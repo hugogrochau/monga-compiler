@@ -1,4 +1,6 @@
-typedef enum tokens {
+extern int yylex(void);
+
+typedef enum token {
   TK_CHAR = 256,
   TK_ELSE,
   TK_FLOAT,
@@ -7,4 +9,4 @@ typedef enum tokens {
   TK_RETURN,
   TK_VOID,
   TK_WHILE,
-} TOKENS ;
+} TOKEN;

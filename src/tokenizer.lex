@@ -1,9 +1,11 @@
+%option noyywrap
+
 %{
-  #include "tokens.h"
+  #include "tokenizer.h"
 %}
 
 %%
-[\t\n\r" "] { };
+[\t\n\r ] { };
 "char"  { return TK_CHAR; }
 "else"  { return TK_ELSE; }
 "float"  { return TK_FLOAT; }
