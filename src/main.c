@@ -38,5 +38,6 @@ int main(void) {
 
   while ( ( token = yylex() )) {
     printTokenString(token);
+    putchar('\n');
   }
 }

@@ -9,5 +9,8 @@ tokenizer.yy.o: tokenizer.yy.c
 main: tokenizer.yy.o
 	gcc $(DIRS) -o build/main build/tokenizer.yy.o src/main.c
 
+test: main
+	scripts/test.py
+
 clean:
 	rm -rf build/*.c build/*.o build/tokenizer
