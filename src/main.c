@@ -7,6 +7,8 @@ void printTokenString(TOKEN token) {
     printf("TK_ASCII (");
     putchar(token);
     putchar(')');
+  } else if (token == TK_AS) {
+    printf("TK_AS");
   } else if (token == TK_CHAR) {
     printf("TK_CHAR");
   } else if (token == TK_ELSE) {
@@ -15,6 +17,8 @@ void printTokenString(TOKEN token) {
     printf("TK_FLOAT");
   } else if (token == TK_IF) {
     printf("TK_IF");
+  } else if (token == TK_INT) {
+    printf("TK_INT");
   } else if (token == TK_NEW) {
     printf("TK_NEW");
   } else if (token == TK_RETURN) {

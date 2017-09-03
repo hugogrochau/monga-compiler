@@ -1,10 +1,12 @@
 extern int yylex(void);
 
 typedef enum token {
-  TK_CHAR = 256,
+  TK_AS = 256,
+  TK_CHAR,
   TK_ELSE,
   TK_FLOAT,
   TK_IF,
+  TK_INT,
   TK_NEW,
   TK_RETURN,
   TK_VOID,
