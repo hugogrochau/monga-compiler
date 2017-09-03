@@ -9,4 +9,5 @@ typedef enum token {
   TK_RETURN,
   TK_VOID,
   TK_WHILE,
+  TK_ID
 } TOKEN;

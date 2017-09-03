@@ -15,5 +15,7 @@
 "void"  { return TK_VOID; }
 "while"  { return TK_WHILE; }
 
+[a-zA-Z_][a-zA-Z0-9_]* { return TK_ID; }
+
 . { return yytext[0]; }
 %%

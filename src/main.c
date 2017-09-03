@@ -28,6 +28,9 @@ void printTokenString(TOKEN token) {
     case TK_WHILE:
       printf("TK_WHILE");
       break;
+    case TK_ID:
+      printf("TK_ID");
+      break;
     default:
       printf("unknown");
   }
