@@ -8,6 +8,9 @@
   /* Whitespace */
 [\t\n\r ] { };
 
+  /* Comments */
+"/*"([^*]|"*"*[^/*])*"*"*"*/" { };
+
   /* Reserved words */
 [\t\n\r ] { };
 "as"  { return TK_AS; }
