@@ -5,28 +5,28 @@
 void printTokenString(TOKEN token) {
   switch (token) {
     case TK_CHAR:
-      printf("char");
+      printf("TK_CHAR");
       break;
     case TK_ELSE:
-      printf("else");
+      printf("TK_ELSE");
       break;
     case TK_FLOAT:
-      printf("float");
+      printf("TK_FLOAT");
       break;
     case TK_IF:
-      printf("if");
+      printf("TK_IF");
       break;
     case TK_NEW:
-      printf("new");
+      printf("TK_NEW");
       break;
     case TK_RETURN:
-      printf("return");
+      printf("TK_RETURN");
       break;
     case TK_VOID:
-      printf("void");
+      printf("TK_VOID");
       break;
     case TK_WHILE:
-      printf("while");
+      printf("TK_WHILE");
       break;
     default:
       printf("unknown");
