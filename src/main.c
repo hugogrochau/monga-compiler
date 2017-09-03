@@ -43,6 +43,8 @@ void printTokenString(TOKEN token) {
     printf("TK_LOGIC_OR");
   } else if (token == TK_INTEGER_CONSTANT) {
     printf("TK_INTEGER_CONSTANT");
+  } else if (token == TK_FLOAT_CONSTANT) {
+    printf("TK_FLOAT_CONSTANT");
   }
 }
 

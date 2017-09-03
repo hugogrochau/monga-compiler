@@ -19,4 +19,5 @@ typedef enum token {
   TK_LOGIC_AND,
   TK_LOGIC_OR,
   TK_INTEGER_CONSTANT,
+  TK_FLOAT_CONSTANT,
 } TOKEN;
