@@ -9,8 +9,8 @@ void printTokenString(TOKEN token) {
     putchar(')');
   } else if (token == TK_AS) {
     printf("TK_AS");
-  } else if (token == TK_CHAR) {
-    printf("TK_CHAR");
+  } else if (token == TK_CHARACTER) {
+    printf("TK_CHARACTER");
   } else if (token == TK_ELSE) {
     printf("TK_ELSE");
   } else if (token == TK_FLOAT) {
@@ -41,6 +41,8 @@ void printTokenString(TOKEN token) {
     printf("TK_LOGIC_AND");
   } else if (token == TK_LOGIC_OR) {
     printf("TK_LOGIC_OR");
+  } else if (token == TK_INTEGER_CONSTANT) {
+    printf("TK_INTEGER_CONSTANT");
   }
 }
 
