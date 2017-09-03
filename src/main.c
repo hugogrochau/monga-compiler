@@ -3,37 +3,26 @@
 #include "tokenizer.h"
 
 void printTokenString(TOKEN token) {
-  switch (token) {
-    case TK_CHAR:
-      printf("TK_CHAR");
-      break;
-    case TK_ELSE:
-      printf("TK_ELSE");
-      break;
-    case TK_FLOAT:
-      printf("TK_FLOAT");
-      break;
-    case TK_IF:
-      printf("TK_IF");
-      break;
-    case TK_NEW:
-      printf("TK_NEW");
-      break;
-    case TK_RETURN:
-      printf("TK_RETURN");
-      break;
-    case TK_VOID:
-      printf("TK_VOID");
-      break;
-    case TK_WHILE:
-      printf("TK_WHILE");
-      break;
-    case TK_ID:
-      printf("TK_ID");
-      break;
-    default:
-      printf("unknown");
-  }
+  if (token == TK_CHAR)
+    printf("TK_CHAR");
+  else if (token == TK_ELSE)
+    printf("TK_ELSE");
+  else if (token == TK_FLOAT)
+    printf("TK_FLOAT");
+  else if (token == TK_IF)
+    printf("TK_IF");
+  else if (token == TK_NEW)
+    printf("TK_NEW");
+  else if (token == TK_RETURN)
+    printf("TK_RETURN");
+  else if (token == TK_VOID)
+    printf("TK_VOID");
+  else if (token == TK_WHILE)
+    printf("TK_WHILE");
+  else if (token == TK_ID)
+    printf("TK_ID");
+  else if (token < 256)
+    printf("TK_ASCII");
 }
 
 int main(void) {
