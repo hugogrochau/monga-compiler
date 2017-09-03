@@ -9,5 +9,11 @@ typedef enum token {
   TK_RETURN,
   TK_VOID,
   TK_WHILE,
-  TK_ID
+  TK_ID,
+  TK_EQUAL,
+  TK_NOT_EQUAL,
+  TK_LESS_EQUAL,
+  TK_GREATER_EQUAL,
+  TK_LOGIC_AND,
+  TK_LOGIC_OR,
 } TOKEN;

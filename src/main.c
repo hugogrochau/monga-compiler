@@ -3,7 +3,11 @@
 #include "tokenizer.h"
 
 void printTokenString(TOKEN token) {
-  if (token == TK_CHAR) {
+  if (token < 256) {
+    printf("TK_ASCII (");
+    putchar(token);
+    putchar(')');
+  } else if (token == TK_CHAR) {
     printf("TK_CHAR");
   } else if (token == TK_ELSE) {
     printf("TK_ELSE");
@@ -21,12 +25,21 @@ void printTokenString(TOKEN token) {
     printf("TK_WHILE");
   } else if (token == TK_ID) {
     printf("TK_ID");
-  } else if (token < 256) {
-    printf("TK_ASCII (");
-    putchar(token);
-    putchar(')');
+  } else if (token == TK_GREATER_EQUAL) {
+    printf("TK_GREATER_EQUAL");
+  } else if (token == TK_LESS_EQUAL) {
+    printf("TK_LESS_EQUAL");
+  } else if (token == TK_EQUAL) {
+    printf("TK_EQUAL");
+  } else if (token == TK_NOT_EQUAL) {
+    printf("TK_NOT_EQUAL");
+  } else if (token == TK_LOGIC_AND) {
+    printf("TK_LOGIC_AND");
+  } else if (token == TK_LOGIC_OR) {
+    printf("TK_LOGIC_OR");
   }
 }
+
 
 int main(void) {
   int token;
