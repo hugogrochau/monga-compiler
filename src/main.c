@@ -46,7 +46,6 @@ void printTokenString(TOKEN token) {
   }
 }
 
-
 int main(void) {
   int token;
 
