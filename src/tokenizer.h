@@ -1,6 +1,6 @@
 extern int yylex(void);
 
-typedef enum token {
+typedef enum tokenType {
   TK_AS = 256,
   TK_CHARACTER,
   TK_ELSE,
@@ -19,4 +19,15 @@ typedef enum token {
   TK_LOGIC_AND,
   TK_LOGIC_OR,
   TK_INTEGER_CONSTANT,
-} TOKEN;
+} TokenType;
+
+typedef struct tokenData {
+  long l;
+  double d;
+  char *c;
+} TokenData;
+
+typedef struct token {
+  TokenType type;
+  TokenData data;
+} Token;
