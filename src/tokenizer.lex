@@ -12,6 +12,18 @@ E			[Ee][+-]?{D}+
 
   TokenType readToken(TokenType type) {
     token.type = type;
+
+    switch (type) {
+      case TK_INTEGER_CONSTANT:
+        // hexadecimal
+        if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X')) {
+          token.data.l = strtol(yytext, NULL, 0);
+        } else {
+          token.data.l = strtol(yytext, NULL, 10);
+        }
+        break;
+    }
+
     return type;
   }
 %}
@@ -23,7 +35,6 @@ E			[Ee][+-]?{D}+
   /* Comments */
 "/*"([^*]|"*"*[^/*])*"*"*"*/" { };
 "#".* { };
-
 
   /* Strings */
 \"(\\.|[^"])*\" { return readToken(TK_STRING); };
