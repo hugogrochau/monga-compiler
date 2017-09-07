@@ -22,7 +22,7 @@
 
 
   /* Strings */
-\".*\" { };
+\"(\\.|[^"])*\" { return readToken(TK_STRING); };
 
   /* Reserved words */
 [\t\n\r ] { };

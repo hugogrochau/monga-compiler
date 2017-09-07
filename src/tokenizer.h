@@ -19,6 +19,7 @@ typedef enum tokenType {
   TK_LOGIC_AND,
   TK_LOGIC_OR,
   TK_INTEGER_CONSTANT,
+  TK_STRING
 } TokenType;
 
 typedef struct tokenData {
