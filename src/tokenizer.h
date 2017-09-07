@@ -26,7 +26,7 @@ typedef enum tokenType {
 typedef struct tokenData {
   long l;
   double d;
-  char *c;
+  char *s;
 } TokenData;
 
 typedef struct token {

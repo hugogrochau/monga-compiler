@@ -14,6 +14,9 @@ E			[Ee][+-]?{D}+
     token.type = type;
 
     switch (type) {
+      case TK_ID:
+        token.data.s = yytext;
+        break;
       case TK_INTEGER_CONSTANT:
         // hexadecimal
         if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X')) {
@@ -21,10 +24,10 @@ E			[Ee][+-]?{D}+
         } else {
           token.data.l = strtol(yytext, NULL, 10);
         }
-      break;
+        break;
       case TK_FLOAT_CONSTANT:
         token.data.d = strtod(yytext, NULL);
-      break;
+        break;
     }
 
     return type;

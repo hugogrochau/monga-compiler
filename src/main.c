@@ -29,8 +29,6 @@ void printTokenString(TokenType type) {
     printf("TK_VOID");
   } else if (type == TK_WHILE) {
     printf("TK_WHILE");
-  } else if (type == TK_ID) {
-    printf("TK_ID");
   } else if (type == TK_GREATER_EQUAL) {
     printf("TK_GREATER_EQUAL");
   } else if (type == TK_LESS_EQUAL) {
@@ -43,6 +41,10 @@ void printTokenString(TokenType type) {
     printf("TK_LOGIC_AND");
   } else if (type == TK_LOGIC_OR) {
     printf("TK_LOGIC_OR");
+  } else if (type == TK_ID) {
+    printf("TK_ID (");
+    printf("%s", token.data.s);
+    putchar(')');
   } else if (type == TK_INTEGER_CONSTANT) {
     printf("TK_INTEGER_CONSTANT (");
     printf("%ld", token.data.l);
