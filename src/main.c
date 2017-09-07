@@ -54,7 +54,9 @@ void printTokenString(TokenType type) {
     printf("%.2f", token.data.d);
     putchar(')');
   } else if (type == TK_STRING) {
-    printf("TK_STRING");
+    printf("TK_STRING (");
+    printf("%s", token.data.s);
+    putchar(')');
   }
 }
 

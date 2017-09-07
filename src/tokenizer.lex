@@ -10,6 +10,54 @@ E			[Ee][+-]?{D}+
 
   extern Token token;
 
+  char *escapeString(char *inString) {
+    char *outString = malloc((strlen(inString) + 1) * sizeof(char));
+    // skip first "
+    int inIndex = 1;
+    int outIndex = 0;
+    while (inString[inIndex] && inString[inIndex] != '"') {
+      if (inString[inIndex] == '\\') {
+        switch(inString[inIndex + 1]) {
+          case 'a':
+            outString[outIndex] = '\a';
+            break;
+          case 'b':
+            outString[outIndex] = '\b';
+            break;
+          case 'f':
+            outString[outIndex] = '\f';
+            break;
+          case 'n':
+            outString[outIndex] = '\n';
+            break;
+          case 'r':
+            outString[outIndex] = '\r';
+            break;
+          case 't':
+            outString[outIndex] = '\t';
+            break;
+          case 'v':
+            outString[outIndex] = '\v';
+            break;
+          case '\\':
+            outString[outIndex] = '\\';
+            break;
+          case '"':
+            outString[outIndex] = '"';
+            break;
+        }
+        outIndex++;
+        inIndex += 2;
+      } else {
+        outString[outIndex] = inString[inIndex];
+        outIndex++;
+        inIndex++;
+      }
+    }
+    outString[outIndex] = '\0';
+    return outString;
+  }
+
   TokenType readToken(TokenType type) {
     token.type = type;
 
@@ -27,6 +75,9 @@ E			[Ee][+-]?{D}+
         break;
       case TK_FLOAT_CONSTANT:
         token.data.d = strtod(yytext, NULL);
+        break;
+      case TK_STRING:
+        token.data.s = escapeString(yytext);
         break;
     }
 
