@@ -48,7 +48,9 @@ void printTokenString(TokenType type) {
     printf("%ld", token.data.l);
     putchar(')');
   } else if (type == TK_FLOAT_CONSTANT) {
-    printf("TK_FLOAT_CONSTANT");
+    printf("TK_FLOAT_CONSTANT (");
+    printf("%.2f", token.data.d);
+    putchar(')');
   } else if (type == TK_STRING) {
     printf("TK_STRING");
   }

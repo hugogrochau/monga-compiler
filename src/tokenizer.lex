@@ -21,7 +21,10 @@ E			[Ee][+-]?{D}+
         } else {
           token.data.l = strtol(yytext, NULL, 10);
         }
-        break;
+      break;
+      case TK_FLOAT_CONSTANT:
+        token.data.d = strtod(yytext, NULL);
+      break;
     }
 
     return type;
@@ -68,9 +71,9 @@ E			[Ee][+-]?{D}+
 [0-9]+ { return readToken(TK_INTEGER_CONSTANT); };
 
   /* Floats */
-0[xX]{XD}+{E} { return readToken(TK_FLOAT_CONSTANT); }
-0[xX]{XD}*"."{XD}+({E})? { return readToken(TK_FLOAT_CONSTANT); }
-0[xX]{XD}+"."{XD}*({E})? { return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}+ { return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}*"."{XD}+ { return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}+"."{XD}* { return readToken(TK_FLOAT_CONSTANT); }
 {D}+{E} { return readToken(TK_FLOAT_CONSTANT); }
 {D}*"."{D}+({E})?	{ return readToken(TK_FLOAT_CONSTANT); }
 {D}+"."{D}*({E})?	{ return readToken(TK_FLOAT_CONSTANT); }
