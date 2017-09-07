@@ -97,7 +97,6 @@ E			[Ee][+-]?{D}+
 \"(\\.|[^"])*\" { return readToken(TK_STRING); };
 
   /* Reserved words */
-[\t\n\r ] { };
 "as"  { return readToken(TK_AS); }
 "char"  { return readToken(TK_CHARACTER); }
 "else"  { return readToken(TK_ELSE); }
@@ -125,7 +124,6 @@ E			[Ee][+-]?{D}+
 [0-9]+ { return readToken(TK_INTEGER_CONSTANT); };
 
   /* Floats */
-0[xX]{XD}+ { return readToken(TK_FLOAT_CONSTANT); }
 0[xX]{XD}*"."{XD}+ { return readToken(TK_FLOAT_CONSTANT); }
 0[xX]{XD}+"."{XD}* { return readToken(TK_FLOAT_CONSTANT); }
 {D}+{E} { return readToken(TK_FLOAT_CONSTANT); }
