@@ -13,7 +13,7 @@ def tokenize(filename):
     ''' Runs the tokenizer on a file and returns the output '''
     file = open(filename)
     source_code = file.read().encode('utf-8')
-    process = Popen(build_dir + '/main', stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    process = Popen(build_dir + '/tokenizer', stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     process.stdin.write(source_code)
     stdout = process.communicate()
     file.close()
