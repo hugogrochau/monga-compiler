@@ -1,5 +1,9 @@
 %option noyywrap
 
+D			[0-9]
+XD		[0-9a-fA-F]
+E			[Ee][+-]?{D}+
+
 %{
   #include <string.h>
   #include "tokenizer.h"
@@ -51,6 +55,14 @@
   /* Integers */
 0[xX][0-9a-fA-F]+ { return readToken(TK_INTEGER_CONSTANT); }
 [0-9]+ { return readToken(TK_INTEGER_CONSTANT); };
+
+  /* Floats */
+0[xX]{XD}+{E} { return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}*"."{XD}+({E})? { return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}+"."{XD}*({E})? { return readToken(TK_FLOAT_CONSTANT); }
+{D}+{E} { return readToken(TK_FLOAT_CONSTANT); }
+{D}*"."{D}+({E})?	{ return readToken(TK_FLOAT_CONSTANT); }
+{D}+"."{D}*({E})?	{ return readToken(TK_FLOAT_CONSTANT); }
 
   /* ASCII characters */
 . { return readToken(yytext[0]); }
