@@ -25,19 +25,19 @@
 %start program
 
 %%
-program: definition {;}
-       | definition definition {;}
+program: declaration {;}
+       | program declaration {;}
 ;
 
-definition: definition-variable {;}
-          | definition-function {;}
+declaration: declaration_variable {;}
+           | declaration_function {;}
 ;
 
-definition-variables: definition-variable {;}
-                    | definition-variable definition-variable {;}
+declaration_variable_list: declaration_variable {;}
+                         | declaration_variable_list declaration_variable {;}
 ;
 
-definition-variable: TK_ID ':' type ';' {;}
+declaration_variable: TK_ID ':' type ';' {;}
 ;
 
 type: TK_INT {;}
@@ -47,25 +47,25 @@ type: TK_INT {;}
     | type '[' ']' {;}
 ;
 
-definition-function: TK_ID '(' parameters ')' ':' type block {;}
+declaration_function: TK_ID '(' parameter_list ')' ':' type block {;}
 ;
 
-parameters: parameter {;}
-          | parameter ',' parameter {;}
-          | {;}
+parameter_list: parameter {;}
+              | parameter_list ',' parameter {;}
+              | {;}
 ;
 
 parameter: TK_ID ':' type {;}
 ;
 
-block: '{' definition-variables commands '}' {;}
-     | '{' definition-variables '}' {;}
-     | '{' commands '}' {;}
+block: '{' declaration_variable_list command_list '}' {;}
+     | '{' declaration_variable_list '}' {;}
+     | '{' command_list '}' {;}
      | '{' '}' {;}
 ;
 
-commands: command {;}
-        | command command {;}
+command_list: command {;}
+            | command_list command {;}
 ;
 
 command: TK_IF expression block {;}
@@ -79,36 +79,61 @@ command: TK_IF expression block {;}
        | block {;}
 ;
 
+expression_primary: variable {;}
+                  | TK_INT_CONSTANT {;}
+                  | TK_FLOAT_CONSTANT {;}
+                  | TK_STRING {;}
+                  | '(' expression ')' {;}
+                  | call {;}
+                  | TK_NEW type '[' expression ']' {;}
+;
+
+call: TK_ID '(' expression_list ')' {;}
+;
+
 variable: TK_ID {;}
-        | expression '[' expression ']' {;}
+        | expression_primary '[' expression ']' {;}
 ;
 
-expression: TK_INT_CONSTANT {;}
-          | TK_FLOAT_CONSTANT {;}
-          | TK_STRING {;}
-          | '(' expression ')' {;}
-          | call {;}
-          | expression TK_AS type {;}
-          | TK_NEW type '[' expression ']' {;}
-          | '-' expression {;}
-          | expression '+' expression {;}
-          | expression '-' expression {;}
-          | expression '*' expression {;}
-          | expression '/' expression {;}
-          | expression TK_EQUAL expression {;}
-          | expression TK_NOT_EQUAL expression {;}
-          | expression TK_LESS_EQUAL expression {;}
-          | expression TK_GREATER_EQUAL expression {;}
-          | expression '<' expression {;}
-          | expression '>' expression {;}
-          | '!' expression {;}
-          | expression TK_LOGIC_AND expression {;}
-          | expression TK_LOGIC_OR  expression {;}
+expression_list: expression {;}
+               | expression_list ',' expression {;}
 ;
 
-call: TK_ID '(' expressions ')' {;}
+expression_postfix: expression_primary {;}
+                  | expression_postfix TK_AS type {;}
 ;
 
-expressions: expression {;}
-           | expression ',' expression {;}
+expression_unary: expression_postfix {;}
+                | '-' expression_unary {;}
+                | '!' expression_unary {;}
+;
+
+expression_multiplicative: expression_unary {;}
+                         | expression_multiplicative '*' expression_unary {;}
+                         | expression_multiplicative '/' expression_unary {;}
+;
+
+expression_additive: expression_multiplicative {;}
+                   | expression_additive '+' expression_multiplicative {;}
+                   | expression_additive '-' expression_multiplicative {;}
+;
+
+expression_relational: expression_additive {;}
+                     | expression_relational '<' expression_additive {;}
+                     | expression_relational '>' expression_additive {;}
+                     | expression_relational TK_LESS_EQUAL expression_additive {;}
+                     | expression_relational TK_GREATER_EQUAL expression_additive {;}
+;
+
+expression_equality: expression_relational {;}
+                   | expression_equality TK_EQUAL expression_relational {;}
+                   | expression_equality TK_NOT_EQUAL expression_relational {;}
+;
+
+expression_logic_and: expression_equality {;}
+                    | expression_logic_and TK_LOGIC_AND expression_equality {;}
+;
+
+expression: expression_logic_and {;}
+          | expression TK_LOGIC_OR expression_logic_and {;}
 ;
