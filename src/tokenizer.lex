@@ -65,7 +65,7 @@ E			[Ee][+-]?{D}+
       case TK_ID:
         token.data.s = yytext;
         break;
-      case TK_INTEGER_CONSTANT:
+      case TK_INT_CONSTANT:
         // hexadecimal
         if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X')) {
           token.data.l = strtol(yytext, NULL, 0);
@@ -98,7 +98,7 @@ E			[Ee][+-]?{D}+
 
   /* Reserved words */
 "as"  { return readToken(TK_AS); }
-"char"  { return readToken(TK_CHARACTER); }
+"char"  { return readToken(TK_CHAR); }
 "else"  { return readToken(TK_ELSE); }
 "float"  { return readToken(TK_FLOAT); }
 "if"  { return readToken(TK_IF); }
@@ -120,8 +120,8 @@ E			[Ee][+-]?{D}+
 [a-zA-Z_][a-zA-Z0-9_]* { return readToken(TK_ID); }
 
   /* Integers */
-0[xX][0-9a-fA-F]+ { return readToken(TK_INTEGER_CONSTANT); }
-[0-9]+ { return readToken(TK_INTEGER_CONSTANT); };
+0[xX][0-9a-fA-F]+ { return readToken(TK_INT_CONSTANT); }
+[0-9]+ { return readToken(TK_INT_CONSTANT); };
 
   /* Floats */
 0[xX]{XD}*"."{XD}+ { return readToken(TK_FLOAT_CONSTANT); }

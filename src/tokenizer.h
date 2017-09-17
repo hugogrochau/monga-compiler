@@ -2,7 +2,7 @@ extern int yylex(void);
 
 typedef enum tokenType {
   TK_AS = 256,
-  TK_CHARACTER,
+  TK_CHAR,
   TK_ELSE,
   TK_FLOAT,
   TK_IF,
@@ -18,7 +18,7 @@ typedef enum tokenType {
   TK_GREATER_EQUAL,
   TK_LOGIC_AND,
   TK_LOGIC_OR,
-  TK_INTEGER_CONSTANT,
+  TK_INT_CONSTANT,
   TK_FLOAT_CONSTANT,
   TK_STRING
 } TokenType;

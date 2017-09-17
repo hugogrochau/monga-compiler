@@ -11,8 +11,8 @@ void printTokenString(TokenType type) {
     putchar(')');
   } else if (type == TK_AS) {
     printf("TK_AS");
-  } else if (type == TK_CHARACTER) {
-    printf("TK_CHARACTER");
+  } else if (type == TK_CHAR) {
+    printf("TK_CHAR");
   } else if (type == TK_ELSE) {
     printf("TK_ELSE");
   } else if (type == TK_FLOAT) {
@@ -45,8 +45,8 @@ void printTokenString(TokenType type) {
     printf("TK_ID (");
     printf("%s", token.data.s);
     putchar(')');
-  } else if (type == TK_INTEGER_CONSTANT) {
-    printf("TK_INTEGER_CONSTANT (");
+  } else if (type == TK_INT_CONSTANT) {
+    printf("TK_INT_CONSTANT (");
     printf("%ld", token.data.l);
     putchar(')');
   } else if (type == TK_FLOAT_CONSTANT) {
