@@ -9,6 +9,9 @@ tokenizer.yy.o: tokenizer.yy.c
 tokenizer: tokenizer.yy.o
 	gcc $(DIRS) -o build/tokenizer build/tokenizer.yy.o src/main.c
 
+parser.tab.c:
+	bison src/parser.y -o build/parser.c
+
 test: tokenizer
 	scripts/test.py
 
