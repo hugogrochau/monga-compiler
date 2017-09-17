@@ -3,11 +3,8 @@ DIRS = -I build -I src
 tokenizer.yy.c: parser.c
 	lex -o build/tokenizer.yy.c src/tokenizer.lex
 
-tokenizer.yy.o: tokenizer.yy.c
-	gcc $(DIRS) -o build/tokenizer.yy.o -c build/tokenizer.yy.c
-
-tokenizer: tokenizer.yy.o
-	gcc $(DIRS) -o build/tokenizer build/tokenizer.yy.o src/main_t1.c
+tokenizer: tokenizer.yy.c
+	gcc $(DIRS) -o build/tokenizer build/tokenizer.yy.c src/main_t1.c
 
 parser.c:
 	bison -d -o build/parser.c src/parser.y

@@ -6,42 +6,48 @@ import os
 import glob
 from subprocess import Popen, PIPE
 
-build_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../build'))
-test_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../test'))
+BUILD_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../build'))
+TEST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../test'))
 
 def tokenize(file_name):
     ''' Runs the tokenizer on a file and returns the output '''
     file = open(file_name)
     source_code = file.read().encode('utf-8')
-    process = Popen(build_dir + '/tokenizer', stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    process = Popen(BUILD_DIR + '/tokenizer', stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     process.stdin.write(source_code)
     stdout = process.communicate()
     file.close()
     return str(stdout[0], 'utf-8')
 
 def add_tests(generator):
+    ''' function to dynamically add tests '''
     def class_decorator(cls):
-        for func, file_name, expected in generator():
-            test = lambda self, i=file_name, o=expected, f=func: f(self, i, o)
-            file_name_short = file_name.split('/')[-1]
-            test_name = file_name_short.split('.')[0]
+        ''' TestCase decorator '''
+        for test_function, received, expected, test_name in generator():
+            test = lambda self, r=received, e=expected, f=test_function: f(self, r, e)
             test.__name__ = "test %s" % (test_name)
             setattr(cls, test.__name__, test)
         return cls
     return class_decorator
 
 def test_tokenizer():
-    def t(self, file_name, expected):
-        self.assertEqual(tokenize(file_name), expected)
+    ''' should correctly tokenize monga source files '''
+    def test(self, received, expected):
+        ''' function to yield '''
+        self.assertEqual(received, expected)
 
-    '''should correctly tokenize monga source files'''
-    for file_name in glob.glob(test_dir + '/tokenizer/**/*.in.monga'):
-        file = open(file_name.replace('.in.monga', '.out.tokens'))
-        expected = file.read()
-        yield t, file_name, expected
-        file.close()
+    for file_name in glob.glob(TEST_DIR + '/tokenizer/**/*.in.monga'):
+        received = tokenize(file_name)
+        expected_file = open(file_name.replace('.in.monga', '.out.tokens'))
+        expected = expected_file.read()
+
+        file_name_short = file_name.split('/')[-1]
+        test_name = file_name_short.split('.')[0]
+        yield test, received, expected, test_name
+        expected_file.close()
 
 class TestCase(unittest.TestCase):
+    ''' mock test case '''
     pass
 TestCase = add_tests(test_tokenizer)(TestCase)
 
