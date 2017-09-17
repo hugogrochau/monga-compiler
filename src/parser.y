@@ -1,6 +1,7 @@
 %{
     #include <stdio.h>
-    int yylex(void);
+    extern int yylex(void);
+    extern int lineNumber;
     void yyerror(char *);
 %}
 %token TK_AS
@@ -142,4 +143,5 @@ expression: expression_logic_and {;}
 %%
 void yyerror(char *s) {
     printf("%s\n", s);
+    printf("On line number: %d\n", lineNumber);
 }

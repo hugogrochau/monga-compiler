@@ -13,3 +13,5 @@ typedef struct token {
   TokenType type;
   TokenData data;
 } Token;
+
+int lineNumber;

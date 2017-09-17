@@ -3,7 +3,7 @@
 #include "tokenizer.h"
 
 extern int yylex(void);
-Token token;
+extern Token token;
 
 void printTokenString(TokenType type) {
   if (type < 256) {

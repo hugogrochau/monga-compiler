@@ -8,7 +8,8 @@ E			[Ee][+-]?{D}+
   #include <string.h>
   #include "tokenizer.h"
 
-  extern Token token;
+  Token token;
+  int lineNumber = 1;
 
   char *escapeString(char *inString) {
     char *outString = malloc((strlen(inString) + 1) * sizeof(char));
@@ -87,7 +88,8 @@ E			[Ee][+-]?{D}+
 
 %%
   /* Whitespace */
-[\t\n\r ] { };
+[\t\r ] { };
+\n { lineNumber++; };
 
   /* Comments */
 "/*"([^*]|"*"*[^/*])*"*"*"*/" { };
