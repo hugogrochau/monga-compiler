@@ -85,14 +85,36 @@ def test_parser_pass():
         test_name = '[pass] ' + file_name_short.split('.')[0]
 
         # Yield a dynamic test case the file
-        params = [output, '']
+        expected = ''
+        message = 'It should parse valid monga syntax'
+        params = [output, expected, message]
         yield test_name, equality_test, params
+
+def test_parser_fail():
+    ''' It should throw an error when parsing invalid monga syntax '''
+    for file_name in glob.glob(TEST_DIR + '/parser/fail/*.monga'):
+        # Parse the input file
+        output = parse(file_name)
+
+        # Generate test name based on file name
+        file_name_short = file_name.split('/')[-1]
+        test_name = '[expected fail] ' + file_name_short.split('.')[0]
+
+        # Yield a dynamic test case the file
+        not_expected = ''
+        message = 'It should throw an error when parsing invalid monga syntax'
+        params = [output, not_expected, message]
+        yield test_name, inequality_test, params
 
 # Dynamic test runner
 
 def equality_test(self, received, expected, message=None):
     ''' Equality test function to yield '''
     self.assertEqual(received, expected, message)
+
+def inequality_test(self, received, not_expected, message=None):
+    ''' Inequality test function to yield '''
+    self.assertNotEqual(received, not_expected, message)
 
 def add_tests(*generators):
     ''' Function to dynamically add tests '''
@@ -113,7 +135,8 @@ class TestCase(unittest.TestCase):
 
 TestCase = add_tests(
     test_tokenizer,
-    test_parser_pass
+    test_parser_pass,
+    test_parser_fail
 )(TestCase)
 
 if __name__ == '__main__':
