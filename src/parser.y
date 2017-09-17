@@ -1,5 +1,7 @@
 %{
-
+    #include <stdio.h>
+    int yylex(void);
+    void yyerror(char *);
 %}
 %token TK_AS
 %token TK_CHAR
@@ -79,6 +81,9 @@ command: TK_IF expression block {;}
        | block {;}
 ;
 
+call: TK_ID '(' expression_list ')' {;}
+;
+
 expression_primary: variable {;}
                   | TK_INT_CONSTANT {;}
                   | TK_FLOAT_CONSTANT {;}
@@ -86,9 +91,6 @@ expression_primary: variable {;}
                   | '(' expression ')' {;}
                   | call {;}
                   | TK_NEW type '[' expression ']' {;}
-;
-
-call: TK_ID '(' expression_list ')' {;}
 ;
 
 variable: TK_ID {;}
@@ -137,3 +139,7 @@ expression_logic_and: expression_equality {;}
 expression: expression_logic_and {;}
           | expression TK_LOGIC_OR expression_logic_and {;}
 ;
+%%
+void yyerror(char *s) {
+    printf("%s\n", s);
+}

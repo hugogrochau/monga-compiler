@@ -1,27 +1,7 @@
-extern int yylex(void);
+#include "parser.h"
 
-typedef enum tokenType {
-  TK_AS = 258,
-  TK_CHAR,
-  TK_ELSE,
-  TK_FLOAT,
-  TK_IF,
-  TK_INT,
-  TK_NEW,
-  TK_RETURN,
-  TK_VOID,
-  TK_WHILE,
-  TK_ID,
-  TK_EQUAL,
-  TK_NOT_EQUAL,
-  TK_LESS_EQUAL,
-  TK_GREATER_EQUAL,
-  TK_LOGIC_AND,
-  TK_LOGIC_OR,
-  TK_INT_CONSTANT,
-  TK_FLOAT_CONSTANT,
-  TK_STRING
-} TokenType;
+
+typedef enum yytokentype TokenType;
 
 typedef struct tokenData {
   long l;

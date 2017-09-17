@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "tokenizer.h"
 
+extern int yylex(void);
 Token token;
 
 void printTokenString(TokenType type) {
