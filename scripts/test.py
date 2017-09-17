@@ -24,7 +24,7 @@ class Tests(unittest.TestCase):
 
     def test_tokenizer(self):
         '''should correctly tokenize monga source files'''
-        for filename in glob.glob(test_dir + '/**/*.in.monga'):
+        for filename in glob.glob(test_dir + '/tokenizer/**/*.in.monga'):
             file = open(filename.replace(".in.monga", ".out.tokens"))
             output = tokenize(filename)
             expected = file.read()
