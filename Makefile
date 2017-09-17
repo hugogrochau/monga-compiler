@@ -10,9 +10,9 @@ parser.c:
 	bison -d -o build/parser.c src/parser.y
 
 parser: tokenizer.yy.c parser.c
-	gcc $(DIRS) -o build/parser build/tokenizer.yy.o build/parser.c src/main_t2.c
+	gcc $(DIRS) -o build/parser build/tokenizer.yy.c build/parser.c src/main_t2.c
 
-test: tokenizer
+test: tokenizer parser
 	scripts/test.py
 
 clean:

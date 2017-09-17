@@ -142,6 +142,5 @@ expression: expression_logic_and {;}
 ;
 %%
 void yyerror(char *s) {
-    printf("%s\n", s);
-    printf("On line number: %d\n", lineNumber);
+    printf("%s. On line number %d\n", s, lineNumber);
 }
