@@ -1,0 +1,7 @@
+main(): int {
+  sum1, 2);
+}
+
+sum(a: int, b: int): int {
+  return a + b;
+}
