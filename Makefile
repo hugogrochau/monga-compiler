@@ -16,4 +16,5 @@ test: tokenizer parser
 	scripts/test.py
 
 clean:
-	rm -rf build/*.c build/*.o build/tokenizer
+	rm -rf build/*
+	touch build/.gitkeep
