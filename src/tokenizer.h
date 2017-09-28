@@ -3,7 +3,7 @@
 
 typedef enum yytokentype TokenType;
 
-typedef struct tokenData {
+typedef union tokenData {
   long l;
   double d;
   char *s;
