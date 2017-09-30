@@ -3,3 +3,7 @@ TK_STRING (test string 123)
 TK_STRING ()
 TK_STRING (test
 string)
+TK_"
+TK_ID (foo)
+TK_ID (bar)
+TK_"

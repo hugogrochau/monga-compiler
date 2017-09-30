@@ -96,7 +96,7 @@ E			[Ee][+-]?{D}+
 "#"[^\n]* { };
 
   /* Strings */
-\"(\\.|[^"])*\" { return readToken(TK_STRING); };
+\"(\\[^\n]|[^"\n])*\" { return readToken(TK_STRING); };
 
   /* Reserved words */
 "as"  { return readToken(TK_AS); }

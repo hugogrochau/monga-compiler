@@ -2,3 +2,5 @@
 "test string 123"
 ""
 "test\nstring"
+"foo
+bar"
