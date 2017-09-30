@@ -59,29 +59,31 @@ E			[Ee][+-]?{D}+
     return outString;
   }
 
+  void saveId() {
+    char *idBuffer = malloc(strlen(yytext) * sizeof(char));
+    token.data.s = strcpy(idBuffer, yytext);
+  }
+
+  void saveIntConstant() {
+    // hexadecimal
+    if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X')) {
+      token.data.l = strtol(yytext, NULL, 0);
+    // decimals (including those starting with 0)
+    } else {
+      token.data.l = strtol(yytext, NULL, 10);
+    }
+  }
+
+  void saveFloatConstant() {
+    token.data.d = strtod(yytext, NULL);
+  }
+
+  void saveStringConstant() {
+    token.data.s = escapeString(yytext);
+  }
+
   TokenType readToken(TokenType type) {
     token.type = type;
-
-    switch (type) {
-      case TK_ID:
-        token.data.s = yytext;
-        break;
-      case TK_INT_CONSTANT:
-        // hexadecimal
-        if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X')) {
-          token.data.l = strtol(yytext, NULL, 0);
-        } else {
-          token.data.l = strtol(yytext, NULL, 10);
-        }
-        break;
-      case TK_FLOAT_CONSTANT:
-        token.data.d = strtod(yytext, NULL);
-        break;
-      case TK_STRING:
-        token.data.s = escapeString(yytext);
-        break;
-    }
-
     return type;
   }
 %}
@@ -96,7 +98,7 @@ E			[Ee][+-]?{D}+
 "#"[^\n]* { };
 
   /* Strings */
-\"(\\[^\n]|[^"\n])*\" { return readToken(TK_STRING); };
+\"(\\[^\n]|[^"\n])*\" { saveStringConstant(); return readToken(TK_STRING); };
 
   /* Reserved words */
 "as"  { return readToken(TK_AS); }
@@ -119,18 +121,18 @@ E			[Ee][+-]?{D}+
 "||" { return readToken(TK_LOGIC_OR); }
 
   /* Identifiers */
-[a-zA-Z_][a-zA-Z0-9_]* { return readToken(TK_ID); }
+[a-zA-Z_][a-zA-Z0-9_]* { saveId(); return readToken(TK_ID); }
 
   /* Integers */
-0[xX][0-9a-fA-F]+ { return readToken(TK_INT_CONSTANT); }
-[0-9]+ { return readToken(TK_INT_CONSTANT); };
+0[xX][0-9a-fA-F]+ { saveIntConstant(); return readToken(TK_INT_CONSTANT); }
+[0-9]+ { saveIntConstant(); return readToken(TK_INT_CONSTANT); };
 
   /* Floats */
-0[xX]{XD}*"."{XD}+ { return readToken(TK_FLOAT_CONSTANT); }
-0[xX]{XD}+"."{XD}* { return readToken(TK_FLOAT_CONSTANT); }
-{D}+{E} { return readToken(TK_FLOAT_CONSTANT); }
-{D}*"."{D}+({E})?	{ return readToken(TK_FLOAT_CONSTANT); }
-{D}+"."{D}*({E})?	{ return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}*"."{XD}+ { saveFloatConstant(); return readToken(TK_FLOAT_CONSTANT); }
+0[xX]{XD}+"."{XD}* { saveFloatConstant(); return readToken(TK_FLOAT_CONSTANT); }
+{D}+{E} { saveFloatConstant(); return readToken(TK_FLOAT_CONSTANT); }
+{D}*"."{D}+({E})?	{ saveFloatConstant(); return readToken(TK_FLOAT_CONSTANT); }
+{D}+"."{D}*({E})?	{ saveFloatConstant(); return readToken(TK_FLOAT_CONSTANT); }
 
   /* ASCII characters */
 . { return readToken(yytext[0]); }
