@@ -36,10 +36,6 @@ declaration: declaration_variable {;}
            | declaration_function {;}
 ;
 
-declaration_variable_list: declaration_variable {;}
-                         | declaration_variable_list declaration_variable {;}
-;
-
 declaration_variable: TK_ID ':' type ';' {;}
 ;
 
@@ -66,6 +62,11 @@ block: '{' declaration_variable_list command_list '}' {;}
      | '{' command_list '}' {;}
      | '{' '}' {;}
 ;
+
+declaration_variable_list: declaration_variable {;}
+                         | declaration_variable_list declaration_variable {;}
+;
+
 
 command_list: command {;}
             | command_list command {;}
