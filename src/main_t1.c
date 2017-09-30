@@ -7,9 +7,8 @@ extern Token token;
 
 void printTokenString(TokenType type) {
   if (type < 256) {
-    printf("TK_ASCII (");
+    printf("TK_");
     putchar(token.type);
-    putchar(')');
   } else if (type == TK_AS) {
     printf("TK_AS");
   } else if (type == TK_CHAR) {

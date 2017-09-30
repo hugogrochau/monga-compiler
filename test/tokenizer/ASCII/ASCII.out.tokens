@@ -1,18 +1,18 @@
-TK_ASCII (<)
-TK_ASCII (>)
-TK_ASCII (()
-TK_ASCII ())
-TK_ASCII ({)
-TK_ASCII (})
-TK_ASCII ([)
-TK_ASCII (])
-TK_ASCII (+)
-TK_ASCII (-)
-TK_ASCII (*)
-TK_ASCII (/)
-TK_ASCII (!)
-TK_ASCII (;)
-TK_ASCII (:)
-TK_ASCII (,)
-TK_ASCII (=)
-TK_ASCII (@)
+TK_<
+TK_>
+TK_(
+TK_)
+TK_{
+TK_}
+TK_[
+TK_]
+TK_+
+TK_-
+TK_*
+TK_/
+TK_!
+TK_;
+TK_:
+TK_,
+TK_=
+TK_@
