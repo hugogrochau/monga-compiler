@@ -135,9 +135,12 @@ expression_logic_and: expression_relational {;}
                     | expression_logic_and TK_LOGIC_AND expression_relational {;}
 ;
 
-expression: expression_logic_and {;}
+expression_logic_or: expression_logic_and {;}
           | expression TK_LOGIC_OR expression_logic_and {;}
 ;
+
+expression: expression_logic_or;
+
 %%
 void yyerror(char *s) {
     printf("%s. On line number %d\n", s, lineNumber);
