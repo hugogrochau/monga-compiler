@@ -1,5 +1,7 @@
 DIRS = -I build -I src
 
+default: test
+
 tokenizer.yy.c: parser.c src/tokenizer.h src/tokenizer.lex
 	lex -o build/tokenizer.yy.c src/tokenizer.lex
 
