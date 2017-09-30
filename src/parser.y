@@ -123,19 +123,16 @@ expression_additive: expression_multiplicative {;}
 ;
 
 expression_relational: expression_additive {;}
-                     | expression_relational '<' expression_additive {;}
-                     | expression_relational '>' expression_additive {;}
-                     | expression_relational TK_LESS_EQUAL expression_additive {;}
-                     | expression_relational TK_GREATER_EQUAL expression_additive {;}
+                     | expression_additive '<' expression_additive {;}
+                     | expression_additive '>' expression_additive {;}
+                     | expression_additive TK_LESS_EQUAL expression_additive {;}
+                     | expression_additive TK_GREATER_EQUAL expression_additive {;}
+                     | expression_additive TK_EQUAL expression_additive {;}
+                     | expression_additive TK_NOT_EQUAL expression_additive {;}
 ;
 
-expression_equality: expression_relational {;}
-                   | expression_equality TK_EQUAL expression_relational {;}
-                   | expression_equality TK_NOT_EQUAL expression_relational {;}
-;
-
-expression_logic_and: expression_equality {;}
-                    | expression_logic_and TK_LOGIC_AND expression_equality {;}
+expression_logic_and: expression_relational {;}
+                    | expression_logic_and TK_LOGIC_AND expression_relational {;}
 ;
 
 expression: expression_logic_and {;}
