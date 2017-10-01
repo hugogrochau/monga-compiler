@@ -3,27 +3,37 @@
 #include "ast_structure.h"
 #include "ast_printer.h"
 
-void printDeclaration (AST_Declaration *declaration) {
+void printLevel(char *string, int depth) {
+  for (int i = 0; i < depth; i++) {
+    printf("  ");
+  }
+  printf(string);
+  putchar('\n');
+}
+
+void printDeclaration (AST_Declaration *declaration, int depth) {
   if (declaration->type == AST_DECLARATION_VARIABLE) {
-    printf("VARIABLE]\n");
+    printLevel("[DECLARATION-VARIABLE]", depth);
   } else if (declaration->type == AST_DECLARATION_FUNCTION) {
-    printf("FUNCTION]\n");
+    printLevel("[DECLARATION-FUNCTION]", depth);
   } else {
-    printf("UNKNOWN]\n");
+    printLevel("[DECLARATION-UNKNOWN]", depth);
   }
 }
 
-void printDeclarations (AST_DeclarationElement *declarationList) {
+void printDeclarations (AST_DeclarationElement *declarationList, int depth) {
   AST_DeclarationElement *element = declarationList;
+
   while (element != NULL) {
-    printf("[DECLARATION-");
-    printDeclaration(element->declaration);
+    printLevel("[DECLARATION]", depth);
+    printDeclaration(element->declaration, depth + 1);
     element = element->next;
   }
 }
 
 void AST_printProgram (AST_Program *program) {
-  printf("[PROGRAM]\n");
-  printDeclarations(program->declarations);
-}
+  int depth = 0;
+  printLevel("[PROGRAM]", depth);
 
+  printDeclarations(program->declarations, depth + 1);
+}
