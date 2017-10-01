@@ -9,4 +9,8 @@ AST_DeclarationElement * AST_createDeclarationList(AST_Declaration *declaration)
 
 AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarationList, AST_Declaration *declaration);
 
+AST_Declaration * AST_createDeclarationVariable(AST_DeclarationVariable *declaration);
+
+AST_Declaration * AST_createDeclarationFunction(AST_DeclarationFunction *declaration);
+
 #endif

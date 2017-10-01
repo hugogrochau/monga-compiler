@@ -2,8 +2,8 @@
 #define AST_STRUCTURE_H
 
 typedef enum declarationType {
-  VARIABLE,
-  FUNCTION
+  AST_DECLARATION_VARIABLE,
+  AST_DECLARATION_FUNCTION
 } AST_DeclarationType;
 
 typedef struct declarationVariable {
@@ -19,9 +19,9 @@ typedef struct declarationFunction {
 typedef struct declaration {
   AST_DeclarationType type;
   union {
-    AST_DeclarationVariable variable;
-    AST_DeclarationVariable function;
-  };
+    AST_DeclarationVariable *variable;
+    AST_DeclarationFunction *function;
+  } declaration;
 } AST_Declaration;
 
 typedef struct declarationElement {

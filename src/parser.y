@@ -66,8 +66,13 @@ declaration_list:
     }
 ;
 
-declaration: declaration_variable {;}
-           | declaration_function {;}
+declaration:
+    declaration_variable {
+        $$ = AST_createDeclarationVariable($1);
+    } |
+    declaration_function {
+        $$ = AST_createDeclarationFunction($1);
+    }
 ;
 
 declaration_variable: TK_ID ':' type ';' {;}

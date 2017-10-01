@@ -3,10 +3,21 @@
 #include "ast_structure.h"
 #include "ast_printer.h"
 
+void printDeclaration (AST_Declaration *declaration) {
+  if (declaration->type == AST_DECLARATION_VARIABLE) {
+    printf("VARIABLE]\n");
+  } else if (declaration->type == AST_DECLARATION_FUNCTION) {
+    printf("FUNCTION]\n");
+  } else {
+    printf("UNKNOWN]\n");
+  }
+}
+
 void printDeclarations (AST_DeclarationElement *declarationList) {
   AST_DeclarationElement *element = declarationList;
   while (element != NULL) {
-    printf("[DECLARATION]\n");
+    printf("[DECLARATION-");
+    printDeclaration(element->declaration);
     element = element->next;
   }
 }

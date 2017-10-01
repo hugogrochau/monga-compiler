@@ -36,3 +36,20 @@ AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarati
   return declarationList;
 }
 
+AST_Declaration * AST_createDeclarationVariable(AST_DeclarationVariable *declaration) {
+  AST_Declaration *newDeclaration = malloc(sizeof(AST_Declaration));
+
+  newDeclaration->type = AST_DECLARATION_VARIABLE;
+  newDeclaration->declaration.variable = declaration;
+
+  return newDeclaration;
+}
+
+AST_Declaration * AST_createDeclarationFunction(AST_DeclarationFunction *declaration) {
+  AST_Declaration *newDeclaration = malloc(sizeof(AST_Declaration));
+
+  newDeclaration->type = AST_DECLARATION_FUNCTION;
+  newDeclaration->declaration.function = declaration;
+
+  return newDeclaration;
+}
