@@ -1,9 +1,16 @@
 %{
     #include <stdio.h>
+    #include "ast_structure.h"
+    #include "ast_creation.h"
+
     extern int yylex(void);
-    extern int lineNumber;
     void yyerror(char *);
+
+    extern int lineNumber;
+
+    extern AST_Program* program;
 %}
+
 %token TK_AS
 %token TK_CHAR
 %token TK_ELSE
@@ -25,11 +32,30 @@
 %token TK_FLOAT_CONSTANT
 %token TK_STRING
 
+%union{
+    AST_DeclarationType *declarationType;
+    AST_DeclarationVariable *declarationVariable;
+    AST_DeclarationFunction *declarationFunction;
+    AST_Declaration *declaration;
+    AST_DeclarationElement *declarationElement;
+    AST_Program *program;
+}
+
+%type <program> program
+%type <declarationElement> declaration
+
 %start program
 
 %%
-program: declaration {;}
-       | program declaration {;}
+program:
+    declaration {
+        program = appendDeclarationOrCreateProgram(program, $1);
+        $$ = program;
+    } |
+    program declaration {
+        program = appendDeclarationOrCreateProgram($1, $2);
+        $$ = program;
+    }
 ;
 
 declaration: declaration_variable {;}

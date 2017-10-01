@@ -6,6 +6,7 @@ E			[Ee][+-]?{D}+
 
 %{
   #include <string.h>
+  #include "ast_structure.h"
   #include "tokenizer.h"
 
   Token token;

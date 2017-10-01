@@ -12,7 +12,7 @@ parser.c: src/parser.y
 	bison -d -o build/parser.c src/parser.y
 
 parser: tokenizer.yy.c parser.c src/main_t2.c
-	gcc $(DIRS) -o build/parser build/tokenizer.yy.c build/parser.c src/main_t2.c
+	gcc $(DIRS) -o build/parser src/ast_creation.c build/tokenizer.yy.c build/parser.c src/main_t2.c
 
 test: tokenizer parser
 	scripts/test.py

@@ -1,5 +1,7 @@
-#include "parser.h"
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
 
+#include "parser.h"
 
 typedef enum yytokentype TokenType;
 
@@ -15,3 +17,5 @@ typedef struct token {
 } Token;
 
 int lineNumber;
+
+#endif

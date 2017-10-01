@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "ast_structure.h"
 #include "tokenizer.h"
 
 extern int yylex(void);
