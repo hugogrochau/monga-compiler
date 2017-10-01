@@ -3,7 +3,8 @@
 #include "ast_structure.h"
 #include "ast_printer.h"
 
-void printDeclarations (AST_DeclarationElement *element) {
+void printDeclarations (AST_DeclarationElement *declarationList) {
+  AST_DeclarationElement *element = declarationList;
   while (element != NULL) {
     printf("[DECLARATION]\n");
     element = element->next;
@@ -12,6 +13,6 @@ void printDeclarations (AST_DeclarationElement *element) {
 
 void AST_printProgram (AST_Program *program) {
   printf("[PROGRAM]\n");
-  printDeclarations(program->head);
+  printDeclarations(program->declarations);
 }
 

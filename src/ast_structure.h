@@ -30,7 +30,7 @@ typedef struct declarationElement {
 } AST_DeclarationElement;
 
 typedef struct program {
-  AST_DeclarationElement *head;
+  AST_DeclarationElement *declarations;
 } AST_Program;
 
 #endif

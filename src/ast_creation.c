@@ -3,33 +3,36 @@
 #include "ast_creation.h"
 #include "ast_structure.h"
 
-AST_Program * createProgram() {
+AST_Program * AST_createProgram(AST_DeclarationElement *declarationList) {
   AST_Program *program = malloc(sizeof(AST_Program));
-  program->head = NULL;
+
+  program->declarations = declarationList;
 
   return program;
 }
 
-AST_Program * appendDeclarationToProgram(AST_Program *program, AST_DeclarationElement *declarationElement) {
-  AST_DeclarationElement *currentElement = program->head;
+AST_DeclarationElement * AST_createDeclarationList(AST_Declaration *declaration) {
+  AST_DeclarationElement *declarationList = malloc(sizeof(AST_DeclarationElement));
 
-  if (currentElement == NULL) {
-    program->head = declarationElement;
-  } else {
-    while (currentElement->next != NULL) {
-      currentElement = currentElement->next;
-    }
+  declarationList->declaration = declaration;
+  declarationList->next = NULL;
 
-    currentElement->next = declarationElement;
-  }
-
-  return program;
+  return declarationList;
 }
 
-AST_Program * appendDeclarationOrCreateProgram(AST_Program *program, AST_DeclarationElement *declarationElement) {
-  if (program == NULL) {
-    program = createProgram();
+AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarationList, AST_Declaration *declaration) {
+  AST_DeclarationElement *newElement = malloc(sizeof(AST_DeclarationElement));
+  AST_DeclarationElement *currentElement = declarationList;
+
+  newElement->declaration = declaration;
+
+  /* Go to the end of the linked list */
+  while (currentElement->next != NULL) {
+    currentElement = currentElement->next;
   }
 
-  return appendDeclarationToProgram(program, declarationElement);
+  currentElement->next = newElement;
+
+  return declarationList;
 }
+

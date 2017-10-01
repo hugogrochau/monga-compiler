@@ -3,6 +3,10 @@
 
 #include "ast_structure.h"
 
-AST_Program * appendDeclarationOrCreateProgram(AST_Program *program, AST_DeclarationElement *head);
+AST_Program * AST_createProgram(AST_DeclarationElement *declarationList);
+
+AST_DeclarationElement * AST_createDeclarationList(AST_Declaration *declaration);
+
+AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarationList, AST_Declaration *declaration);
 
 #endif

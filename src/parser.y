@@ -42,19 +42,27 @@
 }
 
 %type <program> program
-%type <declarationElement> declaration
+%type <declarationElement> declaration_list
+%type <declaration> declaration
+%type <declarationVariable> declaration_variable
+%type <declarationFunction> declaration_function
 
 %start program
 
 %%
 program:
-    declaration {
-        program = appendDeclarationOrCreateProgram(program, $1);
+    declaration_list {
+        program = AST_createProgram($1);
         $$ = program;
+    }
+;
+
+declaration_list:
+    declaration_list declaration {
+        $$ = AST_appendDeclaration($1, $2);
     } |
-    program declaration {
-        program = appendDeclarationOrCreateProgram($1, $2);
-        $$ = program;
+    declaration {
+        $$ = AST_createDeclarationList($1);
     }
 ;
 
