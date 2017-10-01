@@ -5,13 +5,13 @@
 
 void printDeclarations (AST_DeclarationElement *element) {
   while (element != NULL) {
-    printf("[DECLARATION]");
+    printf("[DECLARATION]\n");
     element = element->next;
   }
 }
 
 void AST_printProgram (AST_Program *program) {
-  printf("[PROGRAM]");
+  printf("[PROGRAM]\n");
   printDeclarations(program->head);
 }
 

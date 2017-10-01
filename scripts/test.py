@@ -89,6 +89,28 @@ def test_t2_fail():
         params = [output, not_expected, message]
         yield test_name, inequality_test, params
 
+# t3
+
+def test_t3():
+    ''' It should correctly generate a AST for monga source code '''
+    glob_string = os.path.join(TEST_DIR, 't3/**/*.in.monga')
+    for file_name in glob.glob(glob_string):
+        # Generate AST for input file
+        received = runner('t3', file_name)
+
+        # Load output file
+        expected_file = open(file_name.replace('.in.monga', '.out.tree'))
+        expected = expected_file.read()
+        expected_file.close()
+
+        # Generate test name based on file name
+        file_name_short = file_name.split('/')[-1]
+        test_name = file_name_short.split('.')[0]
+
+        # Yield a dynamic test case for the file
+        params = [received, expected]
+        yield test_name, equality_test, params
+
 # Dynamic test runner
 
 def equality_test(self, received, expected, message=None):
@@ -115,11 +137,13 @@ class TestCase(unittest.TestCase):
     ''' Mock test case '''
     pass
 
+# init
 
 TestCase = add_tests(
     test_t1,
     test_t2_pass,
-    test_t2_fail
+    test_t2_fail,
+    test_t3
 )(TestCase)
 
 if __name__ == '__main__':
