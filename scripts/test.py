@@ -11,10 +11,8 @@ import subprocess
 BUILD_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../build'))
 TEST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../test'))
 
-# Tokenizer
-
-def tokenize(file_name):
-    ''' Runs the tokenizer on a file and returns the output '''
+def runner(executable, file_name):
+    ''' Runs the executable on a file and returns the output '''
     # Read source file
     file = open(file_name)
     source_code = file.read().encode('utf-8')
@@ -22,7 +20,7 @@ def tokenize(file_name):
 
     # Run the tokenizer binary on the file's content
     process = subprocess.Popen(
-        BUILD_DIR + '/tokenizer',
+        os.path.join(BUILD_DIR, executable),
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         shell=True
@@ -33,11 +31,14 @@ def tokenize(file_name):
     # Returns the output
     return str(stdout[0], 'utf-8')
 
-def test_tokenizer():
+# t1
+
+def test_t1():
     ''' It should correctly tokenize monga source code '''
-    for file_name in glob.glob(TEST_DIR + '/tokenizer/**/*.in.monga'):
+    glob_string = os.path.join(TEST_DIR, 't1/**/*.in.monga')
+    for file_name in glob.glob(glob_string):
         # Tokenize input file
-        received = tokenize(file_name)
+        received = runner('t1', file_name)
 
         # Load output file
         expected_file = open(file_name.replace('.in.monga', '.out.tokens'))
@@ -52,33 +53,14 @@ def test_tokenizer():
         params = [received, expected]
         yield test_name, equality_test, params
 
-# Parser
+# t2
 
-def parse(file_name):
-    ''' Runs the parser on a .monga file and returns the output '''
-    # Read source file
-    file = open(file_name)
-    source_code = file.read().encode('utf-8')
-    file.close()
-
-    # Run the parse binary on the file's content
-    process = subprocess.Popen(
-        BUILD_DIR + '/parser',
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        shell=True
-    )
-    process.stdin.write(source_code)
-    stdout = process.communicate()
-
-    # Return the output
-    return str(stdout[0], 'utf-8')
-
-def test_parser_pass():
+def test_t2_pass():
     ''' It should parse valid monga syntax '''
-    for file_name in glob.glob(TEST_DIR + '/parser/pass/*.monga'):
+    glob_string = os.path.join(TEST_DIR, 't2/pass/*.monga')
+    for file_name in glob.glob(glob_string):
         # Parse the input file
-        output = parse(file_name)
+        output = runner('t2', file_name)
 
         # Generate test name based on file name
         file_name_short = file_name.split('/')[-1]
@@ -90,11 +72,12 @@ def test_parser_pass():
         params = [output, expected, message]
         yield test_name, equality_test, params
 
-def test_parser_fail():
+def test_t2_fail():
     ''' It should throw an error when parsing invalid monga syntax '''
-    for file_name in glob.glob(TEST_DIR + '/parser/fail/*.monga'):
+    glob_string = os.path.join(TEST_DIR, 't2/fail/*.monga')
+    for file_name in glob.glob(glob_string):
         # Parse the input file
-        output = parse(file_name)
+        output = runner('t2', file_name)
 
         # Generate test name based on file name
         file_name_short = file_name.split('/')[-1]
@@ -134,9 +117,9 @@ class TestCase(unittest.TestCase):
 
 
 TestCase = add_tests(
-    test_tokenizer,
-    test_parser_pass,
-    test_parser_fail
+    test_t1,
+    test_t2_pass,
+    test_t2_fail
 )(TestCase)
 
 if __name__ == '__main__':

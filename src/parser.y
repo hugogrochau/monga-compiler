@@ -8,7 +8,7 @@
 
     extern int lineNumber;
 
-    extern AST_Program* program;
+    extern AST_Program *program;
 %}
 
 %token TK_AS

@@ -1,20 +1,27 @@
 DIRS = -I build -I src
 
+T1_DEPENDENCIES = build/tokenizer.yy.c src/main_t1.c
+T2_DEPENDENCIES = src/ast_creation.c build/tokenizer.yy.c build/parser.c src/main_t2.c
+T3_DEPENDENCIES = src/ast_creation.c src/ast_printer.c build/tokenizer.yy.c build/parser.c src/main_t3.c
+
 default: test
 
-tokenizer.yy.c: parser.c src/tokenizer.h src/tokenizer.lex
+build/tokenizer.yy.c: build/parser.c src/tokenizer.h src/tokenizer.lex
 	lex -o build/tokenizer.yy.c src/tokenizer.lex
 
-tokenizer: tokenizer.yy.c src/main_t1.c
-	gcc $(DIRS) -o build/tokenizer build/tokenizer.yy.c src/main_t1.c
+build/t1: $(T1_DEPENDENCIES)
+	gcc $(DIRS) -o build/t1 $(T1_DEPENDENCIES)
 
-parser.c: src/parser.y
+build/parser.c: src/parser.y
 	bison -d -o build/parser.c src/parser.y
 
-parser: tokenizer.yy.c parser.c src/main_t2.c
-	gcc $(DIRS) -o build/parser src/ast_creation.c build/tokenizer.yy.c build/parser.c src/main_t2.c
+build/t2: $(T2_DEPENDENCIES)
+	gcc $(DIRS) -o build/t2 $(T2_DEPENDENCIES)
 
-test: tokenizer parser
+build/t3: $(T3_DEPENDENCIES) build/tokenizer.yy.c build/parser.c src/main_t3.c
+	gcc $(DIRS) -o build/t3 $(T3_DEPENDENCIES)
+
+test: build/t1 build/t2 build/t3
 	scripts/test.py
 
 clean:

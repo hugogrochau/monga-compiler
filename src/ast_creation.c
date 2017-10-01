@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "ast_creation.h"
 #include "ast_structure.h"
 
 AST_Program * createProgram() {
