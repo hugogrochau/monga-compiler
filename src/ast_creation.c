@@ -36,7 +36,7 @@ AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarati
   return declarationList;
 }
 
-AST_Declaration * AST_createDeclarationVariable(AST_DeclarationVariable *declaration) {
+AST_Declaration * AST_createDeclarationAsVariable(AST_DeclarationVariable *declaration) {
   AST_Declaration *newDeclaration = malloc(sizeof(AST_Declaration));
 
   newDeclaration->type = AST_DECLARATION_VARIABLE;
@@ -45,11 +45,31 @@ AST_Declaration * AST_createDeclarationVariable(AST_DeclarationVariable *declara
   return newDeclaration;
 }
 
-AST_Declaration * AST_createDeclarationFunction(AST_DeclarationFunction *declaration) {
+AST_Declaration * AST_createDeclarationAsFunction(AST_DeclarationFunction *declaration) {
   AST_Declaration *newDeclaration = malloc(sizeof(AST_Declaration));
 
   newDeclaration->type = AST_DECLARATION_FUNCTION;
   newDeclaration->declaration.function = declaration;
 
   return newDeclaration;
+}
+
+AST_DeclarationVariable * AST_createDeclarationVariable(char *id, AST_Type type) {
+  AST_DeclarationVariable *variableDeclaration = malloc(sizeof(AST_DeclarationVariable));
+
+  variableDeclaration->type = type;
+  variableDeclaration->id = id;
+
+  return variableDeclaration;
+}
+
+AST_Type AST_createArrayType(AST_Type type) {
+  switch (type) {
+    case AST_INT:
+      return AST_ARRAY_INT;
+    case AST_FLOAT:
+      return AST_ARRAY_FLOAT;
+    case AST_CHAR:
+      return AST_ARRAY_CHAR;
+  }
 }

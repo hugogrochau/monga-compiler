@@ -11,28 +11,35 @@
     extern AST_Program *program;
 %}
 
-%token TK_AS
-%token TK_CHAR
-%token TK_ELSE
-%token TK_FLOAT
-%token TK_IF
-%token TK_INT
-%token TK_NEW
-%token TK_RETURN
-%token TK_VOID
-%token TK_WHILE
-%token TK_ID
-%token TK_EQUAL
-%token TK_NOT_EQUAL
-%token TK_LESS_EQUAL
-%token TK_GREATER_EQUAL
-%token TK_LOGIC_AND
-%token TK_LOGIC_OR
-%token TK_INT_CONSTANT
-%token TK_FLOAT_CONSTANT
-%token TK_STRING
+%token <i> TK_AS
+%token <i> TK_ELSE
+%token <i> TK_IF
+%token <i> TK_NEW
+%token <i> TK_RETURN
+%token <i> TK_WHILE
+%token <i> TK_EQUAL
+%token <i> TK_NOT_EQUAL
+%token <i> TK_LESS_EQUAL
+%token <i> TK_GREATER_EQUAL
+%token <i> TK_LOGIC_AND
+%token <i> TK_LOGIC_OR
+
+%token <type> TK_CHAR
+%token <type> TK_INT
+%token <type> TK_FLOAT
+%token <type> TK_VOID
+
+%token <c> TK_ID
+
+%token <i> TK_INT_CONSTANT
+%token <d> TK_FLOAT_CONSTANT
+%token <c> TK_STRING
 
 %union{
+    int i;
+    double d;
+    char *c;
+    AST_Type type;
     AST_DeclarationType *declarationType;
     AST_DeclarationVariable *declarationVariable;
     AST_DeclarationFunction *declarationFunction;
@@ -41,6 +48,7 @@
     AST_Program *program;
 }
 
+%type <type> type
 %type <program> program
 %type <declarationElement> declaration_list
 %type <declaration> declaration
@@ -68,21 +76,35 @@ declaration_list:
 
 declaration:
     declaration_variable {
-        $$ = AST_createDeclarationVariable($1);
+        $$ = AST_createDeclarationAsVariable($1);
     } |
     declaration_function {
-        $$ = AST_createDeclarationFunction($1);
+        $$ = AST_createDeclarationAsFunction($1);
     }
 ;
 
-declaration_variable: TK_ID ':' type ';' {;}
+declaration_variable:
+    TK_ID ':' type ';' {
+        $$ = AST_createDeclarationVariable($1, $3);
+    }
 ;
 
-type: TK_INT {;}
-    | TK_CHAR {;}
-    | TK_FLOAT {;}
-    | TK_VOID {;}
-    | type '[' ']' {;}
+type:
+    TK_INT {
+        $$ = AST_INT;
+    } |
+    TK_CHAR {
+        $$ = AST_CHAR;
+    } |
+    TK_FLOAT {
+        $$ = AST_FLOAT;
+    } |
+    TK_VOID {
+        $$ = AST_VOID;
+    } |
+    type '[' ']' {
+        $$ = AST_createArrayType($1);
+    }
 ;
 
 declaration_function: TK_ID '(' parameter_list ')' ':' type block {;}

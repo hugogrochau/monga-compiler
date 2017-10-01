@@ -9,8 +9,12 @@ AST_DeclarationElement * AST_createDeclarationList(AST_Declaration *declaration)
 
 AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarationList, AST_Declaration *declaration);
 
-AST_Declaration * AST_createDeclarationVariable(AST_DeclarationVariable *declaration);
+AST_Declaration * AST_createDeclarationAsVariable(AST_DeclarationVariable *declaration);
 
-AST_Declaration * AST_createDeclarationFunction(AST_DeclarationFunction *declaration);
+AST_Declaration * AST_createDeclarationAsFunction(AST_DeclarationFunction *declaration);
+
+AST_DeclarationVariable * AST_createDeclarationVariable(char *id, AST_Type type);
+
+AST_Type AST_createArrayType(AST_Type type);
 
 #endif
