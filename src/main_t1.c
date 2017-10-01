@@ -6,57 +6,84 @@ extern int yylex(void);
 extern Token token;
 
 void printTokenString(TokenType type) {
-  if (type < 256) {
-    printf("TK_");
-    putchar(token.type);
-  } else if (type == TK_AS) {
-    printf("TK_AS");
-  } else if (type == TK_CHAR) {
-    printf("TK_CHAR");
-  } else if (type == TK_ELSE) {
-    printf("TK_ELSE");
-  } else if (type == TK_FLOAT) {
-    printf("TK_FLOAT");
-  } else if (type == TK_IF) {
-    printf("TK_IF");
-  } else if (type == TK_INT) {
-    printf("TK_INT");
-  } else if (type == TK_NEW) {
-    printf("TK_NEW");
-  } else if (type == TK_RETURN) {
-    printf("TK_RETURN");
-  } else if (type == TK_VOID) {
-    printf("TK_VOID");
-  } else if (type == TK_WHILE) {
-    printf("TK_WHILE");
-  } else if (type == TK_GREATER_EQUAL) {
-    printf("TK_GREATER_EQUAL");
-  } else if (type == TK_LESS_EQUAL) {
-    printf("TK_LESS_EQUAL");
-  } else if (type == TK_EQUAL) {
-    printf("TK_EQUAL");
-  } else if (type == TK_NOT_EQUAL) {
-    printf("TK_NOT_EQUAL");
-  } else if (type == TK_LOGIC_AND) {
-    printf("TK_LOGIC_AND");
-  } else if (type == TK_LOGIC_OR) {
-    printf("TK_LOGIC_OR");
-  } else if (type == TK_ID) {
-    printf("TK_ID (");
-    printf("%s", token.data.s);
-    putchar(')');
-  } else if (type == TK_INT_CONSTANT) {
-    printf("TK_INT_CONSTANT (");
-    printf("%ld", token.data.l);
-    putchar(')');
-  } else if (type == TK_FLOAT_CONSTANT) {
-    printf("TK_FLOAT_CONSTANT (");
-    printf("%.2f", token.data.d);
-    putchar(')');
-  } else if (type == TK_STRING) {
-    printf("TK_STRING (");
-    printf("%s", token.data.s);
-    putchar(')');
+  switch (type) {
+    case TK_AS:
+      printf("TK_AS");
+      break;
+    case TK_CHAR:
+      printf("TK_CHAR");
+      break;
+    case TK_ELSE:
+      printf("TK_ELSE");
+      break;
+    case TK_FLOAT:
+      printf("TK_FLOAT");
+      break;
+    case TK_IF:
+      printf("TK_IF");
+      break;
+    case TK_INT:
+      printf("TK_INT");
+      break;
+    case TK_NEW:
+      printf("TK_NEW");
+      break;
+    case TK_RETURN:
+      printf("TK_RETURN");
+      break;
+    case TK_VOID:
+      printf("TK_VOID");
+      break;
+    case TK_WHILE:
+      printf("TK_WHILE");
+      break;
+    case TK_GREATER_EQUAL:
+      printf("TK_GREATER_EQUAL");
+      break;
+    case TK_LESS_EQUAL:
+      printf("TK_LESS_EQUAL");
+      break;
+    case TK_EQUAL:
+      printf("TK_EQUAL");
+      break;
+    case TK_NOT_EQUAL:
+      printf("TK_NOT_EQUAL");
+      break;
+    case TK_LOGIC_AND:
+      printf("TK_LOGIC_AND");
+      break;
+    case TK_LOGIC_OR:
+      printf("TK_LOGIC_OR");
+      break;
+    case TK_ID:
+      printf("TK_ID (");
+      printf("%s", token.data.s);
+      putchar(')');
+      break;
+    case TK_INT_CONSTANT:
+      printf("TK_INT_CONSTANT (");
+      printf("%ld", token.data.l);
+      putchar(')');
+      break;
+    case TK_FLOAT_CONSTANT:
+      printf("TK_FLOAT_CONSTANT (");
+      printf("%.2f", token.data.d);
+      putchar(')');
+      break;
+    case TK_STRING:
+      printf("TK_STRING (");
+      printf("%s", token.data.s);
+      putchar(')');
+      break;
+    default:
+      /* ASCII tokens */
+      if (type < 256) {
+        printf("TK_");
+        putchar(token.type);
+      } else {
+        printf("UNKNOWN");
+      }
+      break;
   }
 }
 
