@@ -11,18 +11,18 @@
     extern AST_Program *program;
 %}
 
-%token <i> TK_AS
-%token <i> TK_ELSE
-%token <i> TK_IF
-%token <i> TK_NEW
-%token <i> TK_RETURN
-%token <i> TK_WHILE
-%token <i> TK_EQUAL
-%token <i> TK_NOT_EQUAL
-%token <i> TK_LESS_EQUAL
-%token <i> TK_GREATER_EQUAL
-%token <i> TK_LOGIC_AND
-%token <i> TK_LOGIC_OR
+%token TK_AS
+%token TK_ELSE
+%token TK_IF
+%token TK_NEW
+%token TK_RETURN
+%token TK_WHILE
+%token TK_EQUAL
+%token TK_NOT_EQUAL
+%token TK_LESS_EQUAL
+%token TK_GREATER_EQUAL
+%token TK_LOGIC_AND
+%token TK_LOGIC_OR
 
 %token <type> TK_CHAR
 %token <type> TK_INT
