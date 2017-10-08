@@ -116,27 +116,27 @@ declaration_function:
     }
 ;
 
-parameter_list: parameter {;}
-              | parameter_list ',' parameter {;}
-              | {;}
+parameter_list:
+    parameter {;} |
+    parameter_list ',' parameter {;} |
+    %empty {;}
 ;
 
 parameter: TK_ID ':' type {;}
 ;
 
 block: '{' declaration_variable_list command_list '}' {;}
-     | '{' declaration_variable_list '}' {;}
-     | '{' command_list '}' {;}
-     | '{' '}' {;}
 ;
 
-declaration_variable_list: declaration_variable {;}
-                         | declaration_variable_list declaration_variable {;}
+declaration_variable_list:
+    declaration_variable_list declaration_variable {;} |
+    %empty {;}
 ;
 
 
-command_list: command {;}
-            | command_list command {;}
+command_list:
+    command command_list {;} |
+    %empty {;}
 ;
 
 command: TK_IF expression block {;}
