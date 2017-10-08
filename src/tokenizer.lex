@@ -93,7 +93,7 @@ E			[Ee][+-]?{D}+
 \n { lineNumber++; };
 
   /* Comments */
-"#"[^\n]* { };
+"#"[^\n]*\n { };
 
   /* Strings */
 \"(\\[^\n]|[^"\n])*\" { saveStringConstant(); return readToken(TK_STRING); };
