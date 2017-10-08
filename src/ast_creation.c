@@ -159,10 +159,10 @@ AST_CommandElement * AST_appendCommandList(AST_CommandElement *commandList, AST_
   AST_CommandElement *commandElement = malloc(sizeof(AST_CommandElement));
   AST_CommandElement *currentElement = commandList;
 
-    /* Go to the end of the linked list */
-    while (currentElement->next != NULL) {
-      currentElement = currentElement->next;
-    }
+  /* Go to the end of the linked list */
+  while (currentElement->next != NULL) {
+    currentElement = currentElement->next;
+  }
 
   commandElement->command = command;
   commandElement->next = NULL;

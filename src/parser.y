@@ -175,7 +175,7 @@ declaration_variable_list:
 
 command_list:
     command command_list {
-        if ($1 == NULL) {
+        if ($2 == NULL) {
             $$ = AST_createCommandList($1);
         } else {
             $$ = AST_appendCommandList($2, $1);
