@@ -115,6 +115,7 @@ def test_t3():
 
 def equality_test(self, received, expected, message=None):
     ''' Equality test function to yield '''
+    self.maxDiff = None
     self.assertEqual(received, expected, message)
 
 def inequality_test(self, received, not_expected, message=None):

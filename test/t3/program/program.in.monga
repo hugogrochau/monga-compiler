@@ -3,6 +3,4 @@ main(a: int, b: float): int {
   foo = a + b;
 }
 
-foo: int;
-foo: float;
-foo: void;
+bar: int;

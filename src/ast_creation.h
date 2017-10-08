@@ -25,4 +25,10 @@ AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, 
 
 AST_Parameter * AST_createParameter(char *id, AST_Type type);
 
+AST_Block * AST_createBlock(AST_DeclarationElement *declarationVariableList, AST_CommandElement *commandList);
+
+AST_DeclarationElement * AST_createDeclarationVariableList(AST_DeclarationVariable *declarationVariable);
+
+AST_DeclarationElement * AST_appendDeclarationVariableList(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable);
+
 #endif

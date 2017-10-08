@@ -31,37 +31,37 @@ AST_DeclarationElement * AST_createDeclarationList(AST_Declaration *declaration)
 }
 
 AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarationList, AST_Declaration *declaration) {
-  AST_DeclarationElement *newElement = malloc(sizeof(AST_DeclarationElement));
+  AST_DeclarationElement *declarationElement = malloc(sizeof(AST_DeclarationElement));
   AST_DeclarationElement *currentElement = declarationList;
-
-  newElement->declaration = declaration;
 
   /* Go to the end of the linked list */
   while (currentElement->next != NULL) {
     currentElement = currentElement->next;
   }
 
-  currentElement->next = newElement;
+  declarationElement->declaration = declaration;
+
+  currentElement->next = declarationElement;
 
   return declarationList;
 }
 
-AST_Declaration * AST_createDeclarationAsVariable(AST_DeclarationVariable *declaration) {
-  AST_Declaration *newDeclaration = malloc(sizeof(AST_Declaration));
+AST_Declaration * AST_createDeclarationAsVariable(AST_DeclarationVariable *declarationVariable) {
+  AST_Declaration *declaration = malloc(sizeof(AST_Declaration));
 
-  newDeclaration->declarationType = AST_DECLARATION_VARIABLE;
-  newDeclaration->declaration.variable = declaration;
+  declaration->declarationType = AST_DECLARATION_VARIABLE;
+  declaration->declaration.variable = declarationVariable;
 
-  return newDeclaration;
+  return declaration;
 }
 
-AST_Declaration * AST_createDeclarationAsFunction(AST_DeclarationFunction *declaration) {
-  AST_Declaration *newDeclaration = malloc(sizeof(AST_Declaration));
+AST_Declaration * AST_createDeclarationAsFunction(AST_DeclarationFunction *declarationFunction) {
+  AST_Declaration *declaration = malloc(sizeof(AST_Declaration));
 
-  newDeclaration->declarationType = AST_DECLARATION_FUNCTION;
-  newDeclaration->declaration.function = declaration;
+  declaration->declarationType = AST_DECLARATION_FUNCTION;
+  declaration->declaration.function = declarationFunction;
 
-  return newDeclaration;
+  return declaration;
 }
 
 AST_DeclarationVariable * AST_createDeclarationVariable(char *id, AST_Type type) {
@@ -118,4 +118,27 @@ AST_Parameter * AST_createParameter(char *id, AST_Type type) {
   parameter->type = type;
 
   return parameter;
+}
+
+AST_Block * AST_createBlock(AST_DeclarationElement *declarationVariableList, AST_CommandElement *commandList) {
+  AST_Block *block = malloc(sizeof(AST_Block));
+
+  block->declarationVariableList = declarationVariableList;
+  block->commandList = commandList;
+
+  return block;
+}
+
+AST_DeclarationElement * AST_createDeclarationVariableList(AST_DeclarationVariable *declarationVariable) {
+  AST_Declaration *declaration = AST_createDeclarationAsVariable(declarationVariable);
+  AST_DeclarationElement *declarationList = AST_createDeclarationList(declaration);
+
+  return declarationList;
+}
+
+AST_DeclarationElement * AST_appendDeclarationVariableList(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable) {
+  AST_Declaration *declaration = AST_createDeclarationAsVariable(declarationVariable);
+  AST_DeclarationElement *declarationList = AST_appendDeclaration(declarationVariableList, declaration);
+
+  return declarationList;
 }

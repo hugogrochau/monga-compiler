@@ -3,6 +3,33 @@
 
 #include "ast_printer.h"
 
+void printLevel(int depth, char *template, ...);
+
+void printType(int depth, AST_Type type);
+
+void printDeclarationList (int depth, AST_DeclarationElement *declarationList);
+
+void printDeclaration (int depth, AST_Declaration *declaration);
+
+void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration);
+
+void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration);
+
+void printParameterList(int depth, AST_ParameterElement *parameterList);
+
+void printParameter(int depth, AST_Parameter *parameter);
+
+void printBlock(int depth, AST_Block *block);
+
+void printId(int depth, char *id);
+
+void AST_printProgram (AST_Program *program) {
+  int depth = 0;
+  printLevel(depth, "[PROGRAM]");
+
+  printDeclarationList(depth + 1, program->declarations);
+}
+
 void printLevel(int depth, char *template, ...) {
   va_list argumentList;
   va_start(argumentList, template);
@@ -43,36 +70,13 @@ void printType(int depth, AST_Type type) {
   }
 }
 
-void printId(int depth, char *id) {
-  printLevel(depth, "[ID (%s)]", id);
-}
-
-void printParameter(int depth, AST_Parameter *parameter) {
-  printId(depth, parameter->id);
-  printType(depth, parameter->type);
-}
-
-void printParameters(int depth, AST_ParameterElement *parameterList) {
-  AST_ParameterElement *currentElement = parameterList;
+void printDeclarationList (int depth, AST_DeclarationElement *declarationList) {
+  AST_DeclarationElement *currentElement = declarationList;
 
   while (currentElement != NULL) {
-    printLevel(depth, "[PARAMETER]");
-    printParameter(depth + 1, currentElement->parameter);
+    printDeclaration(depth, currentElement->declaration);
     currentElement = currentElement->next;
   }
-}
-
-void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration) {
-  printLevel(depth, "[FUNCTION]");
-  printId(depth + 1, declaration->id);
-  printType(depth + 1, declaration->type);
-  printParameters(depth + 1, declaration->parameterList);
-}
-
-void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration) {
-  printLevel(depth, "[VARIABLE]");
-  printId(depth + 1, declaration->id);
-  printType(depth + 1, declaration->type);
 }
 
 void printDeclaration (int depth, AST_Declaration *declaration) {
@@ -87,19 +91,41 @@ void printDeclaration (int depth, AST_Declaration *declaration) {
   }
 }
 
-void printDeclarations (int depth, AST_DeclarationElement *declarationList) {
-  AST_DeclarationElement *currentElement = declarationList;
+void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration) {
+  printLevel(depth, "[VARIABLE]");
+  printId(depth + 1, declaration->id);
+  printType(depth + 1, declaration->type);
+}
+
+void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration) {
+  printLevel(depth, "[FUNCTION]");
+  printId(depth + 1, declaration->id);
+  printType(depth + 1, declaration->type);
+  printParameterList(depth + 1, declaration->parameterList);
+  printBlock(depth + 1, declaration->block);
+}
+
+void printParameterList(int depth, AST_ParameterElement *parameterList) {
+  AST_ParameterElement *currentElement = parameterList;
 
   while (currentElement != NULL) {
-    printLevel(depth, "[DECLARATION]");
-    printDeclaration(depth + 1, currentElement->declaration);
+    printParameter(depth + 1, currentElement->parameter);
     currentElement = currentElement->next;
   }
 }
 
-void AST_printProgram (AST_Program *program) {
-  int depth = 0;
-  printLevel(depth, "[PROGRAM]");
+void printParameter(int depth, AST_Parameter *parameter) {
+  printLevel(depth, "[PARAMETER]");
+  printId(depth + 1, parameter->id);
+  printType(depth + 1, parameter->type);
+}
 
-  printDeclarations(depth + 1, program->declarations);
+void printBlock(int depth, AST_Block *block) {
+  printLevel(depth, "[BLOCK]");
+  printDeclarationList(depth + 1, block->declarationVariableList);
+  // printCommandList(depth + 1, block->commandList);
+}
+
+void printId(int depth, char *id) {
+  printLevel(depth, "[ID (%s)]", id);
 }

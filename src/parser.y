@@ -16,15 +16,16 @@
     float f;
     char *s;
     AST_Type type;
+    AST_Program *program;
+    AST_Block *block;
+    AST_DeclarationElement *declarationElement;
+    AST_Declaration *declaration;
     AST_DeclarationType *declarationType;
     AST_DeclarationVariable *declarationVariable;
     AST_DeclarationFunction *declarationFunction;
-    AST_Declaration *declaration;
-    AST_DeclarationElement *declarationElement;
     AST_Parameter *parameter;
     AST_ParameterElement *parameterList;
-    AST_Block *block;
-    AST_Program *program;
+    AST_CommandElement *commandList;
 }
 
 %token TK_AS
@@ -53,13 +54,14 @@
 
 %type <type> type
 %type <program> program
-%type <declarationElement> declaration_list
+%type <block> block
+%type <declarationElement> declaration_list declaration_variable_list
 %type <declaration> declaration
 %type <declarationVariable> declaration_variable
 %type <declarationFunction> declaration_function
-%type <block> block
 %type <parameter> parameter
 %type <parameterList> parameter_list parameter_list_non_empty
+%type <commandList> command_list
 
 %start program
 
@@ -143,12 +145,23 @@ parameter:
     }
 ;
 
-block: '{' declaration_variable_list command_list '}' {;}
+block:
+    '{' declaration_variable_list command_list '}' {
+        $$ = AST_createBlock($2, $3);
+    }
 ;
 
 declaration_variable_list:
-    declaration_variable_list declaration_variable {;} |
-    %empty {;}
+    declaration_variable_list declaration_variable {
+        if ($1 == NULL) {
+            $$ = AST_createDeclarationVariableList($2);
+        } else {
+            $$ = AST_appendDeclarationVariableList($1, $2);
+        }
+    } |
+    %empty {
+        $$ = NULL;
+    }
 ;
 
 command_list:

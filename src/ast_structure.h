@@ -13,6 +13,7 @@ typedef struct declarationElement AST_DeclarationElement;
 typedef struct parameter AST_Parameter;
 typedef struct parameterElement AST_ParameterElement;
 typedef struct program AST_Program;
+typedef struct commandElement AST_CommandElement;
 
 enum type {
   AST_VOID,
@@ -34,7 +35,8 @@ struct program {
 };
 
 struct block {
-  char *foo;
+  AST_DeclarationElement *declarationVariableList;
+  AST_CommandElement *commandList;
 };
 
 struct declarationVariable {
@@ -74,6 +76,10 @@ struct parameter {
 struct parameterElement {
   AST_Parameter *parameter;
   AST_ParameterElement *next;
+};
+
+struct commandElement {
+  int foo;
 };
 
 #endif
