@@ -47,10 +47,26 @@ void printId(int depth, char *id) {
   printLevel(depth, "[ID (%s)]", id);
 }
 
+void printParameter(int depth, AST_Parameter *parameter) {
+  printId(depth, parameter->id);
+  printType(depth, parameter->type);
+}
+
+void printParameters(int depth, AST_ParameterElement *parameterList) {
+  AST_ParameterElement *currentElement = parameterList;
+
+  while (currentElement != NULL) {
+    printLevel(depth, "[PARAMETER]");
+    printParameter(depth + 1, currentElement->parameter);
+    currentElement = currentElement->next;
+  }
+}
+
 void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration) {
   printLevel(depth, "[FUNCTION]");
   printId(depth + 1, declaration->id);
   printType(depth + 1, declaration->type);
+  printParameters(depth + 1, declaration->parameterList);
 }
 
 void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration) {
@@ -72,12 +88,12 @@ void printDeclaration (int depth, AST_Declaration *declaration) {
 }
 
 void printDeclarations (int depth, AST_DeclarationElement *declarationList) {
-  AST_DeclarationElement *element = declarationList;
+  AST_DeclarationElement *currentElement = declarationList;
 
-  while (element != NULL) {
+  while (currentElement != NULL) {
     printLevel(depth, "[DECLARATION]");
-    printDeclaration(depth + 1, element->declaration);
-    element = element->next;
+    printDeclaration(depth + 1, currentElement->declaration);
+    currentElement = currentElement->next;
   }
 }
 

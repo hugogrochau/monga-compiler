@@ -19,4 +19,10 @@ AST_Type AST_createArrayType(AST_Type type);
 
 AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_ParameterElement *parameterList, AST_Type type, AST_Block *block);
 
+AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter);
+
+AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, AST_Parameter *parameter);
+
+AST_Parameter * AST_createParameter(char *id, AST_Type type);
+
 #endif

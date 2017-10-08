@@ -21,6 +21,7 @@
     AST_DeclarationFunction *declarationFunction;
     AST_Declaration *declaration;
     AST_DeclarationElement *declarationElement;
+    AST_Parameter *parameter;
     AST_ParameterElement *parameterList;
     AST_Block *block;
     AST_Program *program;
@@ -49,6 +50,7 @@
 %token <i> TK_INT_CONSTANT
 %token <f> TK_FLOAT_CONSTANT
 %token <s> TK_STRING
+
 %type <type> type
 %type <program> program
 %type <declarationElement> declaration_list
@@ -56,7 +58,8 @@
 %type <declarationVariable> declaration_variable
 %type <declarationFunction> declaration_function
 %type <block> block
-%type <parameterList> parameter_list
+%type <parameter> parameter
+%type <parameterList> parameter_list parameter_list_non_empty
 
 %start program
 
@@ -117,17 +120,27 @@ declaration_function:
 ;
 
 parameter_list:
-    parameter {;} |
-    parameter_list_non_empty ',' parameter {;} |
-    %empty {;}
+    parameter_list_non_empty {
+        $$ = $1;
+    } |
+    %empty {
+        $$ = NULL;
+    }
 ;
 
 parameter_list_non_empty:
-    parameter {;} |
-    parameter_list_non_empty ',' parameter {;}
+    parameter {
+        $$ = AST_createParameterList($1);
+    } |
+    parameter_list_non_empty ',' parameter {
+        $$ = AST_appendParameter($1, $3);
+    }
 ;
 
-parameter: TK_ID ':' type {;}
+parameter:
+    TK_ID ':' type {
+        $$ = AST_createParameter($1, $3);
+    }
 ;
 
 block: '{' declaration_variable_list command_list '}' {;}
@@ -137,7 +150,6 @@ declaration_variable_list:
     declaration_variable_list declaration_variable {;} |
     %empty {;}
 ;
-
 
 command_list:
     command command_list {;} |

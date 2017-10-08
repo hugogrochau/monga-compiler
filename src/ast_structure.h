@@ -10,10 +10,11 @@ typedef struct declarationFunction AST_DeclarationFunction;
 typedef union declarationUnion AST_DeclarationUnion;
 typedef struct declaration AST_Declaration;
 typedef struct declarationElement AST_DeclarationElement;
+typedef struct parameter AST_Parameter;
 typedef struct parameterElement AST_ParameterElement;
 typedef struct program AST_Program;
 
-typedef enum type {
+enum type {
   AST_VOID,
   AST_INT,
   AST_FLOAT,
@@ -21,11 +22,15 @@ typedef enum type {
   AST_ARRAY_INT,
   AST_ARRAY_FLOAT,
   AST_ARRAY_CHAR
-} AST_Type;
+};
 
 enum declarationType {
   AST_DECLARATION_VARIABLE,
   AST_DECLARATION_FUNCTION
+};
+
+struct program {
+  AST_DeclarationElement *declarations;
 };
 
 struct block {
@@ -61,14 +66,14 @@ struct declarationElement {
   AST_DeclarationElement *next;
 };
 
-struct parameterElement {
+struct parameter {
   char *id;
   AST_Type type;
-  AST_ParameterElement *next;
 };
 
-struct program {
-  AST_DeclarationElement *declarations;
+struct parameterElement {
+  AST_Parameter *parameter;
+  AST_ParameterElement *next;
 };
 
 #endif

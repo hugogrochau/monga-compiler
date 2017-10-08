@@ -85,3 +85,37 @@ AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_Parameter
 
   return functionDeclaration;
 }
+
+AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter) {
+  AST_ParameterElement *parameterList = malloc(sizeof(AST_ParameterElement));
+
+  parameterList->parameter = parameter;
+
+  return parameterList;
+
+}
+
+AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, AST_Parameter *parameter) {
+  AST_ParameterElement *parameterElement = malloc(sizeof(AST_ParameterElement));
+  AST_ParameterElement *currentElement = parameterList;
+
+  /* Go to the end of the linked list */
+  while (currentElement->next != NULL) {
+    currentElement = currentElement->next;
+  }
+
+  parameterElement->parameter = parameter;
+
+  currentElement->next = parameterElement;
+
+  return parameterList;
+}
+
+AST_Parameter * AST_createParameter(char *id, AST_Type type) {
+  AST_Parameter *parameter = malloc(sizeof(AST_Parameter));
+
+  parameter->id = id;
+  parameter->type = type;
+
+  return parameter;
+}
