@@ -126,7 +126,7 @@ union commandUnion {
 
 struct command {
   AST_CommandType commandType;
-  AST_CommandUnion commandUnion;
+  AST_CommandUnion command;
 };
 
 struct commandIf {

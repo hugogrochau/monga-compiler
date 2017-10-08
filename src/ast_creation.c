@@ -40,6 +40,7 @@ AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarati
   }
 
   declarationElement->declaration = declaration;
+  declarationElement->next = NULL;
 
   currentElement->next = declarationElement;
 
@@ -90,6 +91,7 @@ AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter) {
   AST_ParameterElement *parameterList = malloc(sizeof(AST_ParameterElement));
 
   parameterList->parameter = parameter;
+  parameterList->next = NULL;
 
   return parameterList;
 
@@ -105,6 +107,7 @@ AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, 
   }
 
   parameterElement->parameter = parameter;
+  parameterElement->next = NULL;
 
   currentElement->next = parameterElement;
 
@@ -141,4 +144,154 @@ AST_DeclarationElement * AST_appendDeclarationVariableList(AST_DeclarationElemen
   AST_DeclarationElement *declarationList = AST_appendDeclaration(declarationVariableList, declaration);
 
   return declarationList;
+}
+
+AST_CommandElement * AST_createCommandList(AST_Command *command) {
+  AST_CommandElement *commandElement = malloc(sizeof(AST_CommandElement));
+
+  commandElement->command = command;
+  commandElement->next = NULL;
+
+  return commandElement;
+}
+
+AST_CommandElement * AST_appendCommandList(AST_CommandElement *commandList, AST_Command *command) {
+  AST_CommandElement *commandElement = malloc(sizeof(AST_CommandElement));
+  AST_CommandElement *currentElement = commandList;
+
+    /* Go to the end of the linked list */
+    while (currentElement->next != NULL) {
+      currentElement = currentElement->next;
+    }
+
+  commandElement->command = command;
+  commandElement->next = NULL;
+
+  currentElement->next = commandElement;
+
+  return commandList;
+}
+
+AST_Command * AST_createCommandIf(AST_Expression *expression, AST_Block *thenBlock) {
+  AST_CommandIf *commandIf = malloc(sizeof(AST_CommandIf));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandIf->commandType = AST_COMMAND_IF;
+  commandIf->expression = expression;
+  commandIf->thenBlock = thenBlock;
+  commandIf->elseBlock = NULL;
+
+  command->commandType = AST_COMMAND_IF;
+  command->command.commandIf = commandIf;
+
+  return command;
+}
+
+AST_Command * AST_createCommandIfElse(AST_Expression *expression, AST_Block *thenBlock, AST_Block *elseBlock) {
+  AST_CommandIf *commandIf = malloc(sizeof(AST_CommandIf));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandIf->commandType = AST_COMMAND_IF;
+  commandIf->expression = expression;
+  commandIf->thenBlock = thenBlock;
+  commandIf->elseBlock = NULL;
+
+  command->commandType = AST_COMMAND_IF;
+  command->command.commandIf = commandIf;
+
+  return command;
+}
+
+AST_Command * AST_createCommandWhile(AST_Expression *expression, AST_Block *block) {
+  AST_CommandWhile *commandWhile = malloc(sizeof(AST_CommandWhile));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandWhile->commandType = AST_COMMAND_WHILE;
+  commandWhile->expression = expression;
+  commandWhile->block = block;
+
+  command->commandType = AST_COMMAND_WHILE;
+  command->command.commandWhile = commandWhile;
+
+  return command;
+}
+
+AST_Command * AST_createCommandAssign(AST_Variable *variable, AST_Expression *expression) {
+  AST_CommandAssign *commandAssign = malloc(sizeof(AST_CommandAssign));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandAssign->commandType = AST_COMMAND_ASSIGN;
+  commandAssign->variable = variable;
+  commandAssign->expression = expression;
+
+  command->commandType = AST_COMMAND_ASSIGN;
+  command->command.commandAssign = commandAssign;
+
+  return command;
+}
+
+AST_Command * AST_createCommandReturnEmpty() {
+  AST_CommandReturn *commandReturn = malloc(sizeof(AST_CommandReturn));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandReturn->commandType = AST_COMMAND_RETURN;
+  commandReturn->expression = NULL;
+
+  command->commandType = AST_COMMAND_RETURN;
+  command->command.commandReturn = commandReturn;
+
+  return command;
+
+}
+
+AST_Command * AST_createCommandReturn(AST_Expression *expression) {
+  AST_CommandReturn *commandReturn = malloc(sizeof(AST_CommandReturn));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandReturn->commandType = AST_COMMAND_RETURN;
+  commandReturn->expression = expression;
+
+  command->commandType = AST_COMMAND_RETURN;
+  command->command.commandReturn = commandReturn;
+
+  return command;
+}
+
+AST_Command * AST_createCommandCall(AST_Call *call) {
+  AST_CommandCall *commandCall = malloc(sizeof(AST_CommandCall));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandCall->commandType = AST_COMMAND_CALL;
+  commandCall->call = call;
+
+  command->commandType = AST_COMMAND_CALL;
+  command->command.commandCall = commandCall;
+
+  return command;
+}
+
+AST_Command * AST_createCommandPrint(AST_Expression *expression) {
+  AST_CommandPrint *commandPrint = malloc(sizeof(AST_CommandPrint));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandPrint->commandType = AST_COMMAND_PRINT;
+  commandPrint->expression = expression;
+
+  command->commandType = AST_COMMAND_PRINT;
+  command->command.commandPrint = commandPrint;
+
+  return command;
+}
+
+AST_Command * AST_createCommandBlock(AST_Block *block) {
+  AST_CommandBlock *commandBlock = malloc(sizeof(AST_CommandBlock));
+  AST_Command *command = malloc(sizeof(AST_Command));
+
+  commandBlock->commandType = AST_COMMAND_BLOCK;
+  commandBlock->block = block;
+
+  command->commandType = AST_COMMAND_BLOCK;
+  command->command.commandBlock = commandBlock;
+
+  return command;
 }

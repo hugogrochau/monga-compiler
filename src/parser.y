@@ -24,8 +24,12 @@
     AST_DeclarationVariable *declarationVariable;
     AST_DeclarationFunction *declarationFunction;
     AST_Parameter *parameter;
-    AST_ParameterElement *parameterList;
-    AST_CommandElement *commandList;
+    AST_ParameterElement *parameterElement;
+    AST_CommandElement *commandElement;
+    AST_Command *command;
+    AST_Expression *expression;
+    AST_Call *call;
+    AST_Variable *variable;
 }
 
 %token TK_AS
@@ -59,9 +63,14 @@
 %type <declaration> declaration
 %type <declarationVariable> declaration_variable
 %type <declarationFunction> declaration_function
+%type <parameterElement> parameter_list parameter_list_non_empty
 %type <parameter> parameter
-%type <parameterList> parameter_list parameter_list_non_empty
-%type <commandList> command_list
+%type <commandElement> command_list
+%type <command> command
+%type <call> call
+%type <expressionElement> expression_list
+%type <expression> expression expression_logic_or
+%type <variable> variable
 
 %start program
 
@@ -165,19 +174,46 @@ declaration_variable_list:
 ;
 
 command_list:
-    command command_list {;} |
-    %empty {;}
+    command command_list {
+        if ($1 == NULL) {
+            $$ = AST_createCommandList($1);
+        } else {
+            $$ = AST_appendCommandList($2, $1);
+        }
+    } |
+    %empty {
+        $$ = NULL;
+    }
 ;
 
-command: TK_IF expression block {;}
-       | TK_IF expression block TK_ELSE block {;}
-       | TK_WHILE expression block {;}
-       | variable '=' expression ';' {;}
-       | TK_RETURN ';' {;}
-       | TK_RETURN expression ';' {;}
-       | call ';' {;}
-       | '@' expression ';' {;}
-       | block {;}
+command:
+    TK_IF expression block {
+        $$ = AST_createCommandIf($2, $3);
+    } |
+    TK_IF expression block TK_ELSE block {
+        $$ = AST_createCommandIfElse($2, $3, $5);
+    } |
+    TK_WHILE expression block {
+        $$ = AST_createCommandWhile($2, $3);
+    } |
+    variable '=' expression ';' {
+        $$ = AST_createCommandAssign($1, $3);
+    } |
+    TK_RETURN ';' {
+        $$ = AST_createCommandReturnEmpty();
+    } |
+    TK_RETURN expression ';' {
+        $$ = AST_createCommandReturn($2);
+    } |
+    call ';' {
+        $$ = AST_createCommandCall($1);
+    } |
+    '@' expression ';' {
+        $$ = AST_createCommandPrint($2);
+    } |
+    block {
+        $$ = AST_createCommandBlock($1);
+    }
 ;
 
 call: TK_ID '(' expression_list ')' {;}
@@ -236,7 +272,8 @@ expression_logic_or: expression_logic_and {;}
           | expression TK_LOGIC_OR expression_logic_and {;}
 ;
 
-expression: expression_logic_or;
+expression: expression_logic_or {;}
+;
 
 %%
 void yyerror(char *s) {
