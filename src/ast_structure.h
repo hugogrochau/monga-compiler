@@ -1,6 +1,18 @@
 #ifndef AST_STRUCTURE_H
 #define AST_STRUCTURE_H
 
+typedef enum type AST_Type;
+typedef enum declarationType AST_DeclarationType;
+
+typedef struct block AST_Block;
+typedef struct declarationVariable AST_DeclarationVariable;
+typedef struct declarationFunction AST_DeclarationFunction;
+typedef union declarationUnion AST_DeclarationUnion;
+typedef struct declaration AST_Declaration;
+typedef struct declarationElement AST_DeclarationElement;
+typedef struct parameterElement AST_ParameterElement;
+typedef struct program AST_Program;
+
 typedef enum type {
   AST_VOID,
   AST_INT,
@@ -11,38 +23,52 @@ typedef enum type {
   AST_ARRAY_CHAR
 } AST_Type;
 
-typedef enum declarationType {
+enum declarationType {
   AST_DECLARATION_VARIABLE,
   AST_DECLARATION_FUNCTION
-} AST_DeclarationType;
+};
 
-typedef struct declarationVariable {
-  AST_DeclarationType type;
+struct block {
+  char *foo;
+};
+
+struct declarationVariable {
+  AST_DeclarationType declarationType;
   char *id;
-} AST_DeclarationVariable;
+  AST_Type type;
+};
 
-typedef struct declarationFunction {
-  AST_DeclarationType type;
+struct declarationFunction {
+  AST_DeclarationType declarationType;
   char *id;
-} AST_DeclarationFunction;
+  AST_ParameterElement *parameterList;
+  AST_Type type;
+  AST_Block *block;
+};
 
-typedef union declarationUnion {
+union declarationUnion {
   AST_DeclarationVariable *variable;
   AST_DeclarationFunction *function;
-} AST_DeclarationUnion;
+};
 
-typedef struct declaration {
-  AST_DeclarationType type;
+struct declaration {
+  AST_DeclarationType declarationType;
   AST_DeclarationUnion declaration;
-} AST_Declaration;
+};
 
-typedef struct declarationElement {
+struct declarationElement {
   AST_Declaration *declaration;
-  struct declarationElement *next;
-} AST_DeclarationElement;
+  AST_DeclarationElement *next;
+};
 
-typedef struct program {
+struct parameterElement {
+  char *id;
+  AST_Type type;
+  AST_ParameterElement *next;
+};
+
+struct program {
   AST_DeclarationElement *declarations;
-} AST_Program;
+};
 
 #endif

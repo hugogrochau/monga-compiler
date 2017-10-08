@@ -9,7 +9,6 @@ E			[Ee][+-]?{D}+
   #include "ast_structure.h"
   #include "tokenizer.h"
 
-  Token token;
   int lineNumber = 1;
 
   char *escapeString(char *inString) {
@@ -62,29 +61,28 @@ E			[Ee][+-]?{D}+
 
   void saveId() {
     char *idBuffer = malloc(strlen(yytext) * sizeof(char));
-    token.data.s = strcpy(idBuffer, yytext);
+    yylval.s = strcpy(idBuffer, yytext);
   }
 
   void saveIntConstant() {
     // hexadecimal
     if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X')) {
-      token.data.l = strtol(yytext, NULL, 0);
+      yylval.i = strtol(yytext, NULL, 0);
     // decimals (including those starting with 0)
     } else {
-      token.data.l = strtol(yytext, NULL, 10);
+      yylval.i = strtol(yytext, NULL, 10);
     }
   }
 
   void saveFloatConstant() {
-    token.data.d = strtod(yytext, NULL);
+    yylval.f = strtod(yytext, NULL);
   }
 
   void saveStringConstant() {
-    token.data.s = escapeString(yytext);
+    yylval.s = escapeString(yytext);
   }
 
   TokenType readToken(TokenType type) {
-    token.type = type;
     return type;
   }
 %}

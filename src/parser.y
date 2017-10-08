@@ -11,6 +11,21 @@
     extern AST_Program *program;
 %}
 
+%union{
+    int i;
+    float f;
+    char *s;
+    AST_Type type;
+    AST_DeclarationType *declarationType;
+    AST_DeclarationVariable *declarationVariable;
+    AST_DeclarationFunction *declarationFunction;
+    AST_Declaration *declaration;
+    AST_DeclarationElement *declarationElement;
+    AST_ParameterElement *parameterList;
+    AST_Block *block;
+    AST_Program *program;
+}
+
 %token TK_AS
 %token TK_ELSE
 %token TK_IF
@@ -29,31 +44,19 @@
 %token <type> TK_FLOAT
 %token <type> TK_VOID
 
-%token <c> TK_ID
+%token <s> TK_ID
 
 %token <i> TK_INT_CONSTANT
-%token <d> TK_FLOAT_CONSTANT
-%token <c> TK_STRING
-
-%union{
-    int i;
-    double d;
-    char *c;
-    AST_Type type;
-    AST_DeclarationType *declarationType;
-    AST_DeclarationVariable *declarationVariable;
-    AST_DeclarationFunction *declarationFunction;
-    AST_Declaration *declaration;
-    AST_DeclarationElement *declarationElement;
-    AST_Program *program;
-}
-
+%token <f> TK_FLOAT_CONSTANT
+%token <s> TK_STRING
 %type <type> type
 %type <program> program
 %type <declarationElement> declaration_list
 %type <declaration> declaration
 %type <declarationVariable> declaration_variable
 %type <declarationFunction> declaration_function
+%type <block> block
+%type <parameterList> parameter_list
 
 %start program
 
@@ -107,7 +110,10 @@ type:
     }
 ;
 
-declaration_function: TK_ID '(' parameter_list ')' ':' type block {;}
+declaration_function:
+    TK_ID '(' parameter_list ')' ':' type block {
+        $$ = AST_createDeclarationFunction($1, $3, $6, $7);
+    }
 ;
 
 parameter_list: parameter {;}

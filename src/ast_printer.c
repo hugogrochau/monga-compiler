@@ -1,71 +1,82 @@
 #include <stdio.h>
+#include <stdarg.h>
 
-#include "ast_structure.h"
 #include "ast_printer.h"
 
-void printLevel(char *string, int depth) {
+void printLevel(int depth, char *template, ...) {
+  va_list argumentList;
+  va_start(argumentList, template);
+
   for (int i = 0; i < depth; i++) {
     printf("  ");
   }
-  printf(string);
+
+  vprintf(template, argumentList);
+  va_end(argumentList);
+
   putchar('\n');
 }
 
-void printType(AST_Type type, int depth) {
+void printType(int depth, AST_Type type) {
   switch (type) {
     case AST_VOID:
-      printLevel("[VOID]", depth);
+      printLevel(depth, "[VOID]");
       break;
     case AST_INT:
-      printLevel("[INT]", depth);
+      printLevel(depth, "[INT]");
       break;
     case AST_FLOAT:
-      printLevel("[FLOAT]", depth);
+      printLevel(depth, "[FLOAT]");
       break;
     case AST_CHAR:
-      printLevel("[CHAR]", depth);
+      printLevel(depth, "[CHAR]");
       break;
     case AST_ARRAY_INT:
-      printLevel("[ARRAY_INT]", depth);
+      printLevel(depth, "[ARRAY_INT]");
       break;
     case AST_ARRAY_FLOAT:
-      printLevel("[ARRAY_FLOAT]", depth);
+      printLevel(depth, "[ARRAY_FLOAT]");
       break;
     case AST_ARRAY_CHAR:
-      printLevel("[ARRAY_CHAR]", depth);
+      printLevel(depth, "[ARRAY_CHAR]");
       break;
   }
 }
 
-void printDeclarationVariable(AST_DeclarationVariable *declaration, int depth) {
-  printLevel("[VARIABLE]", depth);
-  printType(declaration->type, depth);
+void printId(int depth, char *id) {
+  printLevel(depth, "[ID (%s)]", id);
 }
 
-void printDeclaration (AST_Declaration *declaration, int depth) {
-  if (declaration->type == AST_DECLARATION_VARIABLE) {
-    printLevel("[DECLARATION-VARIABLE]", depth);
-    printDeclarationVariable(declaration->declaration.variable, depth + 1);
-  } else if (declaration->type == AST_DECLARATION_FUNCTION) {
-    printLevel("[DECLARATION-FUNCTION]", depth);
+void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration) {
+  printLevel(depth, "[VARIABLE]");
+  printId(depth + 1, declaration->id);
+  printType(depth + 1, declaration->type);
+}
+
+void printDeclaration (int depth, AST_Declaration *declaration) {
+  if (declaration->declarationType == AST_DECLARATION_VARIABLE) {
+    printLevel(depth, "[DECLARATION-VARIABLE]");
+    printDeclarationVariable(depth + 1, declaration->declaration.variable);
+  } else if (declaration->declarationType == AST_DECLARATION_FUNCTION) {
+    printLevel(depth, "[DECLARATION-FUNCTION]");
   } else {
-    printLevel("[DECLARATION-UNKNOWN]", depth);
+    printLevel(depth, "[DECLARATION-UNKNOWN]");
   }
 }
 
-void printDeclarations (AST_DeclarationElement *declarationList, int depth) {
+void printDeclarations (int depth, AST_DeclarationElement *declarationList) {
   AST_DeclarationElement *element = declarationList;
 
   while (element != NULL) {
-    printLevel("[DECLARATION]", depth);
-    printDeclaration(element->declaration, depth + 1);
+    printLevel(depth, "[DECLARATION]");
+    printDeclaration(depth + 1, element->declaration);
     element = element->next;
   }
 }
 
 void AST_printProgram (AST_Program *program) {
   int depth = 0;
-  printLevel("[PROGRAM]", depth);
+  printLevel(depth, "[PROGRAM]");
 
-  printDeclarations(program->declarations, depth + 1);
+  printDeclarations(depth + 1, program->declarations);
 }

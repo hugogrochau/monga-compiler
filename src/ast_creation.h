@@ -17,4 +17,6 @@ AST_DeclarationVariable * AST_createDeclarationVariable(char *id, AST_Type type)
 
 AST_Type AST_createArrayType(AST_Type type);
 
+AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_ParameterElement *parameterList, AST_Type type, AST_Block *block);
+
 #endif

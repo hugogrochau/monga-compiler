@@ -5,7 +5,8 @@
 #include "tokenizer.h"
 
 extern int yylex(void);
-extern Token token;
+extern YYSTYPE yylval;
+AST_Program *program;
 
 void printTokenString(TokenType type) {
   switch (type) {
@@ -59,29 +60,29 @@ void printTokenString(TokenType type) {
       break;
     case TK_ID:
       printf("TK_ID (");
-      printf("%s", token.data.s);
+      printf("%s", yylval.s);
       putchar(')');
       break;
     case TK_INT_CONSTANT:
       printf("TK_INT_CONSTANT (");
-      printf("%ld", token.data.l);
+      printf("%ld", yylval.i);
       putchar(')');
       break;
     case TK_FLOAT_CONSTANT:
       printf("TK_FLOAT_CONSTANT (");
-      printf("%.2f", token.data.d);
+      printf("%.2f", yylval.f);
       putchar(')');
       break;
     case TK_STRING:
       printf("TK_STRING (");
-      printf("%s", token.data.s);
+      printf("%s", yylval.s);
       putchar(')');
       break;
     default:
       /* ASCII tokens */
       if (type < 256) {
         printf("TK_");
-        putchar(token.type);
+        putchar(type);
       } else {
         printf("UNKNOWN");
       }

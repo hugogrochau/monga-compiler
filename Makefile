@@ -1,6 +1,6 @@
 DIRS = -I build -I src
 
-T1_DEPENDENCIES = build/tokenizer.yy.c src/main_t1.c
+T1_DEPENDENCIES = src/ast_creation.c build/tokenizer.yy.c build/parser.c src/main_t1.c
 T2_DEPENDENCIES = src/ast_creation.c build/tokenizer.yy.c build/parser.c src/main_t2.c
 T3_DEPENDENCIES = src/ast_creation.c src/ast_printer.c build/tokenizer.yy.c build/parser.c src/main_t3.c
 
