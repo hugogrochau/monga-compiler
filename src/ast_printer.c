@@ -47,6 +47,12 @@ void printId(int depth, char *id) {
   printLevel(depth, "[ID (%s)]", id);
 }
 
+void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration) {
+  printLevel(depth, "[FUNCTION]");
+  printId(depth + 1, declaration->id);
+  printType(depth + 1, declaration->type);
+}
+
 void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration) {
   printLevel(depth, "[VARIABLE]");
   printId(depth + 1, declaration->id);
@@ -59,6 +65,7 @@ void printDeclaration (int depth, AST_Declaration *declaration) {
     printDeclarationVariable(depth + 1, declaration->declaration.variable);
   } else if (declaration->declarationType == AST_DECLARATION_FUNCTION) {
     printLevel(depth, "[DECLARATION-FUNCTION]");
+    printDeclarationFunction(depth + 1, declaration->declaration.function);
   } else {
     printLevel(depth, "[DECLARATION-UNKNOWN]");
   }
