@@ -4,15 +4,15 @@
 typedef enum type AST_Type;
 typedef enum declarationType AST_DeclarationType;
 
-typedef struct block AST_Block;
+typedef struct program AST_Program;
+typedef struct declarationElement AST_DeclarationElement;
+typedef struct declaration AST_Declaration;
+typedef union declarationUnion AST_DeclarationUnion;
 typedef struct declarationVariable AST_DeclarationVariable;
 typedef struct declarationFunction AST_DeclarationFunction;
-typedef union declarationUnion AST_DeclarationUnion;
-typedef struct declaration AST_Declaration;
-typedef struct declarationElement AST_DeclarationElement;
-typedef struct parameter AST_Parameter;
 typedef struct parameterElement AST_ParameterElement;
-typedef struct program AST_Program;
+typedef struct parameter AST_Parameter;
+typedef struct block AST_Block;
 typedef struct commandElement AST_CommandElement;
 
 enum type {
@@ -34,9 +34,19 @@ struct program {
   AST_DeclarationElement *declarations;
 };
 
-struct block {
-  AST_DeclarationElement *declarationVariableList;
-  AST_CommandElement *commandList;
+struct declaration {
+  AST_DeclarationType declarationType;
+  AST_DeclarationUnion declaration;
+};
+
+struct declarationElement {
+  AST_Declaration *declaration;
+  AST_DeclarationElement *next;
+};
+
+union declarationUnion {
+  AST_DeclarationVariable *variable;
+  AST_DeclarationFunction *function;
 };
 
 struct declarationVariable {
@@ -53,19 +63,9 @@ struct declarationFunction {
   AST_Block *block;
 };
 
-union declarationUnion {
-  AST_DeclarationVariable *variable;
-  AST_DeclarationFunction *function;
-};
-
-struct declaration {
-  AST_DeclarationType declarationType;
-  AST_DeclarationUnion declaration;
-};
-
-struct declarationElement {
-  AST_Declaration *declaration;
-  AST_DeclarationElement *next;
+struct parameterElement {
+  AST_Parameter *parameter;
+  AST_ParameterElement *next;
 };
 
 struct parameter {
@@ -73,9 +73,9 @@ struct parameter {
   AST_Type type;
 };
 
-struct parameterElement {
-  AST_Parameter *parameter;
-  AST_ParameterElement *next;
+struct block {
+  AST_DeclarationElement *declarationVariableList;
+  AST_CommandElement *commandList;
 };
 
 struct commandElement {
