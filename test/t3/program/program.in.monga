@@ -1,6 +1,0 @@
-main(a: int, b: float): int {
-  foo: int;
-  foo = a + b;
-}
-
-bar: int;

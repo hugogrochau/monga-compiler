@@ -151,6 +151,7 @@ AST_CommandElement * AST_createCommandList(AST_Command *command) {
 
   commandElement->command = command;
   commandElement->next = NULL;
+  commandElement->previous = NULL;
 
   return commandElement;
 }
@@ -159,17 +160,10 @@ AST_CommandElement * AST_appendCommandList(AST_CommandElement *commandList, AST_
   AST_CommandElement *commandElement = malloc(sizeof(AST_CommandElement));
   AST_CommandElement *currentElement = commandList;
 
-  /* Go to the end of the linked list */
-  while (currentElement->next != NULL) {
-    currentElement = currentElement->next;
-  }
-
   commandElement->command = command;
-  commandElement->next = NULL;
+  commandElement->next = currentElement;
 
-  currentElement->next = commandElement;
-
-  return commandList;
+  return commandElement;
 }
 
 AST_Command * AST_createCommandIf(AST_Expression *expression, AST_Block *thenBlock) {
