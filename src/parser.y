@@ -118,8 +118,13 @@ declaration_function:
 
 parameter_list:
     parameter {;} |
-    parameter_list ',' parameter {;} |
+    parameter_list_non_empty ',' parameter {;} |
     %empty {;}
+;
+
+parameter_list_non_empty:
+    parameter {;} |
+    parameter_list_non_empty ',' parameter {;}
 ;
 
 parameter: TK_ID ':' type {;}
