@@ -289,3 +289,12 @@ AST_Command * AST_createCommandBlock(AST_Block *block) {
 
   return command;
 }
+
+AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList) {
+  AST_Call *call = malloc(sizeof(AST_Call));
+
+  call->id = id;
+  call->expressionList = expressionList;
+
+  return call;
+}

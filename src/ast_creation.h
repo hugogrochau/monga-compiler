@@ -53,4 +53,6 @@ AST_Command * AST_createCommandPrint(AST_Expression *expression);
 
 AST_Command * AST_createCommandBlock(AST_Block *block);
 
+AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList);
+
 #endif

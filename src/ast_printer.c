@@ -25,6 +25,8 @@ void printCommandList(int depth, AST_CommandElement *commandList);
 
 void printCommand(int depth, AST_Command *command);
 
+void printCall(int depth, AST_Call * call);
+
 void printId(int depth, char *id);
 
 void AST_printProgram (AST_Program *program) {
@@ -143,32 +145,38 @@ void printCommandList(int depth, AST_CommandElement *commandList) {
 }
 
 void printCommand(int depth, AST_Command *command) {
+  printLevel(depth, "[COMMAND]");
   switch(command->commandType) {
     case AST_COMMAND_IF:
-      printLevel(depth, "[COMMAND-IF]");
+      printLevel(depth + 1, "[IF]");
       break;
     case AST_COMMAND_WHILE:
-      printLevel(depth, "[COMMAND-WHILE]");
+      printLevel(depth + 1, "[WHILE]");
       break;
     case AST_COMMAND_ASSIGN:
-      printLevel(depth, "[COMMAND-ASSIGN]");
+      printLevel(depth + 1, "[ASSIGN]");
       break;
     case AST_COMMAND_RETURN:
-      printLevel(depth, "[COMMAND-RETURN]");
+      printLevel(depth + 1, "[RETURN]");
       break;
     case AST_COMMAND_CALL:
-      printLevel(depth, "[COMMAND-CALL]");
+      printCall(depth + 1, command->command.commandCall->call);
       break;
     case AST_COMMAND_PRINT:
-      printLevel(depth, "[COMMAND-PRINT]");
+      printLevel(depth + 1, "[PRINT]");
       break;
     case AST_COMMAND_BLOCK:
-      printLevel(depth, "[COMMAND-BLOCK]");
+      printLevel(depth + 1, "[BLOCK]");
       break;
     default:
-      printLevel(depth, "[COMMAND-UNKNOWN]");
+      printLevel(depth + 1, "[UNKNOWN]");
       break;
   }
+}
+
+void printCall(int depth, AST_Call *call) {
+  printLevel(depth, "[CALL]");
+  printId(depth + 1, call->id);
 }
 
 void printId(int depth, char *id) {

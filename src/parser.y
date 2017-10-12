@@ -27,6 +27,7 @@
     AST_ParameterElement *parameterElement;
     AST_CommandElement *commandElement;
     AST_Command *command;
+    AST_ExpressionElement *expressionElement;
     AST_Expression *expression;
     AST_Call *call;
     AST_Variable *variable;
@@ -216,7 +217,10 @@ command:
     }
 ;
 
-call: TK_ID '(' expression_list ')' {;}
+call:
+    TK_ID '(' expression_list ')' {
+        $$ = AST_createCall($1, $3);
+    }
 ;
 
 expression_primary: variable {;}
