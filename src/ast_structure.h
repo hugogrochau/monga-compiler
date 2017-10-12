@@ -4,6 +4,10 @@
 typedef enum type AST_Type;
 typedef enum declarationType AST_DeclarationType;
 typedef enum commandType AST_CommandType;
+typedef enum expressionType AST_ExpressionType;
+typedef enum expressionConstantType AST_ExpressionConstantType;
+typedef enum expressionUnaryType AST_ExpressionUnaryType;
+typedef enum expressionBinaryType AST_ExpressionBinaryType;
 
 typedef struct program AST_Program;
 
@@ -13,10 +17,12 @@ typedef struct declaration AST_Declaration;
 typedef struct declarationVariable AST_DeclarationVariable;
 typedef struct declarationFunction AST_DeclarationFunction;
 
-typedef struct parameterElement AST_ParameterElement;
-typedef struct parameter AST_Parameter;
+typedef struct variable AST_Variable;
 
 typedef struct block AST_Block;
+
+typedef struct parameterElement AST_ParameterElement;
+typedef struct parameter AST_Parameter;
 
 typedef struct commandElement AST_CommandElement;
 typedef union commandUnion AST_CommandUnion;
@@ -32,9 +38,17 @@ typedef struct commandBlock AST_CommandBlock;
 typedef struct call AST_Call;
 
 typedef struct expressionElement AST_ExpressionElement;
+typedef union expressionUnion AST_ExpressionUnion;
 typedef struct expression AST_Expression;
-
-typedef struct variable AST_Variable;
+typedef struct expressionVariable AST_ExpressionVariable;
+typedef struct expressionParentheses AST_ExpressionParentheses;
+typedef struct expressionCall AST_ExpressionCall;
+typedef struct expressionNew AST_ExpressionNew;
+typedef struct expressionAs AST_ExpressionAs;
+typedef union expressionConstantUnion AST_ExpressionConstantUnion;
+typedef struct expressionConstant AST_ExpressionConstant;
+typedef struct expressionUnary AST_ExpressionUnary;
+typedef struct expressionBinary AST_ExpressionBinary;
 
 enum type {
   AST_VOID,
@@ -59,6 +73,43 @@ enum commandType {
   AST_COMMAND_CALL,
   AST_COMMAND_PRINT,
   AST_COMMAND_BLOCK
+};
+
+enum expressionType {
+  AST_EXPRESSION_VARIABLE,
+  AST_EXPRESSION_CONSTANT,
+  AST_EXPRESSION_PARENTHESES,
+  AST_EXPRESSION_CALL,
+  AST_EXPRESSION_NEW,
+  AST_EXPRESSION_AS,
+  AST_EXPRESSION_UNARY,
+  AST_EXPRESSION_BINARY
+};
+
+enum expressionConstantType {
+  AST_EXPRESSION_CONSTANT_INT,
+  AST_EXPRESSION_CONSTANT_FLOAT,
+  AST_EXPRESSION_CONSTANT_STRING
+};
+
+enum expressionUnaryType {
+  AST_EXPRESSION_UNARY_MINUS,
+  AST_EXPRESSION_UNARY_NOT
+};
+
+enum expressionBinaryType {
+  AST_EXPRESSION_BINARY_MULTIPLICATION,
+  AST_EXPRESSION_BINARY_DIVISION,
+  AST_EXPRESSION_BINARY_PLUS,
+  AST_EXPRESSION_BINARY_MINUS,
+  AST_EXPRESSION_BINARY_LESS,
+  AST_EXPRESSION_BINARY_GREATER,
+  AST_EXPRESSION_BINARY_LESS_EQUAL,
+  AST_EXPRESSION_BINARY_GREATER_EQUAL,
+  AST_EXPRESSION_BINARY_EQUAL,
+  AST_EXPRESSION_BINARY_NOT_EQUAL,
+  AST_EXPRESSION_BINARY_LOGIC_OR,
+  AST_EXPRESSION_BINARY_LOGIC_AND
 };
 
 struct program {
@@ -94,6 +145,15 @@ struct declarationFunction {
   AST_Block *block;
 };
 
+struct variable {
+  int foo;
+};
+
+struct block {
+  AST_DeclarationElement *declarationVariableList;
+  AST_CommandElement *commandList;
+};
+
 struct parameterElement {
   AST_Parameter *parameter;
   AST_ParameterElement *next;
@@ -102,11 +162,6 @@ struct parameterElement {
 struct parameter {
   char *id;
   AST_Type type;
-};
-
-struct block {
-  AST_DeclarationElement *declarationVariableList;
-  AST_CommandElement *commandList;
 };
 
 struct commandElement {
@@ -179,12 +234,73 @@ struct expressionElement {
   AST_ExpressionElement *next;
 };
 
-struct expression {
-  int foo;
+union expressionUnion {
+  AST_ExpressionVariable *variable;
+  AST_ExpressionParentheses *parentheses;
+  AST_ExpressionCall *call;
+  AST_ExpressionNew *new;
+  AST_ExpressionAs *as;
+
+  AST_ExpressionConstant *constant;
+  AST_ExpressionUnary *unary;
+  AST_ExpressionBinary *binary;
 };
 
-struct variable {
-  int foo;
+struct expression {
+  AST_ExpressionType expressionType;
+  AST_ExpressionUnion expression;
+};
+
+struct expressionVariable {
+  AST_ExpressionType expressionType;
+  AST_Variable *variable;
+};
+
+struct expressionParentheses {
+  AST_ExpressionType expressionType;
+  AST_Expression *expression;
+};
+
+struct expressionCall {
+  AST_ExpressionType expressionType;
+  AST_Call *call;
+};
+
+struct expressionNew {
+  AST_ExpressionType expressionType;
+  AST_Type type;
+  AST_Expression *expression;
+};
+
+struct expressionAs {
+  AST_ExpressionType expressionType;
+  AST_Expression *expression;
+  AST_Type type;
+};
+
+union expressionConstantUnion {
+  int i;
+  float f;
+  char *s;
+};
+
+struct expressionConstant {
+  AST_ExpressionType expressionType;
+  AST_ExpressionConstantType constantType;
+  AST_ExpressionConstantUnion constant;
+};
+
+struct expressionUnary {
+  AST_ExpressionType expressionType;
+  AST_ExpressionUnaryType unaryType;
+  AST_Expression *expression;
+};
+
+struct expressionBinary {
+  AST_ExpressionType expressionType;
+  AST_ExpressionBinaryType binaryType;
+  AST_Expression *leftExpression;
+  AST_Expression *rightExpression;
 };
 
 #endif
