@@ -69,7 +69,7 @@
 %type <commandElement> command_list
 %type <command> command
 %type <call> call
-%type <expressionElement> expression_list
+%type <expressionElement> expression_list expression_list_non_empty
 %type <expression> expression_primary expression_postfix expression_unary expression_multiplicative expression_additive expression_relational expression_logic_and expression_logic_or expression
 %type <variable> variable
 
@@ -166,7 +166,7 @@ declaration_variable_list:
         if ($1 == NULL) {
             $$ = AST_createDeclarationVariableList($2);
         } else {
-            $$ = AST_appendDeclarationVariableList($1, $2);
+            $$ = AST_appendDeclarationVariable($1, $2);
         }
     } |
     %empty {
@@ -179,7 +179,7 @@ command_list:
         if ($2 == NULL) {
             $$ = AST_createCommandList($1);
         } else {
-            $$ = AST_appendCommandList($2, $1);
+            $$ = AST_appendCommand($2, $1);
         }
     } |
     %empty {
@@ -257,11 +257,20 @@ variable:
 ;
 
 expression_list:
+    expression_list_non_empty {
+        $$ = $1;
+    } |
+    %empty {
+        $$ = NULL;
+    }
+;
+
+expression_list_non_empty:
     expression {
         $$ = AST_createExpressionList($1);
     } |
-    expression_list ',' expression {
-        $$ = AST_appendExpressionList($1, $3);
+    expression_list_non_empty ',' expression {
+        $$ = AST_appendExpression($1, $3);
     }
 ;
 

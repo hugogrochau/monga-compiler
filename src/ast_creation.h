@@ -33,11 +33,11 @@ AST_Block * AST_createBlock(AST_DeclarationElement *declarationVariableList, AST
 
 AST_DeclarationElement * AST_createDeclarationVariableList(AST_DeclarationVariable *declarationVariable);
 
-AST_DeclarationElement * AST_appendDeclarationVariableList(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable);
+AST_DeclarationElement * AST_appendDeclarationVariable(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable);
 
 AST_CommandElement * AST_createCommandList(AST_Command *command);
 
-AST_CommandElement * AST_appendCommandList(AST_CommandElement *commandList, AST_Command *command);
+AST_CommandElement * AST_appendCommand(AST_CommandElement *commandList, AST_Command *command);
 
 AST_Command * AST_createCommandIf(AST_Expression *expression, AST_Block *thenBlock);
 
@@ -61,7 +61,7 @@ AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList);
 
 AST_ExpressionElement * AST_createExpressionList(AST_Expression *expression);
 
-AST_ExpressionElement * AST_appendExpressionList(AST_ExpressionElement *expressionList, AST_Expression* expression);
+AST_ExpressionElement * AST_appendExpression(AST_ExpressionElement *expressionList, AST_Expression* expression);
 
 AST_Expression * AST_createExpressionVariable(AST_Variable *variable);
 

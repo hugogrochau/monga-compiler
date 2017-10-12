@@ -15,6 +15,8 @@ void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration);
 
 void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration);
 
+void printId(int depth, char *id);
+
 void printParameterList(int depth, AST_ParameterElement *parameterList);
 
 void printParameter(int depth, AST_Parameter *parameter);
@@ -27,7 +29,9 @@ void printCommand(int depth, AST_Command *command);
 
 void printCall(int depth, AST_Call * call);
 
-void printId(int depth, char *id);
+void printExpressionList(int depth, AST_ExpressionElement *expressionList);
+
+void printExpression(int depth, AST_Expression *expression);
 
 void AST_printProgram (AST_Program *program) {
   int depth = 0;
@@ -114,6 +118,10 @@ void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration) {
   printBlock(depth + 1, declaration->block);
 }
 
+void printId(int depth, char *id) {
+  printLevel(depth, "[ID (%s)]", id);
+}
+
 void printParameterList(int depth, AST_ParameterElement *parameterList) {
   AST_ParameterElement *currentElement = parameterList;
 
@@ -177,8 +185,44 @@ void printCommand(int depth, AST_Command *command) {
 void printCall(int depth, AST_Call *call) {
   printLevel(depth, "[CALL]");
   printId(depth + 1, call->id);
+  printExpressionList(depth + 1, call->expressionList);
 }
 
-void printId(int depth, char *id) {
-  printLevel(depth, "[ID (%s)]", id);
+void printExpressionList(int depth, AST_ExpressionElement *expressionList) {
+  AST_ExpressionElement *currentElement = expressionList;
+
+  while (currentElement != NULL) {
+    printExpression(depth, currentElement->expression);
+    currentElement = currentElement->next;
+  }
+}
+
+void printExpression(int depth, AST_Expression *expression) {
+  printLevel(depth, "[EXPRESSION]");
+  switch (expression->expressionType) {
+    case AST_EXPRESSION_VARIABLE:
+      printLevel(depth + 1, "[VARIABLE]");
+      break;
+    case AST_EXPRESSION_CONSTANT:
+      printLevel(depth + 1, "[CONSTANT]");
+      break;
+    case AST_EXPRESSION_PARENTHESES:
+      printLevel(depth + 1, "[PARENTHESES]");
+      break;
+    case AST_EXPRESSION_CALL:
+      printLevel(depth + 1, "[CALL]");
+      break;
+    case AST_EXPRESSION_NEW:
+      printLevel(depth + 1, "[NEW]");
+      break;
+    case AST_EXPRESSION_AS:
+      printLevel(depth + 1, "[AS]");
+      break;
+    case AST_EXPRESSION_UNARY:
+      printLevel(depth + 1, "[UNARY]");
+      break;
+    case AST_EXPRESSION_BINARY:
+      printLevel(depth + 1, "[BINARY]");
+      break;
+  }
 }

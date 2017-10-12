@@ -165,7 +165,7 @@ AST_DeclarationElement * AST_createDeclarationVariableList(AST_DeclarationVariab
   return declarationList;
 }
 
-AST_DeclarationElement * AST_appendDeclarationVariableList(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable) {
+AST_DeclarationElement * AST_appendDeclarationVariable(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable) {
   AST_Declaration *declaration = AST_createDeclarationAsVariable(declarationVariable);
   AST_DeclarationElement *declarationList = AST_appendDeclaration(declarationVariableList, declaration);
 
@@ -182,7 +182,7 @@ AST_CommandElement * AST_createCommandList(AST_Command *command) {
   return commandElement;
 }
 
-AST_CommandElement * AST_appendCommandList(AST_CommandElement *commandList, AST_Command *command) {
+AST_CommandElement * AST_appendCommand(AST_CommandElement *commandList, AST_Command *command) {
   AST_CommandElement *commandElement = malloc(sizeof(AST_CommandElement));
   AST_CommandElement *currentElement = commandList;
 
@@ -334,7 +334,7 @@ AST_ExpressionElement * AST_createExpressionList(AST_Expression *expression) {
   return expressionList;
 }
 
-AST_ExpressionElement * AST_appendExpressionList(AST_ExpressionElement *expressionList, AST_Expression* expression) {
+AST_ExpressionElement * AST_appendExpression(AST_ExpressionElement *expressionList, AST_Expression* expression) {
   AST_ExpressionElement *expressionElement = malloc(sizeof(AST_ExpressionElement));
   AST_ExpressionElement *currentElement = expressionList;
 
