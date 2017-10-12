@@ -55,4 +55,26 @@ AST_Command * AST_createCommandBlock(AST_Block *block);
 
 AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList);
 
+AST_Expression * AST_createExpressionVariable(AST_Variable *variable);
+
+AST_Expression * AST_createExpressionParentheses(AST_Expression *expression);
+
+AST_Expression * AST_createExpressionCall(AST_Call *call);
+
+AST_Expression * AST_createExpressionNew(AST_Type type, AST_Expression *expression);
+
+AST_Expression * AST_createExpressionAs(AST_Expression *expression, AST_Type type);
+
+AST_Expression * AST_createExpressionConstant(AST_ExpressionConstantUnion constantUnion, AST_ExpressionConstantType constantType);
+
+AST_Expression * AST_createExpressionIntConstant(int constant);
+
+AST_Expression * AST_createExpressionFloatConstant(float constant);
+
+AST_Expression * AST_createExpressionStringConstant(char *constant);
+
+AST_Expression * AST_createExpressionUnary(AST_Expression *expression, AST_ExpressionUnaryType unaryType);
+
+AST_Expression * AST_createExpressionBinary(AST_Expression *leftExpression, AST_Expression *rightExpression, AST_ExpressionBinaryType binaryType);
+
 #endif

@@ -298,3 +298,138 @@ AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList) {
 
   return call;
 }
+
+AST_Expression * AST_createExpressionVariable(AST_Variable *variable) {
+  AST_Expression *expression = malloc(sizeof(AST_Expression));
+  AST_ExpressionVariable *expressionVariable = malloc(sizeof(AST_ExpressionVariable));
+
+  expressionVariable->expressionType = AST_EXPRESSION_VARIABLE;
+  expressionVariable->variable = variable;
+
+  expression->expressionType = AST_EXPRESSION_VARIABLE;
+  expression->expression.variable = expressionVariable;
+
+  return expression;
+}
+
+AST_Expression * AST_createExpressionParentheses(AST_Expression *expression) {
+  AST_Expression *newExpression = malloc(sizeof(AST_Expression));
+  AST_ExpressionParentheses *expressionParentheses = malloc(sizeof(AST_ExpressionParentheses));
+
+  expressionParentheses->expressionType = AST_EXPRESSION_PARENTHESES;
+  expressionParentheses->expression = expression;
+
+  newExpression->expressionType = AST_EXPRESSION_PARENTHESES;
+  newExpression->expression.parentheses = expressionParentheses;
+
+  return newExpression;
+}
+
+AST_Expression * AST_createExpressionCall(AST_Call *call) {
+  AST_Expression *expression = malloc(sizeof(AST_Expression));
+  AST_ExpressionCall *expressionCall = malloc(sizeof(AST_ExpressionCall));
+
+  expressionCall->expressionType = AST_EXPRESSION_CALL;
+  expressionCall->call = call;
+
+  expression->expressionType = AST_EXPRESSION_CALL;
+  expression->expression.call = expressionCall;
+
+  return expression;
+}
+
+AST_Expression * AST_createExpressionNew(AST_Type type, AST_Expression *expression) {
+  AST_Expression *newExpression = malloc(sizeof(AST_Expression));
+  AST_ExpressionNew *expressionNew = malloc(sizeof(AST_ExpressionNew));
+
+  expressionNew->expressionType = AST_EXPRESSION_NEW;
+  expressionNew->type = type;
+  expressionNew->expression = expression;
+
+  newExpression->expressionType = AST_EXPRESSION_NEW;
+  newExpression->expression.new = expressionNew;
+
+  return newExpression;
+}
+
+AST_Expression * AST_createExpressionAs(AST_Expression *expression, AST_Type type) {
+  AST_Expression *newExpression = malloc(sizeof(AST_Expression));
+  AST_ExpressionAs *expressionAs = malloc(sizeof(AST_ExpressionAs));
+
+  expressionAs->expressionType = AST_EXPRESSION_AS;
+  expressionAs->expression = expression;
+  expressionAs->type = type;
+
+  newExpression->expressionType = AST_EXPRESSION_AS;
+  newExpression->expression.as = expressionAs;
+
+  return newExpression;
+}
+
+AST_Expression * AST_createExpressionConstant(AST_ExpressionConstantUnion constantUnion, AST_ExpressionConstantType constantType) {
+  AST_Expression *expression = malloc(sizeof(AST_Expression));
+  AST_ExpressionConstant *expressionConstant = malloc(sizeof(AST_ExpressionConstant));
+
+  expressionConstant->expressionType = AST_EXPRESSION_CONSTANT;
+  expressionConstant->constantType = constantType;
+  expressionConstant->constant = constantUnion;
+
+  expression->expressionType = AST_EXPRESSION_CONSTANT;
+  expression->expression.constant = expressionConstant;
+
+  return expression;
+}
+
+AST_Expression * AST_createExpressionIntConstant(int constant) {
+  AST_ExpressionConstantUnion constantUnion;
+
+  constantUnion.i = constant;
+
+  return AST_createExpressionConstant(constantUnion, AST_EXPRESSION_CONSTANT_INT);
+}
+
+AST_Expression * AST_createExpressionFloatConstant(float constant) {
+  AST_ExpressionConstantUnion constantUnion;
+
+  constantUnion.f = constant;
+
+  return AST_createExpressionConstant(constantUnion, AST_EXPRESSION_CONSTANT_FLOAT);
+}
+
+AST_Expression * AST_createExpressionStringConstant(char *constant) {
+  AST_ExpressionConstantUnion constantUnion;
+
+  constantUnion.s = constant;
+
+  return AST_createExpressionConstant(constantUnion, AST_EXPRESSION_CONSTANT_STRING);
+}
+
+AST_Expression * AST_createExpressionUnary(AST_Expression *expression, AST_ExpressionUnaryType unaryType) {
+  AST_Expression *newExpression = malloc(sizeof(AST_Expression));
+  AST_ExpressionUnary *expressionUnary = malloc(sizeof(AST_ExpressionUnary));
+
+  expressionUnary->expressionType = AST_EXPRESSION_UNARY;
+  expressionUnary->unaryType = unaryType;
+  expressionUnary->expression = expression;
+
+  newExpression->expressionType = AST_EXPRESSION_UNARY;
+  newExpression->expression.unary = expressionUnary;
+
+  return newExpression;
+}
+
+AST_Expression * AST_createExpressionBinary(AST_Expression *leftExpression, AST_Expression *rightExpression, AST_ExpressionBinaryType binaryType) {
+
+  AST_Expression *expression = malloc(sizeof(AST_Expression));
+  AST_ExpressionBinary *expressionBinary = malloc(sizeof(AST_ExpressionBinary));
+
+  expressionBinary->expressionType = AST_EXPRESSION_BINARY;
+  expressionBinary->binaryType = binaryType;
+  expressionBinary->leftExpression = leftExpression;
+  expressionBinary->rightExpression = rightExpression;
+
+  expression->expressionType = AST_EXPRESSION_BINARY;
+  expression->expression.binary = expressionBinary;
+
+  return expression;
+}
