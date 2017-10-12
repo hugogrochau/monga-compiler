@@ -87,33 +87,6 @@ AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_Parameter
   return functionDeclaration;
 }
 
-AST_Variable * AST_createVariableSimple(char *id) {
-  AST_Variable *variable = malloc(sizeof(AST_Variable));
-  AST_VariableSimple *variableSimple = malloc(sizeof(AST_VariableSimple));
-
-  variableSimple->variableType = AST_VARIABLE_SIMPLE;
-  variableSimple->id = id;
-
-  variable->variableType = AST_VARIABLE_SIMPLE;
-  variable->variable.simple = variableSimple;
-
-  return variable;
-}
-
-AST_Variable * AST_createVariableArray(AST_Expression *outerExpression, AST_Expression *innerExpression) {
-  AST_Variable *variable = malloc(sizeof(AST_Variable));
-  AST_VariableArray *variableArray = malloc(sizeof(AST_VariableArray));
-
-  variableArray->variableType = AST_VARIABLE_ARRAY;
-  variableArray->outerExpression = outerExpression;
-  variableArray->innerExpression = innerExpression;
-
-  variable->variableType = AST_VARIABLE_ARRAY;
-  variable->variable.array = variableArray;
-
-  return variable;
-}
-
 AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter) {
   AST_ParameterElement *parameterList = malloc(sizeof(AST_ParameterElement));
 
@@ -314,6 +287,33 @@ AST_Command * AST_createCommandBlock(AST_Block *block) {
   command->command.commandBlock = commandBlock;
 
   return command;
+}
+
+AST_Variable * AST_createVariableSimple(char *id) {
+  AST_Variable *variable = malloc(sizeof(AST_Variable));
+  AST_VariableSimple *variableSimple = malloc(sizeof(AST_VariableSimple));
+
+  variableSimple->variableType = AST_VARIABLE_SIMPLE;
+  variableSimple->id = id;
+
+  variable->variableType = AST_VARIABLE_SIMPLE;
+  variable->variable.simple = variableSimple;
+
+  return variable;
+}
+
+AST_Variable * AST_createVariableArray(AST_Expression *outerExpression, AST_Expression *innerExpression) {
+  AST_Variable *variable = malloc(sizeof(AST_Variable));
+  AST_VariableArray *variableArray = malloc(sizeof(AST_VariableArray));
+
+  variableArray->variableType = AST_VARIABLE_ARRAY;
+  variableArray->outerExpression = outerExpression;
+  variableArray->innerExpression = innerExpression;
+
+  variable->variableType = AST_VARIABLE_ARRAY;
+  variable->variable.array = variableArray;
+
+  return variable;
 }
 
 AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList) {

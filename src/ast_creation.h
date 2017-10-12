@@ -19,10 +19,6 @@ AST_Type AST_createArrayType(AST_Type type);
 
 AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_ParameterElement *parameterList, AST_Type type, AST_Block *block);
 
-AST_Variable * AST_createVariableSimple(char *id);
-
-AST_Variable * AST_createVariableArray(AST_Expression *outerExpression, AST_Expression *innerExpression);
-
 AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter);
 
 AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, AST_Parameter *parameter);
@@ -56,6 +52,10 @@ AST_Command * AST_createCommandCall(AST_Call *call);
 AST_Command * AST_createCommandPrint(AST_Expression *expression);
 
 AST_Command * AST_createCommandBlock(AST_Block *block);
+
+AST_Variable * AST_createVariableSimple(char *id);
+
+AST_Variable * AST_createVariableArray(AST_Expression *outerExpression, AST_Expression *innerExpression);
 
 AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList);
 

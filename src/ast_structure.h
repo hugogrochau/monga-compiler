@@ -18,11 +18,6 @@ typedef struct declaration AST_Declaration;
 typedef struct declarationVariable AST_DeclarationVariable;
 typedef struct declarationFunction AST_DeclarationFunction;
 
-typedef union variableUnion AST_VariableUnion;
-typedef struct variable AST_Variable;
-typedef struct variableSimple AST_VariableSimple;
-typedef struct variableArray AST_VariableArray;
-
 typedef struct block AST_Block;
 
 typedef struct parameterElement AST_ParameterElement;
@@ -38,6 +33,11 @@ typedef struct commandReturn AST_CommandReturn;
 typedef struct commandCall AST_CommandCall;
 typedef struct commandPrint AST_CommandPrint;
 typedef struct commandBlock AST_CommandBlock;
+
+typedef union variableUnion AST_VariableUnion;
+typedef struct variable AST_Variable;
+typedef struct variableSimple AST_VariableSimple;
+typedef struct variableArray AST_VariableArray;
 
 typedef struct call AST_Call;
 
@@ -154,27 +154,6 @@ struct declarationFunction {
   AST_Block *block;
 };
 
-union variableUnion {
-  AST_VariableSimple *simple;
-  AST_VariableArray *array;
-};
-
-struct variable {
-  AST_VariableType variableType;
-  AST_VariableUnion variable;
-};
-
-struct variableSimple {
-  AST_VariableType variableType;
-  char *id;
-};
-
-struct variableArray {
-  AST_VariableType variableType;
-  AST_Expression *outerExpression;
-  AST_Expression *innerExpression;
-};
-
 struct block {
   AST_DeclarationElement *declarationVariableList;
   AST_CommandElement *commandList;
@@ -248,6 +227,27 @@ struct commandPrint {
 struct commandBlock {
   AST_CommandType commandType;
   AST_Block *block;
+};
+
+union variableUnion {
+  AST_VariableSimple *simple;
+  AST_VariableArray *array;
+};
+
+struct variable {
+  AST_VariableType variableType;
+  AST_VariableUnion variable;
+};
+
+struct variableSimple {
+  AST_VariableType variableType;
+  char *id;
+};
+
+struct variableArray {
+  AST_VariableType variableType;
+  AST_Expression *outerExpression;
+  AST_Expression *innerExpression;
 };
 
 struct call {
