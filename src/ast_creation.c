@@ -187,7 +187,7 @@ AST_Command * AST_createCommandIfElse(AST_Expression *expression, AST_Block *the
   commandIf->commandType = AST_COMMAND_IF;
   commandIf->expression = expression;
   commandIf->thenBlock = thenBlock;
-  commandIf->elseBlock = NULL;
+  commandIf->elseBlock = elseBlock;
 
   command->commandType = AST_COMMAND_IF;
   command->command.commandIf = commandIf;

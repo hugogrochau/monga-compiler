@@ -188,11 +188,11 @@ command_list:
 ;
 
 command:
-    TK_IF expression block {
-        $$ = AST_createCommandIf($2, $3);
-    } |
     TK_IF expression block TK_ELSE block {
         $$ = AST_createCommandIfElse($2, $3, $5);
+    } |
+    TK_IF expression block {
+        $$ = AST_createCommandIf($2, $3);
     } |
     TK_WHILE expression block {
         $$ = AST_createCommandWhile($2, $3);

@@ -27,6 +27,20 @@ void printCommandList(int depth, AST_CommandElement *commandList);
 
 void printCommand(int depth, AST_Command *command);
 
+void printCommandIf(int depth, AST_CommandIf *command);
+
+void printCommandWhile(int depth, AST_CommandWhile *command);
+
+void printCommandAssign(int depth, AST_CommandAssign *command);
+
+void printCommandReturn(int depth, AST_CommandReturn *command);
+
+void printCommandCall(int depth, AST_CommandCall *command);
+
+void printCommandPrint(int depth, AST_CommandPrint *command);
+
+void printCommandBlock(int depth, AST_CommandBlock *command);
+
 void printVariable(int depth, AST_Variable *variable);
 
 void printVariableSimple(int depth, AST_VariableSimple *variable);
@@ -162,32 +176,70 @@ void printCommand(int depth, AST_Command *command) {
   printLevel(depth, "[COMMAND]");
   switch(command->commandType) {
     case AST_COMMAND_IF:
-      printLevel(depth + 1, "[IF]");
+      printCommandIf(depth + 1, command->command.commandIf);
       break;
     case AST_COMMAND_WHILE:
-      printLevel(depth + 1, "[WHILE]");
+      printCommandWhile(depth + 1, command->command.commandWhile);
       break;
     case AST_COMMAND_ASSIGN:
-      printLevel(depth + 1, "[ASSIGN]");
-      printVariable(depth + 2, command->command.commandAssign->variable);
-      printExpression(depth + 2, command->command.commandAssign->expression);
+      printCommandAssign(depth + 1, command->command.commandAssign);
       break;
     case AST_COMMAND_RETURN:
-      printLevel(depth + 1, "[RETURN]");
+      printCommandReturn(depth + 1, command->command.commandReturn);
       break;
     case AST_COMMAND_CALL:
-      printCall(depth + 1, command->command.commandCall->call);
+      printCommandCall(depth + 1, command->command.commandCall);
       break;
     case AST_COMMAND_PRINT:
-      printLevel(depth + 1, "[PRINT]");
+      printCommandPrint(depth + 1, command->command.commandPrint);
       break;
     case AST_COMMAND_BLOCK:
-      printLevel(depth + 1, "[BLOCK]");
+      printCommandBlock(depth + 1, command->command.commandBlock);
       break;
     default:
       printLevel(depth + 1, "[UNKNOWN]");
       break;
   }
+}
+
+void printCommandIf(int depth, AST_CommandIf *command) {
+  printLevel(depth, "[IF]");
+  printExpression(depth + 1, command->expression);
+  printBlock(depth + 1, command->thenBlock);
+  if (command->elseBlock != NULL) {
+    printBlock(depth + 1, command->elseBlock);
+  }
+}
+
+void printCommandWhile(int depth, AST_CommandWhile *command) {
+  printLevel(depth, "[WHILE]");
+  printExpression(depth + 1, command->expression);
+  printBlock(depth + 1, command->block);
+}
+
+void printCommandAssign(int depth, AST_CommandAssign *command) {
+  printLevel(depth, "[ASSIGN]");
+  printVariable(depth + 1, command->variable);
+  printExpression(depth + 1, command->expression);
+}
+
+void printCommandReturn(int depth, AST_CommandReturn *command) {
+  printLevel(depth, "[RETURN]");
+  if (command->expression != NULL) {
+    printExpression(depth + 1, command->expression);
+  }
+}
+void printCommandCall(int depth, AST_CommandCall *command) {
+  printCall(depth + 1, command->call);
+}
+
+void printCommandPrint(int depth, AST_CommandPrint *command) {
+  printLevel(depth, "[PRINT]");
+  printExpression(depth + 1, command->expression);
+}
+
+void printCommandBlock(int depth, AST_CommandBlock *command) {
+  printBlock(depth + 1, command->block);
 }
 
 void printVariable(int depth, AST_Variable *variable) {
