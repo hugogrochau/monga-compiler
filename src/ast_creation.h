@@ -21,7 +21,7 @@ AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_Parameter
 
 AST_Variable * AST_createVariableSimple(char *id);
 
-AST_Variable * AST_createVariableArray(AST_Expression *outsideExpression, AST_Expression *insideExpression);
+AST_Variable * AST_createVariableArray(AST_Expression *outerExpression, AST_Expression *innerExpression);
 
 AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter);
 

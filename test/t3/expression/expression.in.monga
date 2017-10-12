@@ -1,6 +1,10 @@
-foo: int;
-
 main(): void {
+  foo = b;
+  foo = 1;
+  foo = (1);
+  foo = main();
+  foo = new int [ 1 ];
+  foo = 1 as float;
+  foo = -1;
   foo = a < 2;
-  foo = 3 + b;
 }

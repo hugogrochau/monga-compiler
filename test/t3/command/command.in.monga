@@ -1,7 +1,5 @@
 main (a: int, b: int): int {
   foo: int;
-  bar: int;
-  foo = a + b;
   return;
   bar = 1;
   {

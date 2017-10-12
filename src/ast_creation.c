@@ -100,13 +100,13 @@ AST_Variable * AST_createVariableSimple(char *id) {
   return variable;
 }
 
-AST_Variable * AST_createVariableArray(AST_Expression *outsideExpression, AST_Expression *insideExpression) {
+AST_Variable * AST_createVariableArray(AST_Expression *outerExpression, AST_Expression *innerExpression) {
   AST_Variable *variable = malloc(sizeof(AST_Variable));
   AST_VariableArray *variableArray = malloc(sizeof(AST_VariableArray));
 
   variableArray->variableType = AST_VARIABLE_ARRAY;
-  variableArray->outsideExpression = outsideExpression;
-  variableArray->insideExpression = insideExpression;
+  variableArray->outerExpression = outerExpression;
+  variableArray->innerExpression = innerExpression;
 
   variable->variableType = AST_VARIABLE_ARRAY;
   variable->variable.array = variableArray;

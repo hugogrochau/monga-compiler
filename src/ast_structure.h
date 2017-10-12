@@ -171,8 +171,8 @@ struct variableSimple {
 
 struct variableArray {
   AST_VariableType variableType;
-  AST_Expression *outsideExpression;
-  AST_Expression *insideExpression;
+  AST_Expression *outerExpression;
+  AST_Expression *innerExpression;
 };
 
 struct block {

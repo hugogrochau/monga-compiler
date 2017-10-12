@@ -27,6 +27,12 @@ void printCommandList(int depth, AST_CommandElement *commandList);
 
 void printCommand(int depth, AST_Command *command);
 
+void printVariable(int depth, AST_Variable *variable);
+
+void printVariableSimple(int depth, AST_VariableSimple *variable);
+
+void printVariableArray(int depth, AST_VariableArray *variable);
+
 void printCall(int depth, AST_Call * call);
 
 void printExpressionList(int depth, AST_ExpressionElement *expressionList);
@@ -57,25 +63,25 @@ void printLevel(int depth, char *template, ...) {
 void printType(int depth, AST_Type type) {
   switch (type) {
     case AST_VOID:
-      printLevel(depth, "[VOID]");
+      printLevel(depth, "[TYPE (VOID)]");
       break;
     case AST_INT:
-      printLevel(depth, "[INT]");
+      printLevel(depth, "[TYPE (INT)]");
       break;
     case AST_FLOAT:
-      printLevel(depth, "[FLOAT]");
+      printLevel(depth, "[TYPE (FLOAT)]");
       break;
     case AST_CHAR:
-      printLevel(depth, "[CHAR]");
+      printLevel(depth, "[TYPE (CHAR)]");
       break;
     case AST_ARRAY_INT:
-      printLevel(depth, "[ARRAY_INT]");
+      printLevel(depth, "[TYPE (ARRAY_INT)]");
       break;
     case AST_ARRAY_FLOAT:
-      printLevel(depth, "[ARRAY_FLOAT]");
+      printLevel(depth, "[TYPE (ARRAY_FLOAT])");
       break;
     case AST_ARRAY_CHAR:
-      printLevel(depth, "[ARRAY_CHAR]");
+      printLevel(depth, "[TYPE (ARRAY_CHAR)]");
       break;
   }
 }
@@ -163,6 +169,8 @@ void printCommand(int depth, AST_Command *command) {
       break;
     case AST_COMMAND_ASSIGN:
       printLevel(depth + 1, "[ASSIGN]");
+      printVariable(depth + 2, command->command.commandAssign->variable);
+      printExpression(depth + 2, command->command.commandAssign->expression);
       break;
     case AST_COMMAND_RETURN:
       printLevel(depth + 1, "[RETURN]");
@@ -179,6 +187,19 @@ void printCommand(int depth, AST_Command *command) {
     default:
       printLevel(depth + 1, "[UNKNOWN]");
       break;
+  }
+}
+
+void printVariable(int depth, AST_Variable *variable) {
+  printLevel(depth, "[VARIABLE]");
+  switch (variable->variableType) {
+    case AST_VARIABLE_SIMPLE:
+      printId(depth + 1, variable->variable.simple->id);
+      break;
+    case AST_VARIABLE_ARRAY:
+      printExpression(depth + 1, variable->variable.array->outerExpression);
+      printExpression(depth + 1, variable->variable.array->innerExpression);
+    break;
   }
 }
 
