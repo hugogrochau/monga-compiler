@@ -70,7 +70,7 @@
 %type <command> command
 %type <call> call
 %type <expressionElement> expression_list
-%type <expression> expression expression_logic_or
+%type <expression> expression_primary expression_postfix expression_unary expression_multiplicative expression_additive expression_relational expression_logic_and expression_logic_or expression
 %type <variable> variable
 
 %start program
@@ -223,60 +223,139 @@ call:
     }
 ;
 
-expression_primary: variable {;}
-                  | TK_INT_CONSTANT {;}
-                  | TK_FLOAT_CONSTANT {;}
-                  | TK_STRING {;}
-                  | '(' expression ')' {;}
-                  | call {;}
-                  | TK_NEW type '[' expression ']' {;}
+expression_primary:
+    variable {
+        $$ = AST_createExpressionVariable($1);
+    } |
+    TK_INT_CONSTANT {
+        $$ = AST_createExpressionIntConstant($1);
+    } |
+    TK_FLOAT_CONSTANT {
+        $$ = AST_createExpressionFloatConstant($1);
+    } |
+    TK_STRING {
+        $$ = AST_createExpressionStringConstant($1);
+    } |
+    '(' expression ')' {
+        $$ = AST_createExpressionParentheses($2);
+    } |
+    call {
+        $$ = AST_createExpressionCall($1);
+    } |
+    TK_NEW type '[' expression ']' {
+        $$ = AST_createExpressionNew($2, $4);
+    }
 ;
 
-variable: TK_ID {;}
-        | expression_primary '[' expression ']' {;}
+variable:
+    TK_ID {
+        $$ = AST_createVariableSimple($1);
+    } |
+    expression_primary '[' expression ']' {
+        $$ = AST_createVariableArray($1, $3);
+    }
 ;
 
-expression_list: expression {;}
-               | expression_list ',' expression {;}
+expression_list:
+    expression {
+        $$ = AST_createExpressionList($1);
+    } |
+    expression_list ',' expression {
+        $$ = AST_appendExpressionList($1, $3);
+    }
 ;
 
-expression_postfix: expression_primary {;}
-                  | expression_postfix TK_AS type {;}
+expression_postfix:
+    expression_primary {
+        $$ = $1;
+    } |
+    expression_postfix TK_AS type {
+        $$ = AST_createExpressionAs($1, $3);
+    }
 ;
 
-expression_unary: expression_postfix {;}
-                | '-' expression_unary {;}
-                | '!' expression_unary {;}
+expression_unary:
+    expression_postfix {
+        $$ = $1;
+    } |
+    '-' expression_unary {
+        $$ = AST_createExpressionUnary($2, AST_EXPRESSION_UNARY_MINUS);
+    } |
+    '!' expression_unary {
+        $$ = AST_createExpressionUnary($2, AST_EXPRESSION_UNARY_NOT);
+    }
 ;
 
-expression_multiplicative: expression_unary {;}
-                         | expression_multiplicative '*' expression_unary {;}
-                         | expression_multiplicative '/' expression_unary {;}
+expression_multiplicative:
+    expression_unary {
+        $$ = $1;
+    } |
+    expression_multiplicative '*' expression_unary {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_MULTIPLICATION);
+    } |
+    expression_multiplicative '/' expression_unary {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_DIVISION);
+    }
 ;
 
-expression_additive: expression_multiplicative {;}
-                   | expression_additive '+' expression_multiplicative {;}
-                   | expression_additive '-' expression_multiplicative {;}
+expression_additive:
+    expression_multiplicative {
+        $$ = $1;
+    } |
+    expression_additive '+' expression_multiplicative {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_PLUS);
+    } |
+    expression_additive '-' expression_multiplicative {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_MINUS);
+    }
 ;
 
-expression_relational: expression_additive {;}
-                     | expression_additive '<' expression_additive {;}
-                     | expression_additive '>' expression_additive {;}
-                     | expression_additive TK_LESS_EQUAL expression_additive {;}
-                     | expression_additive TK_GREATER_EQUAL expression_additive {;}
-                     | expression_additive TK_EQUAL expression_additive {;}
-                     | expression_additive TK_NOT_EQUAL expression_additive {;}
+expression_relational:
+    expression_additive {
+        $$ = $1;
+    } |
+    expression_additive '<' expression_additive {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_LESS);
+    } |
+    expression_additive '>' expression_additive {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_GREATER);
+    } |
+    expression_additive TK_LESS_EQUAL expression_additive {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_LESS_EQUAL);
+    } |
+    expression_additive TK_GREATER_EQUAL expression_additive {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_GREATER_EQUAL);
+    } |
+    expression_additive TK_EQUAL expression_additive {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_EQUAL);
+    } |
+    expression_additive TK_NOT_EQUAL expression_additive {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_NOT_EQUAL);
+    }
 ;
 
-expression_logic_and: expression_relational {;}
-                    | expression_logic_and TK_LOGIC_AND expression_relational {;}
+expression_logic_and:
+    expression_relational {
+        $$ = $1;
+    } |
+    expression_logic_and TK_LOGIC_AND expression_relational {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_LOGIC_AND);
+    }
 ;
 
-expression_logic_or: expression_logic_and {;}
-          | expression TK_LOGIC_OR expression_logic_and {;}
+expression_logic_or:
+    expression_logic_and {
+        $$ = $1;
+    } |
+    expression TK_LOGIC_OR expression_logic_and {
+        $$ = AST_createExpressionBinary($1, $3, AST_EXPRESSION_BINARY_LOGIC_OR);
+    }
 ;
 
-expression: expression_logic_or {;}
+expression:
+    expression_logic_or {
+        $$ = $1;
+    }
 ;
 
 %%

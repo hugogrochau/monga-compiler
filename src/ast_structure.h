@@ -3,6 +3,7 @@
 
 typedef enum type AST_Type;
 typedef enum declarationType AST_DeclarationType;
+typedef enum variableType AST_VariableType;
 typedef enum commandType AST_CommandType;
 typedef enum expressionType AST_ExpressionType;
 typedef enum expressionConstantType AST_ExpressionConstantType;
@@ -17,7 +18,10 @@ typedef struct declaration AST_Declaration;
 typedef struct declarationVariable AST_DeclarationVariable;
 typedef struct declarationFunction AST_DeclarationFunction;
 
+typedef union variableUnion AST_VariableUnion;
 typedef struct variable AST_Variable;
+typedef struct variableSimple AST_VariableSimple;
+typedef struct variableArray AST_VariableArray;
 
 typedef struct block AST_Block;
 
@@ -65,6 +69,11 @@ enum declarationType {
   AST_DECLARATION_FUNCTION
 };
 
+enum variableType {
+  AST_VARIABLE_SIMPLE,
+  AST_VARIABLE_ARRAY
+};
+
 enum commandType {
   AST_COMMAND_IF,
   AST_COMMAND_WHILE,
@@ -108,8 +117,8 @@ enum expressionBinaryType {
   AST_EXPRESSION_BINARY_GREATER_EQUAL,
   AST_EXPRESSION_BINARY_EQUAL,
   AST_EXPRESSION_BINARY_NOT_EQUAL,
-  AST_EXPRESSION_BINARY_LOGIC_OR,
-  AST_EXPRESSION_BINARY_LOGIC_AND
+  AST_EXPRESSION_BINARY_LOGIC_AND,
+  AST_EXPRESSION_BINARY_LOGIC_OR
 };
 
 struct program {
@@ -145,8 +154,25 @@ struct declarationFunction {
   AST_Block *block;
 };
 
+union variableUnion {
+  AST_VariableSimple *simple;
+  AST_VariableArray *array;
+};
+
 struct variable {
-  int foo;
+  AST_VariableType variableType;
+  AST_VariableUnion variable;
+};
+
+struct variableSimple {
+  AST_VariableType variableType;
+  char *id;
+};
+
+struct variableArray {
+  AST_VariableType variableType;
+  AST_Expression *outsideExpression;
+  AST_Expression *insideExpression;
 };
 
 struct block {

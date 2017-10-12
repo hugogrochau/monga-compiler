@@ -87,6 +87,33 @@ AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_Parameter
   return functionDeclaration;
 }
 
+AST_Variable * AST_createVariableSimple(char *id) {
+  AST_Variable *variable = malloc(sizeof(AST_Variable));
+  AST_VariableSimple *variableSimple = malloc(sizeof(AST_VariableSimple));
+
+  variableSimple->variableType = AST_VARIABLE_SIMPLE;
+  variableSimple->id = id;
+
+  variable->variableType = AST_VARIABLE_SIMPLE;
+  variable->variable.simple = variableSimple;
+
+  return variable;
+}
+
+AST_Variable * AST_createVariableArray(AST_Expression *outsideExpression, AST_Expression *insideExpression) {
+  AST_Variable *variable = malloc(sizeof(AST_Variable));
+  AST_VariableArray *variableArray = malloc(sizeof(AST_VariableArray));
+
+  variableArray->variableType = AST_VARIABLE_ARRAY;
+  variableArray->outsideExpression = outsideExpression;
+  variableArray->insideExpression = insideExpression;
+
+  variable->variableType = AST_VARIABLE_ARRAY;
+  variable->variable.array = variableArray;
+
+  return variable;
+}
+
 AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter) {
   AST_ParameterElement *parameterList = malloc(sizeof(AST_ParameterElement));
 
@@ -94,7 +121,6 @@ AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter) {
   parameterList->next = NULL;
 
   return parameterList;
-
 }
 
 AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, AST_Parameter *parameter) {
@@ -297,6 +323,32 @@ AST_Call * AST_createCall(char *id, AST_ExpressionElement *expressionList) {
   call->expressionList = expressionList;
 
   return call;
+}
+
+AST_ExpressionElement * AST_createExpressionList(AST_Expression *expression) {
+  AST_ExpressionElement *expressionList = malloc(sizeof(AST_ExpressionElement));
+
+  expressionList->expression = expression;
+  expressionList->next = NULL;
+
+  return expressionList;
+}
+
+AST_ExpressionElement * AST_appendExpressionList(AST_ExpressionElement *expressionList, AST_Expression* expression) {
+  AST_ExpressionElement *expressionElement = malloc(sizeof(AST_ExpressionElement));
+  AST_ExpressionElement *currentElement = expressionList;
+
+  /* Go to the end of the linked list */
+  while (currentElement->next != NULL) {
+    currentElement = currentElement->next;
+  }
+
+  expressionElement->expression = expression;
+  expressionElement->next = NULL;
+
+  currentElement->next = expressionElement;
+
+  return expressionList;
 }
 
 AST_Expression * AST_createExpressionVariable(AST_Variable *variable) {
