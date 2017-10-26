@@ -150,7 +150,7 @@ AST_CommandElement * AST_createCommandList(AST_Command *command) {
 
   commandElement->command = command;
   commandElement->next = NULL;
-  commandElement->previous = NULL;
+  commandElement->prev = NULL;
 
   return commandElement;
 }

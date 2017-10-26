@@ -173,7 +173,7 @@ struct parameter {
 struct commandElement {
   AST_Command *command;
   AST_CommandElement *next;
-  AST_CommandElement *previous;
+  AST_CommandElement *prev;
 };
 
 union commandUnion {
