@@ -75,31 +75,31 @@ void handleCommands(AST_CommandElement *commands) {
 
 void handleCommand(AST_Command *command) {
   switch (command->commandType) {
-    AST_COMMAND_IF:
+    case AST_COMMAND_IF:
       handleExpression(command->command.commandIf->expression);
       handleBlock(command->command.commandIf->thenBlock);
       if (command->command.commandIf->elseBlock) {
         handleBlock(command->command.commandIf->elseBlock);
       }
       break;
-    AST_COMMAND_WHILE:
+    case AST_COMMAND_WHILE:
       handleExpression(command->command.commandWhile->expression);
       handleBlock(command->command.commandWhile->block);
       break;
-    AST_COMMAND_ASSIGN:
+    case AST_COMMAND_ASSIGN:
       handleVariable(command->command.commandAssign->variable);
       handleExpression(command->command.commandAssign->expression);
       break;
-    AST_COMMAND_RETURN:
+    case AST_COMMAND_RETURN:
       handleExpression(command->command.commandReturn->expression);
       break;
-    AST_COMMAND_CALL:
+    case AST_COMMAND_CALL:
       handleCall(command->command.commandCall->call);
       break;
-    AST_COMMAND_PRINT:
+    case AST_COMMAND_PRINT:
       handleExpression(command->command.commandPrint->expression);
       break;
-    AST_COMMAND_BLOCK:
+    case AST_COMMAND_BLOCK:
       handleBlock(command->command.commandBlock->block);
       break;
   }
@@ -107,25 +107,25 @@ void handleCommand(AST_Command *command) {
 
 void handleExpression(AST_Expression *expression) {
   switch (expression->expressionType) {
-    AST_EXPRESSION_VARIABLE:
+    case AST_EXPRESSION_VARIABLE:
       handleVariable(expression->expression.variable->variable);
       break;
-    AST_EXPRESSION_PARENTHESES:
+    case AST_EXPRESSION_PARENTHESES:
       handleExpression(expression->expression.parentheses->expression);
       break;
-    AST_EXPRESSION_CALL:
+    case AST_EXPRESSION_CALL:
       handleCall(expression->expression.call->call);
       break;
-    AST_EXPRESSION_NEW:
+    case AST_EXPRESSION_NEW:
       handleExpression(expression->expression.new->expression);
       break;
-    AST_EXPRESSION_AS:
+    case AST_EXPRESSION_AS:
       handleExpression(expression->expression.as->expression);
       break;
-    AST_EXPRESSION_UNARY:
+    case AST_EXPRESSION_UNARY:
       handleExpression(expression->expression.unary->expression);
       break;
-    AST_EXPRESSION_BINARY:
+    case AST_EXPRESSION_BINARY:
       handleExpression(expression->expression.binary->leftExpression);
       handleExpression(expression->expression.binary->rightExpression);
       break;

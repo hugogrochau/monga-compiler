@@ -10,7 +10,12 @@ main (a: int, b: float): void {
 }
 
 main1 (): int {
+  foo1 = foo1 + 1;
+  main();
 
+  if (foo3) {
+    @foo6;
+  }
 }
 
 main2 (c: int): char {

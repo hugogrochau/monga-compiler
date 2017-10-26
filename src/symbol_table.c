@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "symbol_table.h"
 
 void printSymbols(ST_SymbolElement *symbols);
@@ -74,7 +75,7 @@ AST_Declaration * ST_findDeclaration(ST_ScopeElement *scopeStack, char *id) {
   while (currentScope) {
     currentSymbol = currentScope->symbols;
     while (currentSymbol) {
-      if (currentSymbol->symbol->id == id) {
+      if (strcmp(currentSymbol->symbol->id, id) == 0) {
         return currentSymbol->symbol->declaration;
       }
 
