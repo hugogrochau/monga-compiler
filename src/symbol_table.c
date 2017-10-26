@@ -67,6 +67,26 @@ void ST_leaveScope(ST_ScopeElement *scopeStack) {
   free(oldStackTop);
 }
 
+AST_Declaration * ST_findDeclaration(ST_ScopeElement *scopeStack, char *id) {
+  ST_ScopeElement *currentScope = scopeStack;
+  ST_SymbolElement *currentSymbol;
+
+  while (currentScope) {
+    currentSymbol = currentScope->symbols;
+    while (currentSymbol) {
+      if (currentSymbol->symbol->id == id) {
+        return currentSymbol->symbol->declaration;
+      }
+
+      currentSymbol = currentSymbol->prev;
+    }
+
+    currentScope = currentScope->prev;
+  }
+
+  return NULL;
+}
+
 void ST_print(ST_ScopeElement *scopeStack) {
   ST_ScopeElement *currentScope = scopeStack;
 

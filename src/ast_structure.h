@@ -243,6 +243,7 @@ struct variable {
 struct variableSimple {
   AST_VariableType variableType;
   char *id;
+  AST_Declaration *declaration;
 };
 
 struct variableArray {
@@ -254,6 +255,7 @@ struct variableArray {
 struct call {
   char *id;
   AST_ExpressionElement *expressionList;
+  AST_Declaration *declaration;
 };
 
 struct expressionElement {

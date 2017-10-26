@@ -34,6 +34,8 @@ ST_ScopeElement * ST_enterScope(ST_ScopeElement *scopeStack);
 
 void ST_leaveScope(ST_ScopeElement *scopeStack);
 
+AST_Declaration * ST_findDeclaration(ST_ScopeElement *scopeStack, char *id);
+
 void ST_print(ST_ScopeElement *scopeStack);
 
 #endif
