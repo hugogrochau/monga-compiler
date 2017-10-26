@@ -15,19 +15,21 @@ void AST_knit (AST_Program *program) {
   ST_enterScope(scopeStack);
 
   handleDeclarations(program->declarations);
+
+  ST_print(scopeStack);
 }
 
 void handleDeclarations(AST_DeclarationElement *declarations) {
   AST_DeclarationElement *currentDeclaration = declarations;
 
-  while (currentDeclaration->next != NULL) {
+  while (currentDeclaration != NULL) {
     saveDeclarations(currentDeclaration->declaration);
     currentDeclaration = currentDeclaration->next;
   }
 
   currentDeclaration = declarations;
 
-  while (currentDeclaration->next != NULL) {
+  while (currentDeclaration != NULL) {
     if (currentDeclaration->declaration->declarationType == AST_DECLARATION_FUNCTION) {
       handleBlock(currentDeclaration->declaration->declaration.function->block);
     }
@@ -47,6 +49,6 @@ void saveDeclarations(AST_Declaration *declaration) {
 }
 
 void handleBlock(AST_Block *block) {
-  ST_enterScope(scopeStack);
+  scopeStack = ST_enterScope(scopeStack);
   handleDeclarations(block->declarationVariableList);
 }

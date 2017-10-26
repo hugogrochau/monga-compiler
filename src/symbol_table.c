@@ -1,5 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "symbol_table.h"
+
+void printSymbols(ST_SymbolElement *symbols);
+void print(ST_ScopeElement *scopeStack);
 
 ST_ScopeElement * ST_initScopeStack() {
   ST_ScopeElement *scopeStack = malloc(sizeof(ST_ScopeElement));
@@ -19,33 +23,32 @@ void ST_addSymbol(ST_ScopeElement *scopeStack, char *id, AST_Declaration *declar
   symbol->id = id;
   symbol->declaration = declaration;
 
+  newSymbolElement->symbol = symbol;
+
+  // first symbol
   if (oldSymbolsEnd != NULL) {
     newSymbolElement->prev = oldSymbolsEnd;
+    oldSymbolsEnd->next = newSymbolElement;
   } else {
     newSymbolElement->prev = NULL;
   }
-  newSymbolElement->next = NULL;
 
-  oldSymbolsEnd->next = newSymbolElement;
+  newSymbolElement->next = NULL;
 
   scopeStack->symbols = newSymbolElement;
 }
 
-void ST_enterScope(ST_ScopeElement *scopeStack) {
+ST_ScopeElement * ST_enterScope(ST_ScopeElement *scopeStack) {
   ST_ScopeElement *oldStackTop = scopeStack;
   ST_ScopeElement *newStackTop = malloc(sizeof(ST_ScopeElement));
-  ST_SymbolElement *symbols = malloc(sizeof(ST_SymbolElement));
-
-  symbols->prev = NULL;
-  symbols->next = NULL;
 
   newStackTop->prev = oldStackTop;
   newStackTop->next = NULL;
-  newStackTop->symbols = symbols;
+  newStackTop->symbols = NULL;
 
   oldStackTop->next = newStackTop;
 
-  scopeStack = newStackTop;
+  return newStackTop;
 }
 
 void ST_leaveScope(ST_ScopeElement *scopeStack) {
@@ -54,7 +57,7 @@ void ST_leaveScope(ST_ScopeElement *scopeStack) {
   ST_SymbolElement *currentSymbol = scopeStack->symbols;
   ST_SymbolElement *nextSymbol;
 
-  while (currentSymbol->next != NULL) {
+  while (currentSymbol != NULL) {
     nextSymbol = currentSymbol->next;
     free(currentSymbol);
     currentSymbol = nextSymbol;
@@ -62,4 +65,23 @@ void ST_leaveScope(ST_ScopeElement *scopeStack) {
 
   newStackTop->next = NULL;
   free(oldStackTop);
+}
+
+void ST_print(ST_ScopeElement *scopeStack) {
+  ST_ScopeElement *currentScope = scopeStack;
+
+  while (currentScope != NULL) {
+    printf("[SCOPE]\n");
+    printSymbols(currentScope->symbols);
+    currentScope = currentScope->prev;
+  }
+}
+
+void printSymbols(ST_SymbolElement *symbols) {
+  ST_SymbolElement *currentSymbol = symbols;
+
+  while (currentSymbol != NULL) {
+    printf("%s\n", currentSymbol->symbol->id);
+    currentSymbol = currentSymbol->prev;
+  }
 }

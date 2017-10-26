@@ -30,8 +30,10 @@ ST_ScopeElement * ST_initScopeStack();
 
 void ST_addSymbol(ST_ScopeElement *scopeStack, char *id, AST_Declaration *declaration);
 
-void ST_enterScope(ST_ScopeElement *scopeStack);
+ST_ScopeElement * ST_enterScope(ST_ScopeElement *scopeStack);
 
 void ST_leaveScope(ST_ScopeElement *scopeStack);
+
+void ST_print(ST_ScopeElement *scopeStack);
 
 #endif
