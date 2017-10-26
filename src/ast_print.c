@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "ast_printer.h"
+#include "ast_print.h"
 
 void printLevel(int depth, char *template, ...);
 
@@ -240,6 +240,9 @@ void printVariable(int depth, AST_Variable *variable) {
   switch (variable->variableType) {
     case AST_VARIABLE_SIMPLE:
       printId(depth + 1, variable->variable.simple->id);
+      if (variable->variable.simple->declaration != NULL) {
+        printDeclaration(depth + 1, variable->variable.simple->declaration);
+      }
       break;
     case AST_VARIABLE_ARRAY:
       printExpression(depth + 1, variable->variable.array->outerExpression);
@@ -251,6 +254,9 @@ void printVariable(int depth, AST_Variable *variable) {
 void printCall(int depth, AST_Call *call) {
   printLevel(depth, "[CALL]");
   printId(depth + 1, call->id);
+  if (call->declaration != NULL) {
+    printDeclaration(depth + 1, call->declaration);
+  }
   printExpressionList(depth + 1, call->expressionList);
 }
 
@@ -294,7 +300,7 @@ void printExpression(int depth, AST_Expression *expression) {
 }
 
 void printExpressionVariable(int depth, AST_ExpressionVariable *expression) {
-  printVariable(depth + 1, expression->variable);
+  printVariable(depth, expression->variable);
 }
 
 void printExpressionParentheses(int depth, AST_ExpressionParentheses *expression) {

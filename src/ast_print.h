@@ -1,5 +1,5 @@
-#ifndef AST_PRINTER_H
-#define AST_PRINTER_H
+#ifndef AST_PRINT_H
+#define AST_PRINT_H
 
 #include "ast_structure.h"
 

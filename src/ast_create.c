@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "ast_creation.h"
+#include "ast_create.h"
 
 AST_Type AST_createArrayType(AST_Type type) {
   switch (type) {

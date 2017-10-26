@@ -1,7 +1,7 @@
 %{
     #include <stdio.h>
     #include "ast_structure.h"
-    #include "ast_creation.h"
+    #include "ast_create.h"
 
     extern int yylex(void);
     void yyerror(char *);

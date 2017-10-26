@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "ast_structure.h"
-#include "ast_printer.h"
+#include "ast_print.h"
 #include "tokenizer.h"
 #include "parser.h"
 

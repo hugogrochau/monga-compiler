@@ -25,8 +25,6 @@ void AST_knit (AST_Program *program) {
   ST_enterScope(scopeStack);
 
   handleDeclarations(program->declarations);
-
-  ST_print(scopeStack);
 }
 
 void handleDeclarations(AST_DeclarationElement *declarations) {

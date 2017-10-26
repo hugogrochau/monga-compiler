@@ -1,5 +1,5 @@
-#ifndef AST_CREATION_H
-#define AST_CREATION_H
+#ifndef AST_CREATE_
+#define AST_CREATE_H
 
 #include "ast_structure.h"
 
