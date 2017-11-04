@@ -65,7 +65,7 @@ void printTokenString(TokenType type) {
       break;
     case TK_INT_CONSTANT:
       printf("TK_INT_CONSTANT (");
-      printf("%ld", yylval.i);
+      printf("%d", yylval.i);
       putchar(')');
       break;
     case TK_FLOAT_CONSTANT:
@@ -92,7 +92,7 @@ void printTokenString(TokenType type) {
 
 int main(void) {
   TokenType type;
-  while ( type = yylex() ) {
+  while ( (type = yylex()) ) {
     printTokenString(type);
     putchar('\n');
   }

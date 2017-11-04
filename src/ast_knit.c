@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#include "util.h"
 #include "ast_knit.h"
 #include "symbol_table.h"
 
@@ -126,6 +128,11 @@ void handleExpression(AST_Expression *expression) {
     case AST_EXPRESSION_BINARY:
       handleExpression(expression->expression.binary->leftExpression);
       handleExpression(expression->expression.binary->rightExpression);
+      break;
+    case AST_EXPRESSION_CONSTANT:
+      break;
+    default:
+      error("Unknown expression");
       break;
   }
 }

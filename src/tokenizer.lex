@@ -1,4 +1,6 @@
 %option noyywrap
+%option nounput
+%option noinput
 
 D			[0-9]
 XD		[0-9a-fA-F]
