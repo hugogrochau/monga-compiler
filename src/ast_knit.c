@@ -8,8 +8,6 @@ void handleBlock(AST_Block *block);
 
 void handleDeclarations(AST_DeclarationElement *declarations);
 
-void saveDeclarations(AST_Declaration *declaration);
-
 void handleCommands(AST_CommandElement *commands);
 
 void handleCommand(AST_Command *command);
@@ -32,29 +30,22 @@ void AST_knit (AST_Program *program) {
 void handleDeclarations(AST_DeclarationElement *declarations) {
   AST_DeclarationElement *currentDeclaration = declarations;
 
+  // Save declarations to symbol table
   while (currentDeclaration != NULL) {
-    saveDeclarations(currentDeclaration->declaration);
+    ST_addSymbol(scopeStack, currentDeclaration->declaration);
     currentDeclaration = currentDeclaration->next;
   }
 
+  // Go to start of declarations again
   currentDeclaration = declarations;
 
+  // Treat function declarations
   while (currentDeclaration != NULL) {
     if (currentDeclaration->declaration->declarationType == AST_DECLARATION_FUNCTION) {
-      handleBlock(currentDeclaration->declaration->declaration.function->block);
+      handleDeclarations(currentDeclaration->declaration->parameterList);
+      handleBlock(currentDeclaration->declaration->block);
     }
     currentDeclaration = currentDeclaration->next;
-  }
-}
-
-void saveDeclarations(AST_Declaration *declaration) {
-  switch (declaration->declarationType) {
-    case AST_DECLARATION_FUNCTION:
-      ST_addSymbol(scopeStack, declaration->declaration.function->id, declaration);
-      break;
-    case AST_DECLARATION_VARIABLE:
-      ST_addSymbol(scopeStack, declaration->declaration.variable->id, declaration);
-      break;
   }
 }
 
@@ -102,6 +93,9 @@ void handleCommand(AST_Command *command) {
     case AST_COMMAND_BLOCK:
       handleBlock(command->command.commandBlock->block);
       break;
+    default:
+      error("Unknown command");
+      break;
   }
 }
 
@@ -139,7 +133,11 @@ void handleExpression(AST_Expression *expression) {
 
 void handleVariable(AST_Variable *variable) {
   if (variable->variableType == AST_VARIABLE_SIMPLE) {
-    AST_Declaration *declaration = ST_findDeclaration(scopeStack, variable->variable.simple->id);
+    char *variableId = variable->variable.simple->id;
+    AST_Declaration *declaration = ST_findDeclaration(scopeStack, variableId);
+    if (declaration == NULL) {
+      error("Unknown variable %s", variableId);
+    }
     variable->variable.simple->declaration = declaration;
   } else if (variable->variableType == AST_VARIABLE_ARRAY) {
     handleExpression(variable->variable.array->outerExpression);

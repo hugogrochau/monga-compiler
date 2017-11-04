@@ -17,14 +17,10 @@ ST_ScopeElement * ST_initScopeStack() {
   return scopeStack;
 }
 
-void ST_addSymbol(ST_ScopeElement *scopeStack, char *id, AST_Declaration *declaration) {
-  ST_Symbol *symbol = safeMalloc(sizeof(ST_Symbol));
+void ST_addSymbol(ST_ScopeElement *scopeStack, AST_Declaration *symbol) {
   ST_SymbolElement *newSymbolElement = safeMalloc(sizeof(ST_SymbolElement));
 
   ST_SymbolElement *oldSymbolsEnd = scopeStack->symbols;
-
-  symbol->id = id;
-  symbol->declaration = declaration;
 
   newSymbolElement->symbol = symbol;
 
@@ -78,7 +74,7 @@ AST_Declaration * ST_findDeclaration(ST_ScopeElement *scopeStack, char *id) {
     currentSymbol = currentScope->symbols;
     while (currentSymbol) {
       if (strcmp(currentSymbol->symbol->id, id) == 0) {
-        return currentSymbol->symbol->declaration;
+        return currentSymbol->symbol;
       }
 
       currentSymbol = currentSymbol->prev;

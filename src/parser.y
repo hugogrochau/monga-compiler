@@ -21,10 +21,6 @@
     AST_DeclarationElement *declarationElement;
     AST_Declaration *declaration;
     AST_DeclarationType *declarationType;
-    AST_DeclarationVariable *declarationVariable;
-    AST_DeclarationFunction *declarationFunction;
-    AST_Parameter *parameter;
-    AST_ParameterElement *parameterElement;
     AST_CommandElement *commandElement;
     AST_Command *command;
     AST_ExpressionElement *expressionElement;
@@ -60,12 +56,8 @@
 %type <type> type
 %type <program> program
 %type <block> block
-%type <declarationElement> declaration_list declaration_variable_list
-%type <declaration> declaration
-%type <declarationVariable> declaration_variable
-%type <declarationFunction> declaration_function
-%type <parameterElement> parameter_list parameter_list_non_empty
-%type <parameter> parameter
+%type <declarationElement> declaration_list declaration_variable_list parameter_list parameter_list_non_empty
+%type <declaration> declaration declaration_variable declaration_function parameter
 %type <commandElement> command_list
 %type <command> command
 %type <call> call
@@ -94,10 +86,10 @@ declaration_list:
 
 declaration:
     declaration_variable {
-        $$ = AST_createDeclarationAsVariable($1);
+        $$ = $1;
     } |
     declaration_function {
-        $$ = AST_createDeclarationAsFunction($1);
+        $$ = $1;
     }
 ;
 
@@ -142,16 +134,16 @@ parameter_list:
 
 parameter_list_non_empty:
     parameter {
-        $$ = AST_createParameterList($1);
+        $$ = AST_createDeclarationList($1);
     } |
     parameter_list_non_empty ',' parameter {
-        $$ = AST_appendParameter($1, $3);
+        $$ = AST_appendDeclaration($1, $3);
     }
 ;
 
 parameter:
     TK_ID ':' type {
-        $$ = AST_createParameter($1, $3);
+        $$ = AST_createDeclarationParameter($1, $3);
     }
 ;
 
@@ -164,9 +156,9 @@ block:
 declaration_variable_list:
     declaration_variable_list declaration_variable {
         if ($1 == NULL) {
-            $$ = AST_createDeclarationVariableList($2);
+            $$ = AST_createDeclarationList($2);
         } else {
-            $$ = AST_appendDeclarationVariable($1, $2);
+            $$ = AST_appendDeclaration($1, $2);
         }
     } |
     %empty {

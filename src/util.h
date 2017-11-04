@@ -1,3 +1,3 @@
-void error(char *message);
+void error(char *template, ...);
 
 void * safeMalloc(size_t size);

@@ -8,7 +8,7 @@ main (a: int, b: float): void {
   foo2 = foo3[4];
 
   if (foo3) {
-    @foo6;
+    @foo3;
   }
 }
 

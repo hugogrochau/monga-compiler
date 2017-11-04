@@ -13,15 +13,9 @@ typedef enum expressionBinaryType AST_ExpressionBinaryType;
 typedef struct program AST_Program;
 
 typedef struct declarationElement AST_DeclarationElement;
-typedef union declarationUnion AST_DeclarationUnion;
 typedef struct declaration AST_Declaration;
-typedef struct declarationVariable AST_DeclarationVariable;
-typedef struct declarationFunction AST_DeclarationFunction;
 
 typedef struct block AST_Block;
-
-typedef struct parameterElement AST_ParameterElement;
-typedef struct parameter AST_Parameter;
 
 typedef struct commandElement AST_CommandElement;
 typedef union commandUnion AST_CommandUnion;
@@ -66,7 +60,8 @@ enum type {
 
 enum declarationType {
   AST_DECLARATION_VARIABLE,
-  AST_DECLARATION_FUNCTION
+  AST_DECLARATION_FUNCTION,
+  AST_DECLARATION_PARAMETER
 };
 
 enum variableType {
@@ -131,43 +126,17 @@ struct declarationElement {
   AST_DeclarationElement *next;
 };
 
-union declarationUnion {
-  AST_DeclarationVariable *variable;
-  AST_DeclarationFunction *function;
-};
-
 struct declaration {
   AST_DeclarationType declarationType;
-  AST_DeclarationUnion declaration;
-};
-
-struct declarationVariable {
-  AST_DeclarationType declarationType;
   char *id;
   AST_Type type;
-};
-
-struct declarationFunction {
-  AST_DeclarationType declarationType;
-  char *id;
-  AST_ParameterElement *parameterList;
-  AST_Type type;
+  AST_DeclarationElement *parameterList;
   AST_Block *block;
 };
 
 struct block {
   AST_DeclarationElement *declarationVariableList;
   AST_CommandElement *commandList;
-};
-
-struct parameterElement {
-  AST_Parameter *parameter;
-  AST_ParameterElement *next;
-};
-
-struct parameter {
-  char *id;
-  AST_Type type;
 };
 
 struct commandElement {

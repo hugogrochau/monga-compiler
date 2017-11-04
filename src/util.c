@@ -1,8 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
-void error(char *message) {
-  printf("ERROR: %s", message);
+void error(char *template, ...) {
+  va_list argumentList;
+  va_start(argumentList, template);
+
+  printf("ERROR: ");
+  vprintf(template, argumentList);
+
+  va_end(argumentList);
+
   exit(1);
 }
 

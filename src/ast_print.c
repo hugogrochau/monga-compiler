@@ -7,15 +7,13 @@ void printLevel(int depth, char *template, ...);
 
 void printType(int depth, AST_Type type);
 
-void printDeclarationList (int depth, AST_DeclarationElement *declarationList);
-void printDeclaration (int depth, AST_Declaration *declaration);
-void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration);
-void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration);
+void printDeclarationList(int depth, AST_DeclarationElement *declarationList);
+void printDeclaration(int depth, AST_Declaration *declaration);
+void printDeclarationVariable(int depth, AST_Declaration *declaration);
+void printDeclarationFunction(int depth, AST_Declaration *declaration);
+void printDeclarationParameter(int depth, AST_Declaration *declaration);
 
 void printId(int depth, char *id);
-
-void printParameterList(int depth, AST_ParameterElement *parameterList);
-void printParameter(int depth, AST_Parameter *parameter);
 
 void printBlock(int depth, AST_Block *block);
 
@@ -106,10 +104,13 @@ void printDeclaration (int depth, AST_Declaration *declaration) {
   printLevel(depth, "[DECLARATION]");
   switch (declaration->declarationType) {
     case AST_DECLARATION_VARIABLE:
-      printDeclarationVariable(depth + 1, declaration->declaration.variable);
+      printDeclarationVariable(depth + 1, declaration);
       break;
     case AST_DECLARATION_FUNCTION:
-      printDeclarationFunction(depth + 1, declaration->declaration.function);
+      printDeclarationFunction(depth + 1, declaration);
+      break;
+    case AST_DECLARATION_PARAMETER:
+      printDeclarationParameter(depth + 1, declaration);
       break;
     default:
       printLevel(depth + 1, "[UNKNOWN]");
@@ -117,37 +118,29 @@ void printDeclaration (int depth, AST_Declaration *declaration) {
   }
 }
 
-void printDeclarationVariable(int depth, AST_DeclarationVariable *declaration) {
+void printDeclarationVariable(int depth, AST_Declaration *declaration) {
   printLevel(depth, "[VARIABLE]");
   printId(depth + 1, declaration->id);
   printType(depth + 1, declaration->type);
 }
 
-void printDeclarationFunction(int depth, AST_DeclarationFunction *declaration) {
+void printDeclarationFunction(int depth, AST_Declaration *declaration) {
   printLevel(depth, "[FUNCTION]");
   printId(depth + 1, declaration->id);
-  printParameterList(depth + 1, declaration->parameterList);
+  printDeclarationList(depth + 1, declaration->parameterList);
   printType(depth + 1, declaration->type);
   printBlock(depth + 1, declaration->block);
 }
 
+void printDeclarationParameter(int depth, AST_Declaration *declaration) {
+  printLevel(depth, "[PARAMETER]");
+  printId(depth + 1, declaration->id);
+  printType(depth + 1, declaration->type);
+}
+
+
 void printId(int depth, char *id) {
   printLevel(depth, "[ID (%s)]", id);
-}
-
-void printParameterList(int depth, AST_ParameterElement *parameterList) {
-  AST_ParameterElement *currentElement = parameterList;
-
-  while (currentElement != NULL) {
-    printParameter(depth, currentElement->parameter);
-    currentElement = currentElement->next;
-  }
-}
-
-void printParameter(int depth, AST_Parameter *parameter) {
-  printLevel(depth, "[PARAMETER]");
-  printId(depth + 1, parameter->id);
-  printType(depth + 1, parameter->type);
 }
 
 void printBlock(int depth, AST_Block *block) {

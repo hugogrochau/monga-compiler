@@ -7,8 +7,6 @@ typedef struct scopeElement ST_ScopeElement;
 
 typedef struct symbolElement ST_SymbolElement;
 
-typedef struct symbol ST_Symbol;
-
 struct scopeElement {
   ST_SymbolElement *symbols;
   ST_ScopeElement *next;
@@ -16,19 +14,15 @@ struct scopeElement {
 };
 
 struct symbolElement {
-  ST_Symbol *symbol;
+  AST_Declaration *symbol;
   ST_SymbolElement *next;
   ST_SymbolElement *prev;
 };
 
-struct symbol {
-  char *id;
-  AST_Declaration *declaration;
-};
 
 ST_ScopeElement * ST_initScopeStack();
 
-void ST_addSymbol(ST_ScopeElement *scopeStack, char *id, AST_Declaration *declaration);
+void ST_addSymbol(ST_ScopeElement *scopeStack, AST_Declaration *declaration);
 
 ST_ScopeElement * ST_enterScope(ST_ScopeElement *scopeStack);
 

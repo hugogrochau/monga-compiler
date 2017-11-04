@@ -3,19 +3,6 @@
 #include "ast_create.h"
 #include "util.h"
 
-AST_Type AST_createArrayType(AST_Type type) {
-  switch (type) {
-    case AST_INT:
-      return AST_ARRAY_INT;
-    case AST_FLOAT:
-      return AST_ARRAY_FLOAT;
-    case AST_CHAR:
-      return AST_ARRAY_CHAR;
-    default:
-      return type;
-  }
-}
-
 AST_Program * AST_createProgram(AST_DeclarationElement *declarationList) {
   AST_Program *program = safeMalloc(sizeof(AST_Program));
 
@@ -50,79 +37,49 @@ AST_DeclarationElement * AST_appendDeclaration(AST_DeclarationElement *declarati
   return declarationList;
 }
 
-AST_Declaration * AST_createDeclarationAsVariable(AST_DeclarationVariable *declarationVariable) {
-  AST_Declaration *declaration = safeMalloc(sizeof(AST_Declaration));
-
-  declaration->declarationType = AST_DECLARATION_VARIABLE;
-  declaration->declaration.variable = declarationVariable;
-
-  return declaration;
-}
-
-AST_Declaration * AST_createDeclarationAsFunction(AST_DeclarationFunction *declarationFunction) {
+AST_Declaration * AST_createDeclarationFunction(char * id, AST_DeclarationElement *parameterList, AST_Type type, AST_Block *block) {
   AST_Declaration *declaration = safeMalloc(sizeof(AST_Declaration));
 
   declaration->declarationType = AST_DECLARATION_FUNCTION;
-  declaration->declaration.function = declarationFunction;
+  declaration->id = id;
+  declaration->parameterList = parameterList;
+  declaration->type = type;
+  declaration->block = block;
 
   return declaration;
 }
 
-AST_DeclarationVariable * AST_createDeclarationVariable(char *id, AST_Type type) {
-  AST_DeclarationVariable *variableDeclaration = safeMalloc(sizeof(AST_DeclarationVariable));
+AST_Declaration * AST_createDeclarationParameter(char *id, AST_Type type) {
+  AST_Declaration *declaration = safeMalloc(sizeof(AST_Declaration));
 
-  variableDeclaration->declarationType = AST_DECLARATION_VARIABLE;
-  variableDeclaration->id = id;
-  variableDeclaration->type = type;
+  declaration->declarationType = AST_DECLARATION_PARAMETER;
+  declaration->id = id;
+  declaration->type = type;
 
-  return variableDeclaration;
+  return declaration;
 }
 
-AST_DeclarationFunction * AST_createDeclarationFunction(char * id, AST_ParameterElement *parameterList, AST_Type type, AST_Block *block) {
-  AST_DeclarationFunction *functionDeclaration = safeMalloc(sizeof(AST_DeclarationFunction));
+AST_Declaration * AST_createDeclarationVariable(char *id, AST_Type type) {
+  AST_Declaration *declaration = safeMalloc(sizeof(AST_Declaration));
 
-  functionDeclaration->declarationType = AST_DECLARATION_FUNCTION;
-  functionDeclaration->id = id;
-  functionDeclaration->parameterList = parameterList;
-  functionDeclaration->type = type;
-  functionDeclaration->block = block;
+  declaration->declarationType = AST_DECLARATION_VARIABLE;
+  declaration->id = id;
+  declaration->type = type;
 
-  return functionDeclaration;
+  return declaration;
 }
 
-AST_ParameterElement * AST_createParameterList(AST_Parameter *parameter) {
-  AST_ParameterElement *parameterList = safeMalloc(sizeof(AST_ParameterElement));
-
-  parameterList->parameter = parameter;
-  parameterList->next = NULL;
-
-  return parameterList;
-}
-
-AST_ParameterElement * AST_appendParameter(AST_ParameterElement *parameterList, AST_Parameter *parameter) {
-  AST_ParameterElement *parameterElement = safeMalloc(sizeof(AST_ParameterElement));
-  AST_ParameterElement *currentElement = parameterList;
-
-  /* Go to the end of the linked list */
-  while (currentElement->next != NULL) {
-    currentElement = currentElement->next;
+AST_Type AST_createArrayType(AST_Type type) {
+  switch (type) {
+    case AST_INT:
+      return AST_ARRAY_INT;
+    case AST_FLOAT:
+      return AST_ARRAY_FLOAT;
+    case AST_CHAR:
+      return AST_ARRAY_CHAR;
+    default:
+      return type;
   }
-
-  parameterElement->parameter = parameter;
-  parameterElement->next = NULL;
-
-  currentElement->next = parameterElement;
-
-  return parameterList;
-}
-
-AST_Parameter * AST_createParameter(char *id, AST_Type type) {
-  AST_Parameter *parameter = safeMalloc(sizeof(AST_Parameter));
-
-  parameter->id = id;
-  parameter->type = type;
-
-  return parameter;
 }
 
 AST_Block * AST_createBlock(AST_DeclarationElement *declarationVariableList, AST_CommandElement *commandList) {
@@ -132,20 +89,6 @@ AST_Block * AST_createBlock(AST_DeclarationElement *declarationVariableList, AST
   block->commandList = commandList;
 
   return block;
-}
-
-AST_DeclarationElement * AST_createDeclarationVariableList(AST_DeclarationVariable *declarationVariable) {
-  AST_Declaration *declaration = AST_createDeclarationAsVariable(declarationVariable);
-  AST_DeclarationElement *declarationList = AST_createDeclarationList(declaration);
-
-  return declarationList;
-}
-
-AST_DeclarationElement * AST_appendDeclarationVariable(AST_DeclarationElement* declarationVariableList, AST_DeclarationVariable *declarationVariable) {
-  AST_Declaration *declaration = AST_createDeclarationAsVariable(declarationVariable);
-  AST_DeclarationElement *declarationList = AST_appendDeclaration(declarationVariableList, declaration);
-
-  return declarationList;
 }
 
 AST_CommandElement * AST_createCommandList(AST_Command *command) {
