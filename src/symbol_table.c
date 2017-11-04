@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "util.h"
 #include "symbol_table.h"
 
 void printSymbols(ST_SymbolElement *symbols);
 void print(ST_ScopeElement *scopeStack);
 
 ST_ScopeElement * ST_initScopeStack() {
-  ST_ScopeElement *scopeStack = malloc(sizeof(ST_ScopeElement));
+  ST_ScopeElement *scopeStack = safeMalloc(sizeof(ST_ScopeElement));
 
   scopeStack->prev = NULL;
   scopeStack->next = NULL;
@@ -16,8 +18,8 @@ ST_ScopeElement * ST_initScopeStack() {
 }
 
 void ST_addSymbol(ST_ScopeElement *scopeStack, char *id, AST_Declaration *declaration) {
-  ST_Symbol *symbol = malloc(sizeof(ST_Symbol));
-  ST_SymbolElement *newSymbolElement = malloc(sizeof(ST_SymbolElement));
+  ST_Symbol *symbol = safeMalloc(sizeof(ST_Symbol));
+  ST_SymbolElement *newSymbolElement = safeMalloc(sizeof(ST_SymbolElement));
 
   ST_SymbolElement *oldSymbolsEnd = scopeStack->symbols;
 
@@ -41,7 +43,7 @@ void ST_addSymbol(ST_ScopeElement *scopeStack, char *id, AST_Declaration *declar
 
 ST_ScopeElement * ST_enterScope(ST_ScopeElement *scopeStack) {
   ST_ScopeElement *oldStackTop = scopeStack;
-  ST_ScopeElement *newStackTop = malloc(sizeof(ST_ScopeElement));
+  ST_ScopeElement *newStackTop = safeMalloc(sizeof(ST_ScopeElement));
 
   newStackTop->prev = oldStackTop;
   newStackTop->next = NULL;

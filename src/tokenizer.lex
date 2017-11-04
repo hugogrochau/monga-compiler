@@ -8,13 +8,15 @@ E			[Ee][+-]?{D}+
 
 %{
   #include <string.h>
+
+  #include "util.h"
   #include "ast_structure.h"
   #include "tokenizer.h"
 
   int lineNumber = 1;
 
   char *escapeString(char *inString) {
-    char *outString = malloc((strlen(inString) + 1) * sizeof(char));
+    char *outString = safeMalloc((strlen(inString) + 1) * sizeof(char));
     // skip first "
     int inIndex = 1;
     int outIndex = 0;
@@ -62,7 +64,7 @@ E			[Ee][+-]?{D}+
   }
 
   void saveId() {
-    char *idBuffer = malloc(strlen(yytext) * sizeof(char));
+    char *idBuffer = safeMalloc(strlen(yytext) * sizeof(char));
     yylval.s = strcpy(idBuffer, yytext);
   }
 
