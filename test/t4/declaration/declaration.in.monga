@@ -2,7 +2,7 @@ foo1: int;
 foo2: int;
 foo3: int[];
 
-main (a: int, b: float): void {
+main (a: int, b: int): void {
   foo1 = a + b;
   foo1 = foo1 + 1;
   foo2 = foo3[4];

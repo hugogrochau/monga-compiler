@@ -2,6 +2,7 @@
 
 #include "ast_type.h"
 #include "util.h"
+#include "ast_enum_strings.h"
 
 void typeDeclarations(AST_DeclarationElement *declarations);
 void typeBlock(AST_Block *block);
@@ -10,6 +11,7 @@ AST_Type typeCall(AST_Call *call);
 void typeExpression(AST_Expression *expression);
 AST_Type typeVariable(AST_Variable *variable, AST_Type type);
 AST_Type getConstantType(AST_ExpressionConstant *constant);
+AST_Type getArrayElementType(AST_Type type);
 
 void AST_type (AST_Program *program) {
   typeDeclarations(program->declarations);
@@ -86,7 +88,11 @@ AST_Type typeCall(AST_Call *call) {
   while (currentParameterExpression != NULL) {
     typeExpression(currentParameterExpression->expression);
     if (currentParameterExpression->expression->type != currentParameterDeclaration->declaration->type) {
-      error("Wrong type for parameter %d of function %s", call->declaration->id);
+      error("Wrong type (%s) for parameter (%d) of function (%s)",
+        AST_TypeNames[currentParameterExpression->expression->type],
+        parameterNumber,
+        call->declaration->id
+      );
     }
     currentParameterExpression = currentParameterExpression->next;
     currentParameterDeclaration = currentParameterDeclaration->next;
@@ -128,7 +134,10 @@ void typeExpression(AST_Expression *expression) {
     typeExpression(expression->expression.binary->rightExpression);
     // TODO: type casting
     if (expression->expression.binary->leftExpression->type != expression->expression.binary->rightExpression->type) {
-      error("Invalid binary expression types");
+      error("Invalid types for binary expression: (%s) and (%s)",
+        AST_TypeNames[expression->expression.binary->leftExpression->type],
+        AST_TypeNames[expression->expression.binary->rightExpression->type]
+      );
     }
     expression->type = expression->expression.binary->leftExpression->type;
     break;
@@ -140,16 +149,34 @@ AST_Type typeVariable(AST_Variable *variable, AST_Type type) {
     case AST_VARIABLE_ARRAY:
       typeExpression(variable->variable.array->innerExpression);
       typeExpression(variable->variable.array->outerExpression);
-      return variable->variable.array->outerExpression->type;
+      return getArrayElementType(variable->variable.array->outerExpression->type);
     break;
     case AST_VARIABLE_SIMPLE:
       if (type != -1 && variable->variable.simple->declaration->type != type) {
-        error("Variable %s cannot be set to this type", variable->variable.simple->id);
+        error("Variable (%s) of type (%s) cannot be set to type (%s)",
+          variable->variable.simple->id,
+          AST_TypeNames[type],
+          AST_TypeNames[variable->variable.simple->declaration->type]
+        );
       }
       return variable->variable.simple->declaration->type;
     break;
     default:
       error("Unknown variable type");
+      return -1;
+  }
+}
+
+AST_Type getArrayElementType(AST_Type type) {
+  switch (type) {
+    case AST_ARRAY_INT:
+      return AST_INT;
+    case AST_ARRAY_FLOAT:
+      return AST_FLOAT;
+    case AST_ARRAY_CHAR:
+      return AST_CHAR;
+    default:
+      error("Unknown array type");
       return -1;
   }
 }

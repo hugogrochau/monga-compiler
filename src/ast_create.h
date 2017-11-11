@@ -1,4 +1,4 @@
-#ifndef AST_CREATE_
+#ifndef AST_CREATE_H
 #define AST_CREATE_H
 
 #include "ast_structure.h"

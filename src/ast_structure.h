@@ -49,7 +49,7 @@ typedef struct expressionUnary AST_ExpressionUnary;
 typedef struct expressionBinary AST_ExpressionBinary;
 
 enum type {
-  AST_VOID,
+  AST_VOID = 0,
   AST_INT,
   AST_FLOAT,
   AST_CHAR,
