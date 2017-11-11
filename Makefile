@@ -3,7 +3,7 @@ OPTIONS = -I build -I src -Wall
 T1_DEPENDENCIES = src/util.c src/ast_create.c build/tokenizer.yy.c build/parser.c src/main_t1.c
 T2_DEPENDENCIES = src/util.c src/ast_create.c build/tokenizer.yy.c build/parser.c src/main_t2.c
 T3_DEPENDENCIES = src/util.c src/ast_create.c src/ast_print.c build/tokenizer.yy.c build/parser.c src/main_t3.c
-T4_DEPENDENCIES = src/util.c src/ast_create.c src/symbol_table.c src/ast_knit.c src/ast_print.c build/tokenizer.yy.c build/parser.c src/main_t4.c
+T4_DEPENDENCIES = src/util.c src/ast_create.c src/symbol_table.c src/ast_knit.c src/ast_type.c src/ast_print.c build/tokenizer.yy.c build/parser.c src/main_t4.c
 
 default: test
 

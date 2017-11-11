@@ -247,6 +247,7 @@ union expressionUnion {
 struct expression {
   AST_ExpressionType expressionType;
   AST_ExpressionUnion expression;
+  AST_Type type;
 };
 
 struct expressionVariable {
