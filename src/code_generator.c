@@ -8,7 +8,10 @@ char * getType(AST_Type type);
 char * getInitialValueForType(AST_Type type);
 void generateFunction(AST_Declaration *declaration);
 void generateParameters(AST_DeclarationElement *parameters);
-void generateBlock(AST_Block *block);
+
+void generateBlock(int depth, AST_Block *block);
+void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
+void generateCommands(int depth, AST_CommandElement *commands);
 
 int currentId = 0;
 
@@ -107,7 +110,7 @@ void generateFunction(AST_Declaration *declaration) {
   printWithDepth(0, ") {");
   putchar('\n');
 
-  generateBlock(declaration->block);
+  generateBlock(1, declaration->block);
 
   printWithDepth(0, "}");
   putchar('\n');
@@ -132,7 +135,26 @@ void generateParameters(AST_DeclarationElement *parameters) {
   }
 }
 
-void generateBlock(AST_Block *block) {
+void generateBlock(int depth, AST_Block *block) {
+  generateVariableDeclarations(depth, block->declarationVariableList);
+  generateCommands(depth, block->commandList);
+}
+
+
+void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations) {
+  AST_DeclarationElement *currentVariableDeclaration = variableDeclarations;
+
+  while (currentVariableDeclaration != NULL) {
+    printLineWithDepth(depth, "%%%s = alloca %s",
+      currentVariableDeclaration->declaration->id,
+      getType(currentVariableDeclaration->declaration->type)
+    );
+
+    currentVariableDeclaration = currentVariableDeclaration->next;
+  }
+}
+
+void generateCommands(int depth, AST_CommandElement *commands) {
 
 }
 
