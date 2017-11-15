@@ -22,3 +22,17 @@ void * safeMalloc(size_t size) {
   error("Not enough memory");
   return NULL;
 }
+
+void printWithDepth(int depth, char *template, ...) {
+  va_list argumentList;
+  va_start(argumentList, template);
+
+  for (int i = 0; i < depth; i++) {
+    printf("  ");
+  }
+
+  vprintf(template, argumentList);
+  va_end(argumentList);
+
+  putchar('\n');
+}
