@@ -33,6 +33,19 @@ void printWithDepth(int depth, char *template, ...) {
 
   vprintf(template, argumentList);
   va_end(argumentList);
+}
 
+// Who needs to stay DRY... right?
+void printLineWithDepth(int depth, char *template, ...) {
+  va_list argumentList;
+  va_start(argumentList, template);
+
+  for (int i = 0; i < depth; i++) {
+    printf("  ");
+  }
+
+  vprintf(template, argumentList);
   putchar('\n');
+
+  va_end(argumentList);
 }

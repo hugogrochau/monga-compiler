@@ -45,7 +45,7 @@ void printExpressionBinary(int depth, AST_ExpressionBinary *expression);
 
 void AST_printProgram (AST_Program *program) {
   int depth = 0;
-  printWithDepth(depth, "[PROGRAM]");
+  printLineWithDepth(depth, "[PROGRAM]");
 
   printDeclarationList(depth + 1, program->declarations);
 }
@@ -53,25 +53,25 @@ void AST_printProgram (AST_Program *program) {
 void printType(int depth, AST_Type type) {
   switch (type) {
     case AST_VOID:
-      printWithDepth(depth, "[TYPE (VOID)]");
+      printLineWithDepth(depth, "[TYPE (VOID)]");
       break;
     case AST_INT:
-      printWithDepth(depth, "[TYPE (INT)]");
+      printLineWithDepth(depth, "[TYPE (INT)]");
       break;
     case AST_FLOAT:
-      printWithDepth(depth, "[TYPE (FLOAT)]");
+      printLineWithDepth(depth, "[TYPE (FLOAT)]");
       break;
     case AST_CHAR:
-      printWithDepth(depth, "[TYPE (CHAR)]");
+      printLineWithDepth(depth, "[TYPE (CHAR)]");
       break;
     case AST_ARRAY_INT:
-      printWithDepth(depth, "[TYPE (ARRAY_INT)]");
+      printLineWithDepth(depth, "[TYPE (ARRAY_INT)]");
       break;
     case AST_ARRAY_FLOAT:
-      printWithDepth(depth, "[TYPE (ARRAY_FLOAT])");
+      printLineWithDepth(depth, "[TYPE (ARRAY_FLOAT])");
       break;
     case AST_ARRAY_CHAR:
-      printWithDepth(depth, "[TYPE (ARRAY_CHAR)]");
+      printLineWithDepth(depth, "[TYPE (ARRAY_CHAR)]");
       break;
   }
 }
@@ -86,7 +86,7 @@ void printDeclarationList (int depth, AST_DeclarationElement *declarationList) {
 }
 
 void printDeclaration (int depth, AST_Declaration *declaration) {
-  printWithDepth(depth, "[DECLARATION]");
+  printLineWithDepth(depth, "[DECLARATION]");
   switch (declaration->declarationType) {
     case AST_DECLARATION_VARIABLE:
       printDeclarationVariable(depth + 1, declaration);
@@ -98,19 +98,19 @@ void printDeclaration (int depth, AST_Declaration *declaration) {
       printDeclarationParameter(depth + 1, declaration);
       break;
     default:
-      printWithDepth(depth + 1, "[UNKNOWN]");
+      printLineWithDepth(depth + 1, "[UNKNOWN]");
       break;
   }
 }
 
 void printDeclarationVariable(int depth, AST_Declaration *declaration) {
-  printWithDepth(depth, "[VARIABLE]");
+  printLineWithDepth(depth, "[VARIABLE]");
   printId(depth + 1, declaration->id);
   printType(depth + 1, declaration->type);
 }
 
 void printDeclarationFunction(int depth, AST_Declaration *declaration) {
-  printWithDepth(depth, "[FUNCTION]");
+  printLineWithDepth(depth, "[FUNCTION]");
   printId(depth + 1, declaration->id);
   printDeclarationList(depth + 1, declaration->parameterList);
   printType(depth + 1, declaration->type);
@@ -118,18 +118,18 @@ void printDeclarationFunction(int depth, AST_Declaration *declaration) {
 }
 
 void printDeclarationParameter(int depth, AST_Declaration *declaration) {
-  printWithDepth(depth, "[PARAMETER]");
+  printLineWithDepth(depth, "[PARAMETER]");
   printId(depth + 1, declaration->id);
   printType(depth + 1, declaration->type);
 }
 
 
 void printId(int depth, char *id) {
-  printWithDepth(depth, "[ID (%s)]", id);
+  printLineWithDepth(depth, "[ID (%s)]", id);
 }
 
 void printBlock(int depth, AST_Block *block) {
-  printWithDepth(depth, "[BLOCK]");
+  printLineWithDepth(depth, "[BLOCK]");
   printDeclarationList(depth + 1, block->declarationVariableList);
   printCommandList(depth + 1, block->commandList);
 }
@@ -144,7 +144,7 @@ void printCommandList(int depth, AST_CommandElement *commandList) {
 }
 
 void printCommand(int depth, AST_Command *command) {
-  printWithDepth(depth, "[COMMAND]");
+  printLineWithDepth(depth, "[COMMAND]");
   switch(command->commandType) {
     case AST_COMMAND_IF:
       printCommandIf(depth + 1, command->command.commandIf);
@@ -168,13 +168,13 @@ void printCommand(int depth, AST_Command *command) {
       printCommandBlock(depth + 1, command->command.commandBlock);
       break;
     default:
-      printWithDepth(depth + 1, "[UNKNOWN]");
+      printLineWithDepth(depth + 1, "[UNKNOWN]");
       break;
   }
 }
 
 void printCommandIf(int depth, AST_CommandIf *command) {
-  printWithDepth(depth, "[IF]");
+  printLineWithDepth(depth, "[IF]");
   printExpression(depth + 1, command->expression);
   printBlock(depth + 1, command->thenBlock);
   if (command->elseBlock != NULL) {
@@ -183,19 +183,19 @@ void printCommandIf(int depth, AST_CommandIf *command) {
 }
 
 void printCommandWhile(int depth, AST_CommandWhile *command) {
-  printWithDepth(depth, "[WHILE]");
+  printLineWithDepth(depth, "[WHILE]");
   printExpression(depth + 1, command->expression);
   printBlock(depth + 1, command->block);
 }
 
 void printCommandAssign(int depth, AST_CommandAssign *command) {
-  printWithDepth(depth, "[ASSIGN]");
+  printLineWithDepth(depth, "[ASSIGN]");
   printVariable(depth + 1, command->variable);
   printExpression(depth + 1, command->expression);
 }
 
 void printCommandReturn(int depth, AST_CommandReturn *command) {
-  printWithDepth(depth, "[RETURN]");
+  printLineWithDepth(depth, "[RETURN]");
   if (command->expression != NULL) {
     printExpression(depth + 1, command->expression);
   }
@@ -205,7 +205,7 @@ void printCommandCall(int depth, AST_CommandCall *command) {
 }
 
 void printCommandPrint(int depth, AST_CommandPrint *command) {
-  printWithDepth(depth, "[PRINT]");
+  printLineWithDepth(depth, "[PRINT]");
   printExpression(depth + 1, command->expression);
 }
 
@@ -214,7 +214,7 @@ void printCommandBlock(int depth, AST_CommandBlock *command) {
 }
 
 void printVariable(int depth, AST_Variable *variable) {
-  printWithDepth(depth, "[VARIABLE]");
+  printLineWithDepth(depth, "[VARIABLE]");
   switch (variable->variableType) {
     case AST_VARIABLE_SIMPLE:
       printId(depth + 1, variable->variable.simple->id);
@@ -230,7 +230,7 @@ void printVariable(int depth, AST_Variable *variable) {
 }
 
 void printCall(int depth, AST_Call *call) {
-  printWithDepth(depth, "[CALL]");
+  printLineWithDepth(depth, "[CALL]");
   printId(depth + 1, call->id);
   if (call->declaration != NULL) {
     printDeclaration(depth + 1, call->declaration);
@@ -248,7 +248,7 @@ void printExpressionList(int depth, AST_ExpressionElement *expressionList) {
 }
 
 void printExpression(int depth, AST_Expression *expression) {
-  printWithDepth(depth, "[EXPRESSION]");
+  printLineWithDepth(depth, "[EXPRESSION]");
   switch (expression->expressionType) {
     case AST_EXPRESSION_VARIABLE:
       printExpressionVariable(depth + 1, expression->expression.variable);
@@ -282,7 +282,7 @@ void printExpressionVariable(int depth, AST_ExpressionVariable *expression) {
 }
 
 void printExpressionParentheses(int depth, AST_ExpressionParentheses *expression) {
-  printWithDepth(depth, "[PARENTHESES]");
+  printLineWithDepth(depth, "[PARENTHESES]");
   printExpression(depth + 1, expression->expression);
 }
 
@@ -291,83 +291,83 @@ void printExpressionCall(int depth, AST_ExpressionCall *expression) {
 }
 
 void printExpressionNew(int depth, AST_ExpressionNew *expression) {
-  printWithDepth(depth, "[NEW]");
+  printLineWithDepth(depth, "[NEW]");
   printType(depth + 1, expression->type);
   printExpression(depth + 1, expression->expression);
 }
 
 void printExpressionAs(int depth, AST_ExpressionAs *expression) {
-  printWithDepth(depth, "[AS]");
+  printLineWithDepth(depth, "[AS]");
   printExpression(depth + 1, expression->expression);
   printType(depth + 1, expression->type);
 }
 
 void printExpressionConstant(int depth, AST_ExpressionConstant *expression) {
-  printWithDepth(depth, "[CONSTANT]");
+  printLineWithDepth(depth, "[CONSTANT]");
   switch (expression->constantType) {
     case AST_EXPRESSION_CONSTANT_INT:
-      printWithDepth(depth + 1, "[INT (%d)]", expression->constant.i);
+      printLineWithDepth(depth + 1, "[INT (%d)]", expression->constant.i);
       break;
     case AST_EXPRESSION_CONSTANT_FLOAT:
-      printWithDepth(depth + 1, "[FLOAT (%.2f)]", expression->constant.f);
+      printLineWithDepth(depth + 1, "[FLOAT (%.2f)]", expression->constant.f);
       break;
     case AST_EXPRESSION_CONSTANT_STRING:
-      printWithDepth(depth + 1, "[STRING (%s)]", expression->constant.s);
+      printLineWithDepth(depth + 1, "[STRING (%s)]", expression->constant.s);
       break;
   }
 }
 
 void printExpressionUnary(int depth, AST_ExpressionUnary *expression) {
-  printWithDepth(depth, "[UNARY]");
+  printLineWithDepth(depth, "[UNARY]");
   switch (expression->unaryType) {
     case AST_EXPRESSION_UNARY_MINUS:
-      printWithDepth(depth + 1, "[MINUS]");
+      printLineWithDepth(depth + 1, "[MINUS]");
       break;
     case AST_EXPRESSION_UNARY_NOT:
-      printWithDepth(depth + 1, "[NOT]");
+      printLineWithDepth(depth + 1, "[NOT]");
       break;
   }
   printExpression(depth + 1, expression->expression);
 }
 
 void printExpressionBinary(int depth, AST_ExpressionBinary *expression) {
-  printWithDepth(depth, "[BINARY]");
+  printLineWithDepth(depth, "[BINARY]");
   switch (expression->binaryType) {
     case AST_EXPRESSION_BINARY_MULTIPLICATION:
-      printWithDepth(depth + 1, "[MULTIPLICATION]");
+      printLineWithDepth(depth + 1, "[MULTIPLICATION]");
       break;
     case AST_EXPRESSION_BINARY_DIVISION:
-    printWithDepth(depth + 1, "[DIVISION]");
+    printLineWithDepth(depth + 1, "[DIVISION]");
       break;
     case AST_EXPRESSION_BINARY_PLUS:
-    printWithDepth(depth + 1, "[PLUS]");
+    printLineWithDepth(depth + 1, "[PLUS]");
       break;
     case AST_EXPRESSION_BINARY_MINUS:
-    printWithDepth(depth + 1, "[MINUS]");
+    printLineWithDepth(depth + 1, "[MINUS]");
       break;
     case AST_EXPRESSION_BINARY_LESS:
-    printWithDepth(depth + 1, "[LESS]");
+    printLineWithDepth(depth + 1, "[LESS]");
       break;
     case AST_EXPRESSION_BINARY_GREATER:
-    printWithDepth(depth + 1, "[GREATER]");
+    printLineWithDepth(depth + 1, "[GREATER]");
       break;
     case AST_EXPRESSION_BINARY_LESS_EQUAL:
-    printWithDepth(depth + 1, "[LESS_EQUAL]");
+    printLineWithDepth(depth + 1, "[LESS_EQUAL]");
       break;
     case AST_EXPRESSION_BINARY_GREATER_EQUAL:
-    printWithDepth(depth + 1, "[GREATER_EQUAL]");
+    printLineWithDepth(depth + 1, "[GREATER_EQUAL]");
       break;
     case AST_EXPRESSION_BINARY_EQUAL:
-    printWithDepth(depth + 1, "[EQUAL]");
+    printLineWithDepth(depth + 1, "[EQUAL]");
       break;
     case AST_EXPRESSION_BINARY_NOT_EQUAL:
-      printWithDepth(depth + 1, "[NOT_EQUAL]");
+      printLineWithDepth(depth + 1, "[NOT_EQUAL]");
       break;
     case AST_EXPRESSION_BINARY_LOGIC_AND:
-      printWithDepth(depth + 1, "[LOGIC_AND]");
+      printLineWithDepth(depth + 1, "[LOGIC_AND]");
       break;
     case AST_EXPRESSION_BINARY_LOGIC_OR:
-      printWithDepth(depth + 1, "[LOGIC_OR]");
+      printLineWithDepth(depth + 1, "[LOGIC_OR]");
       break;
   }
   printExpression(depth + 1, expression->leftExpression);

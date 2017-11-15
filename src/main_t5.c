@@ -16,7 +16,7 @@ int main(void) {
 
   AST_type(program);
 
-  CG_generateProgram(program);
+  CG_generateCode(program);
 
   return returnValue;
 }

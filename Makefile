@@ -4,6 +4,7 @@ T1_DEPENDENCIES = src/util.c src/ast_create.c build/tokenizer.yy.c build/parser.
 T2_DEPENDENCIES = src/util.c src/ast_create.c build/tokenizer.yy.c build/parser.c src/main_t2.c
 T3_DEPENDENCIES = src/util.c src/ast_create.c src/ast_print.c build/tokenizer.yy.c build/parser.c src/main_t3.c
 T4_DEPENDENCIES = src/util.c src/ast_create.c src/symbol_table.c src/ast_knit.c src/ast_type.c src/ast_print.c build/tokenizer.yy.c build/parser.c src/main_t4.c
+T5_DEPENDENCIES = src/util.c src/ast_create.c src/symbol_table.c src/ast_knit.c src/ast_type.c src/code_generator.c build/tokenizer.yy.c build/parser.c src/main_t5.c
 
 default: test
 
@@ -25,7 +26,10 @@ build/t3: $(T3_DEPENDENCIES)
 build/t4: $(T4_DEPENDENCIES)
 	gcc $(OPTIONS) -o build/t4 $(T4_DEPENDENCIES)
 
-test: build/t1 build/t2 build/t3 build/t4
+build/t5: $(T5_DEPENDENCIES)
+	gcc $(OPTIONS) -o build/t5 $(T5_DEPENDENCIES)
+
+test: build/t1 build/t2 build/t3 build/t4 build/t5
 	scripts/test.py
 
 clean:

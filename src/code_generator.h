@@ -3,6 +3,6 @@
 
 #include "ast_structure.h"
 
-void CG_GenerateCode(AST_Program *program);
+void CG_generateCode(AST_Program *program);
 
 #endif

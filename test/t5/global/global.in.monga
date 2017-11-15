@@ -1,0 +1,12 @@
+foo1: int;
+foo2: char;
+foo3: float;
+foo4: int[];
+foo5: char[];
+foo6: float[];
+
+main (a: int, b: float): void {
+}
+
+main2 (a: char, b: char[]): char {
+}
