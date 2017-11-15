@@ -3,11 +3,13 @@
 #include "code_generator.h"
 #include "util.h"
 
+void generateGlobalDeclaration(AST_Declaration *declaration);
 void generateGlobalVariable(AST_Declaration *declaration);
 char * getType(AST_Type type);
 char * getInitialValueForType(AST_Type type);
 void generateFunction(AST_Declaration *declaration);
 void generateParameters(AST_DeclarationElement *parameters);
+void generateParameter(AST_Declaration *parameter);
 
 void generateBlock(int depth, AST_Block *block);
 void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
@@ -19,28 +21,32 @@ void CG_generateCode(AST_Program *program) {
   AST_DeclarationElement *currentDeclaration = program->declarations;
 
   while (currentDeclaration != NULL) {
-    switch (currentDeclaration->declaration->declarationType) {
-      case AST_DECLARATION_VARIABLE:
-        generateGlobalVariable(currentDeclaration->declaration);
-        break;
-      case AST_DECLARATION_FUNCTION:
-        generateFunction(currentDeclaration->declaration);
-        break;
-      default:
-        error("Unknown global declaration type");
-    }
+    generateGlobalDeclaration(currentDeclaration->declaration);
+    putchar('\n');
 
     currentDeclaration = currentDeclaration->next;
   }
 }
 
+void generateGlobalDeclaration(AST_Declaration *declaration) {
+    switch (declaration->declarationType) {
+      case AST_DECLARATION_VARIABLE:
+        generateGlobalVariable(declaration);
+        break;
+      case AST_DECLARATION_FUNCTION:
+        generateFunction(declaration);
+        break;
+      default:
+        error("Unknown global declaration type");
+    }
+}
+
 void generateGlobalVariable(AST_Declaration *declaration) {
-  printLineWithDepth(0, "@%s = global %s %s",
+  printLineWithDepth(0, "@%s = common global %s %s",
     declaration->id,
     getType(declaration->type),
     getInitialValueForType(declaration->type)
   );
-  putchar('\n');
 }
 
 char * getType(AST_Type type) {
@@ -121,10 +127,7 @@ void generateParameters(AST_DeclarationElement *parameters) {
   int parameterIndex = 0;
 
   while (currentParameter != NULL) {
-    printWithDepth(0, "%s %%%s",
-      getType(currentParameter->declaration->type),
-      currentParameter->declaration->id
-    );
+    generateParameter(currentParameter->declaration);
 
     if (currentParameter->next != NULL) {
       printWithDepth(0, ", ");
@@ -133,6 +136,13 @@ void generateParameters(AST_DeclarationElement *parameters) {
     ++parameterIndex;
     currentParameter = currentParameter->next;
   }
+}
+
+void generateParameter(AST_Declaration *parameter) {
+  printWithDepth(0, "%s %%%s",
+    getType(parameter->type),
+    parameter->id
+  );
 }
 
 void generateBlock(int depth, AST_Block *block) {
