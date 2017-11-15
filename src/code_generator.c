@@ -15,9 +15,17 @@ void generateBlock(int depth, AST_Block *block);
 void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
 void generateCommands(int depth, AST_CommandElement *commands);
 
+int getNextId();
+int getNextLabel();
+int generateId(int id);
+int generateLabel(int label);
+
 int currentId = 0;
+int currentLabel = 0;
 
 void CG_generateCode(AST_Program *program) {
+  printLineWithDepth(0, "declare i32 @printf(i8*, ....)");
+
   AST_DeclarationElement *currentDeclaration = program->declarations;
 
   while (currentDeclaration != NULL) {
@@ -147,6 +155,7 @@ void generateParameter(AST_Declaration *parameter) {
 
 void generateBlock(int depth, AST_Block *block) {
   generateVariableDeclarations(depth, block->declarationVariableList);
+
   generateCommands(depth, block->commandList);
 }
 
@@ -165,10 +174,75 @@ void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDec
 }
 
 void generateCommands(int depth, AST_CommandElement *commands) {
+  AST_CommandElement *currentCommand = commands;
+
+  while (currentCommand != NULL) {
+    generateCommand(depth, currentCommand->command);
+
+    currentCommand = currentCommand->next;
+  }
 
 }
 
-int generateId() {
+void generateCommand(int depth, AST_Command *command) {
+  switch (command->commandType) {
+    case AST_COMMAND_IF:
+      break;
+    case AST_COMMAND_WHILE:
+      break;
+    case AST_COMMAND_ASSIGN:
+      break;
+    case AST_COMMAND_RETURN:
+      break;
+    case AST_COMMAND_CALL:
+      break;
+    case AST_COMMAND_PRINT:
+      generatePrint(depth, command->command.commandPrint);
+      break;
+    case AST_COMMAND_BLOCK:
+      generateBlock(depth, command->command.commandBlock->block);
+      break;
+    default:
+      error("Unknown command type");
+  }
+}
+
+void generatePrint(int depth, AST_CommandPrint *print) {
+  int id = generateExpression(print->expression);
+  switch (print->expression->type) {
+    case AST_INT:
+      return "i32";
+      break;
+    case AST_FLOAT:
+      return "float";
+      break;
+    case AST_CHAR:
+      return "i8";
+      break;
+    case AST_ARRAY_INT:
+    case AST_ARRAY_FLOAT:
+    case AST_ARRAY_CHAR:
+      return "i8*";
+      break;
+    case AST_VOID:
+      return "null";
+  }
+}
+
+int getNextId() {
   ++currentId;
   return currentId;
+}
+
+int getNextLabel() {
+  ++currentLabel;
+  return currentLabel;
+}
+
+int generateId(int id) {
+  printWithDepth(0, "%%t%d", id);
+}
+
+int generateLabel(int label) {
+  printWithDepth(0, "%%l%d", label);
 }
