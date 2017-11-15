@@ -6,7 +6,6 @@
 #include "symbol_table.h"
 
 void printSymbols(ST_SymbolElement *symbols);
-void print(ST_ScopeElement *scopeStack);
 
 ST_ScopeElement * ST_initScopeStack() {
   ST_ScopeElement *scopeStack = safeMalloc(sizeof(ST_ScopeElement));

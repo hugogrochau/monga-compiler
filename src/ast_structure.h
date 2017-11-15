@@ -132,6 +132,8 @@ struct declaration {
   AST_Type type;
   AST_DeclarationElement *parameterList;
   AST_Block *block;
+  // for generating code
+  char *tmp;
 };
 
 struct block {

@@ -12,13 +12,20 @@ void generateParameters(AST_DeclarationElement *parameters);
 void generateParameter(AST_Declaration *parameter);
 
 void generateBlock(int depth, AST_Block *block);
+
 void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
+
 void generateCommands(int depth, AST_CommandElement *commands);
+void generateCommand(int depth, AST_Command *command);
+void generateCommandPrint(int depth, AST_CommandPrint *print);
+
+int generateExpression(int depth, AST_Expression *expression);
+
 
 int getNextId();
 int getNextLabel();
-int generateId(int id);
-int generateLabel(int label);
+void generateId(int id);
+void  generateLabel(int label);
 
 int currentId = 0;
 int currentLabel = 0;
@@ -114,19 +121,19 @@ char * getInitialValueForType(AST_Type type) {
 
 void generateFunction(AST_Declaration *declaration) {
 
-  printWithDepth(0, "define %s @%s (",
+  print("define %s @%s (",
     getType(declaration->type),
     declaration->id
   );
 
   generateParameters(declaration->parameterList);
 
-  printWithDepth(0, ") {");
+  print(") {");
   putchar('\n');
 
   generateBlock(1, declaration->block);
 
-  printWithDepth(0, "}");
+  print("}");
   putchar('\n');
 }
 
@@ -138,7 +145,7 @@ void generateParameters(AST_DeclarationElement *parameters) {
     generateParameter(currentParameter->declaration);
 
     if (currentParameter->next != NULL) {
-      printWithDepth(0, ", ");
+      print(", ");
     }
 
     ++parameterIndex;
@@ -147,10 +154,9 @@ void generateParameters(AST_DeclarationElement *parameters) {
 }
 
 void generateParameter(AST_Declaration *parameter) {
-  printWithDepth(0, "%s %%%s",
-    getType(parameter->type),
-    parameter->id
-  );
+  print(getType(parameter->type));
+  print(" ");
+  generateId(getNextId());
 }
 
 void generateBlock(int depth, AST_Block *block) {
@@ -181,7 +187,6 @@ void generateCommands(int depth, AST_CommandElement *commands) {
 
     currentCommand = currentCommand->next;
   }
-
 }
 
 void generateCommand(int depth, AST_Command *command) {
@@ -197,7 +202,7 @@ void generateCommand(int depth, AST_Command *command) {
     case AST_COMMAND_CALL:
       break;
     case AST_COMMAND_PRINT:
-      generatePrint(depth, command->command.commandPrint);
+      generateCommandPrint(depth, command->command.commandPrint);
       break;
     case AST_COMMAND_BLOCK:
       generateBlock(depth, command->command.commandBlock->block);
@@ -207,26 +212,26 @@ void generateCommand(int depth, AST_Command *command) {
   }
 }
 
-void generatePrint(int depth, AST_CommandPrint *print) {
-  int id = generateExpression(print->expression);
+void generateCommandPrint(int depth, AST_CommandPrint *print) {
+  int id = generateExpression(depth, print->expression);
   switch (print->expression->type) {
     case AST_INT:
-      return "i32";
       break;
     case AST_FLOAT:
-      return "float";
       break;
     case AST_CHAR:
-      return "i8";
       break;
     case AST_ARRAY_INT:
     case AST_ARRAY_FLOAT:
     case AST_ARRAY_CHAR:
-      return "i8*";
       break;
     case AST_VOID:
-      return "null";
+      break;
   }
+}
+
+int generateExpression(int depth, AST_Expression *expression) {
+  return getNextId();
 }
 
 int getNextId() {
@@ -239,10 +244,10 @@ int getNextLabel() {
   return currentLabel;
 }
 
-int generateId(int id) {
-  printWithDepth(0, "%%t%d", id);
+void generateId(int id) {
+  print("%%t%d", id);
 }
 
-int generateLabel(int label) {
-  printWithDepth(0, "%%l%d", label);
+void generateLabel(int label) {
+  print("%%l%d", label);
 }

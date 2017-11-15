@@ -23,6 +23,16 @@ void * safeMalloc(size_t size) {
   return NULL;
 }
 
+// TODO: change vprintf to vfprintf or something
+void print(char *template, ...) {
+  va_list argumentList;
+  va_start(argumentList, template);
+
+  vprintf(template, argumentList);
+
+  va_end(argumentList);
+}
+
 void printWithDepth(int depth, char *template, ...) {
   va_list argumentList;
   va_start(argumentList, template);
@@ -32,6 +42,7 @@ void printWithDepth(int depth, char *template, ...) {
   }
 
   vprintf(template, argumentList);
+
   va_end(argumentList);
 }
 
