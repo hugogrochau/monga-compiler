@@ -81,7 +81,6 @@ enum commandType {
 
 enum expressionType {
   AST_EXPRESSION_VARIABLE,
-  AST_EXPRESSION_PARENTHESES,
   AST_EXPRESSION_CALL,
   AST_EXPRESSION_NEW,
   AST_EXPRESSION_AS,
@@ -133,7 +132,7 @@ struct declaration {
   AST_DeclarationElement *parameterList;
   AST_Block *block;
   // for generating code
-  int *tmp;
+  int tmp;
 };
 
 struct block {

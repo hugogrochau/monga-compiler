@@ -310,19 +310,6 @@ AST_Expression * AST_createExpressionVariable(AST_Variable *variable) {
   return expression;
 }
 
-AST_Expression * AST_createExpressionParentheses(AST_Expression *expression) {
-  AST_Expression *newExpression = safeMalloc(sizeof(AST_Expression));
-  AST_ExpressionParentheses *expressionParentheses = safeMalloc(sizeof(AST_ExpressionParentheses));
-
-  expressionParentheses->expressionType = AST_EXPRESSION_PARENTHESES;
-  expressionParentheses->expression = expression;
-
-  newExpression->expressionType = AST_EXPRESSION_PARENTHESES;
-  newExpression->expression.parentheses = expressionParentheses;
-
-  return newExpression;
-}
-
 AST_Expression * AST_createExpressionCall(AST_Call *call) {
   AST_Expression *expression = safeMalloc(sizeof(AST_Expression));
   AST_ExpressionCall *expressionCall = safeMalloc(sizeof(AST_ExpressionCall));

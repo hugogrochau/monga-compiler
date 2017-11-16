@@ -35,7 +35,6 @@ void printCall(int depth, AST_Call * call);
 void printExpressionList(int depth, AST_ExpressionElement *expressionList);
 void printExpression(int depth, AST_Expression *expression);
 void printExpressionVariable(int depth, AST_ExpressionVariable *expression);
-void printExpressionParentheses(int depth, AST_ExpressionParentheses *expression);
 void printExpressionCall(int depth, AST_ExpressionCall *expression);
 void printExpressionNew(int depth, AST_ExpressionNew *expression);
 void printExpressionAs(int depth, AST_ExpressionAs *expression);
@@ -253,9 +252,6 @@ void printExpression(int depth, AST_Expression *expression) {
     case AST_EXPRESSION_VARIABLE:
       printExpressionVariable(depth + 1, expression->expression.variable);
       break;
-    case AST_EXPRESSION_PARENTHESES:
-      printExpressionParentheses(depth + 1, expression->expression.parentheses);
-      break;
     case AST_EXPRESSION_CALL:
       printExpressionCall(depth + 1, expression->expression.call);
       break;
@@ -279,11 +275,6 @@ void printExpression(int depth, AST_Expression *expression) {
 
 void printExpressionVariable(int depth, AST_ExpressionVariable *expression) {
   printVariable(depth, expression->variable);
-}
-
-void printExpressionParentheses(int depth, AST_ExpressionParentheses *expression) {
-  printLineWithDepth(depth, "[PARENTHESES]");
-  printExpression(depth + 1, expression->expression);
 }
 
 void printExpressionCall(int depth, AST_ExpressionCall *expression) {

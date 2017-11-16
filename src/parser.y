@@ -229,7 +229,7 @@ expression_primary:
         $$ = AST_createExpressionStringConstant($1);
     } |
     '(' expression ')' {
-        $$ = AST_createExpressionParentheses($2);
+        $$ = $2;
     } |
     call {
         $$ = AST_createExpressionCall($1);

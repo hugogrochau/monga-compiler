@@ -62,7 +62,7 @@ void generateGlobalDeclaration(AST_Declaration *declaration) {
       generateFunction(declaration);
       break;
     default:
-      error("Unknown global declaration type");
+      error("Cannot generate a global declaration for an unknown declaration type");
   }
   putchar('\n');
 }
@@ -99,7 +99,7 @@ char * getType(AST_Type type) {
       return "null";
       break;
     default:
-      error("Cannot generate code for this type");
+      error("Cannot generate a llvm type for an unknown type");
       return NULL;
   }
 }
@@ -125,7 +125,7 @@ char * getInitialValueForType(AST_Type type) {
       return "null";
       break;
     default:
-      error("Cannot generate code for this type");
+      error("Cannot generate an initial value for an unknown type");
       return NULL;
   }
 }
@@ -226,7 +226,7 @@ void generateCommand(int depth, AST_Command *command) {
       generateBlock(depth, command->command.commandBlock->block);
       break;
     default:
-      error("Unknown command type");
+      error("Cannot generate a command for an unknown command type");
   }
   putchar('\n');
 }
@@ -256,10 +256,10 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
       print("@stringTemplate, i8*");
       break;
     case AST_VOID:
-      error("Cannot print a void variable");
+      error("Cannot generate a print command for a void variable");
       break;
     default:
-      error("Cannot print an unknown variable");
+      error("Cannot generate a print command for an unknown variable");
       break;
   }
   print(" ");
@@ -268,7 +268,30 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 }
 
 int generateExpression(int depth, AST_Expression *expression) {
-  return getNextId();
+  int id;
+
+  id = getNextId();
+
+  switch (expression->expressionType) {
+    case AST_EXPRESSION_VARIABLE:
+    break;
+    case AST_EXPRESSION_CALL:
+    break;
+    case AST_EXPRESSION_NEW:
+    break;
+    case AST_EXPRESSION_AS:
+    break;
+    case AST_EXPRESSION_CONSTANT:
+    break;
+    case AST_EXPRESSION_UNARY:
+    break;
+    case AST_EXPRESSION_BINARY:
+    break;
+    default:
+      error("Cannot generate an expression for an unknown expression type");
+      return -1;
+  }
+  return id;
 }
 
 int getNextId() {

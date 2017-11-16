@@ -107,10 +107,6 @@ void typeExpression(AST_Expression *expression) {
   case AST_EXPRESSION_VARIABLE:
     expression->type = typeVariable(expression->expression.variable->variable, -1);
     break;
-  case AST_EXPRESSION_PARENTHESES:
-    typeExpression(expression->expression.parentheses->expression);
-    expression->type = expression->expression.parentheses->expression->type;
-    break;
   case AST_EXPRESSION_CALL:
     expression->type = typeCall(expression->expression.call->call);
     break;

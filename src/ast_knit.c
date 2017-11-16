@@ -104,9 +104,6 @@ void handleExpression(AST_Expression *expression) {
     case AST_EXPRESSION_VARIABLE:
       handleVariable(expression->expression.variable->variable);
       break;
-    case AST_EXPRESSION_PARENTHESES:
-      handleExpression(expression->expression.parentheses->expression);
-      break;
     case AST_EXPRESSION_CALL:
       handleCall(expression->expression.call->call);
       break;
