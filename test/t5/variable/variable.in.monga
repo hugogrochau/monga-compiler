@@ -1,5 +1,0 @@
-main (a: int, b: float): void {
-  c: int;
-  d: float;
-  e: char;
-}

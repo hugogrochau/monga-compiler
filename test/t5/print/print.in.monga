@@ -1,4 +1,4 @@
-main (a: int, b: float): void {
+main (int a, float b): void {
   @a;
   @b;
   @"foo";

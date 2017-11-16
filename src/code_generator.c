@@ -297,6 +297,9 @@ int generateExpression(int depth, AST_Expression *expression) {
       error("Cannot generate an expression for an unknown expression type");
       return -1;
   }
+
+  putchar('\n');
+
   return id;
 }
 
