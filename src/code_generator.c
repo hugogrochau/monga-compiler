@@ -165,9 +165,12 @@ void generateParameters(AST_DeclarationElement *parameters) {
 }
 
 void generateParameter(AST_Declaration *parameter) {
+  int id = getNextId();
+  parameter->tmp = id;
+
   print(getType(parameter->type));
   print(" ");
-  generateId(getNextId());
+  generateId(id);
 }
 
 void generateBlock(int depth, AST_Block *block) {

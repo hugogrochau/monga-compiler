@@ -133,7 +133,7 @@ struct declaration {
   AST_DeclarationElement *parameterList;
   AST_Block *block;
   // for generating code
-  char *tmp;
+  int *tmp;
 };
 
 struct block {
