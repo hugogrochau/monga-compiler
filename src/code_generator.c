@@ -25,6 +25,7 @@ int generateExpression(int depth, AST_Expression *expression);
 void generateVariable(int depth, int id, AST_Variable *variable);
 void generateVariableSimple(int depth, int id, AST_VariableSimple *variable);
 void generateVariableArray(int depth, int id, AST_VariableArray *variable);
+void generateExpressionConstant(int depth, int id, AST_ExpressionConstant *constantExpression);
 
 int getNextId();
 int getNextLabel();
@@ -273,22 +274,25 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 int generateExpression(int depth, AST_Expression *expression) {
   int id = getNextId();
 
+  printWithDepth(depth, "");
+
   switch (expression->expressionType) {
     case AST_EXPRESSION_VARIABLE:
       generateVariable(depth, id, expression->expression.variable->variable);
       break;
     case AST_EXPRESSION_CALL:
-    break;
+      break;
     case AST_EXPRESSION_NEW:
-    break;
+      break;
     case AST_EXPRESSION_AS:
-    break;
+      break;
     case AST_EXPRESSION_CONSTANT:
-    break;
+      generateExpressionConstant(depth, id, expression->expression.constant);
+      break;
     case AST_EXPRESSION_UNARY:
-    break;
+      break;
     case AST_EXPRESSION_BINARY:
-    break;
+      break;
     default:
       error("Cannot generate an expression for an unknown expression type");
       return -1;
@@ -297,8 +301,6 @@ int generateExpression(int depth, AST_Expression *expression) {
 }
 
 void generateVariable(int depth, int id, AST_Variable *variable) {
-  printWithDepth(depth, "");
-
   switch (variable->variableType) {
     case AST_VARIABLE_SIMPLE:
       generateVariableSimple(depth, id, variable->variable.simple);
@@ -339,6 +341,31 @@ void generateVariableSimple(int depth, int id, AST_VariableSimple *variable) {
 }
 
 void generateVariableArray(int depth, int id, AST_VariableArray *variable) {
+}
+
+void generateExpressionConstant(int depth, int id, AST_ExpressionConstant *constantExpression) {
+  generateId(id);
+
+  switch (constantExpression->constantType) {
+    case AST_EXPRESSION_CONSTANT_INT:
+      print(" = add %s %s, %d",
+        getType(AST_INT),
+        getInitialValueForType(AST_INT),
+        constantExpression->constant.i
+      );
+      break;
+    case AST_EXPRESSION_CONSTANT_FLOAT:
+      print(" = add %s %s, %6e",
+        getType(AST_FLOAT),
+        getInitialValueForType(AST_FLOAT),
+        constantExpression->constant.f
+      );
+      break;
+    case AST_EXPRESSION_CONSTANT_STRING:
+      break;
+    default:
+      error("Cannot generate a constant expression for an unknown constant type");
+  }
 }
 
 int getNextId() {
