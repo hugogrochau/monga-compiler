@@ -22,6 +22,9 @@ void generateCommand(int depth, AST_Command *command);
 void generateCommandPrint(int depth, AST_CommandPrint *print);
 
 int generateExpression(int depth, AST_Expression *expression);
+void generateVariable(int depth, int id, AST_Variable *variable);
+void generateVariableSimple(int depth, int id, AST_VariableSimple *variable);
+void generateVariableArray(int depth, int id, AST_VariableArray *variable);
 
 int getNextId();
 int getNextLabel();
@@ -268,13 +271,12 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 }
 
 int generateExpression(int depth, AST_Expression *expression) {
-  int id;
-
-  id = getNextId();
+  int id = getNextId();
 
   switch (expression->expressionType) {
     case AST_EXPRESSION_VARIABLE:
-    break;
+      generateVariable(depth, id, expression->expression.variable->variable);
+      break;
     case AST_EXPRESSION_CALL:
     break;
     case AST_EXPRESSION_NEW:
@@ -292,6 +294,51 @@ int generateExpression(int depth, AST_Expression *expression) {
       return -1;
   }
   return id;
+}
+
+void generateVariable(int depth, int id, AST_Variable *variable) {
+  printWithDepth(depth, "");
+
+  switch (variable->variableType) {
+    case AST_VARIABLE_SIMPLE:
+      generateVariableSimple(depth, id, variable->variable.simple);
+      break;
+    case AST_VARIABLE_ARRAY:
+      generateVariableArray(depth, id, variable->variable.array);
+      break;
+    default:
+      error("Cannot generate a variable expression for an unknown variable type");
+  }
+}
+
+void generateVariableSimple(int depth, int id, AST_VariableSimple *variable) {
+  int variableId;
+
+  if (variable->declaration->tmp == -1) {
+    // global
+    variableId = getNextId();
+
+    generateId(variableId);
+    print(" = getelementptr %s, %s* @%s, i64 0",
+      variable->declaration->type,
+      variable->declaration->type,
+      variable->declaration->id
+    );
+    putchar('\n');
+  } else {
+    // local
+    variableId = variable->declaration->tmp;
+  }
+
+  generateId(id);
+  print(" = load %s, %s* ",
+    variable->declaration->type,
+    variable->declaration->type
+  );
+  generateId(variableId);
+}
+
+void generateVariableArray(int depth, int id, AST_VariableArray *variable) {
 }
 
 int getNextId() {

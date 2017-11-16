@@ -45,6 +45,7 @@ AST_Declaration * AST_createDeclarationFunction(char * id, AST_DeclarationElemen
   declaration->parameterList = parameterList;
   declaration->type = type;
   declaration->block = block;
+  declaration->tmp = -1;
 
   return declaration;
 }
@@ -55,6 +56,7 @@ AST_Declaration * AST_createDeclarationParameter(char *id, AST_Type type) {
   declaration->declarationType = AST_DECLARATION_PARAMETER;
   declaration->id = id;
   declaration->type = type;
+  declaration->tmp = -1;
 
   return declaration;
 }
@@ -65,6 +67,7 @@ AST_Declaration * AST_createDeclarationVariable(char *id, AST_Type type) {
   declaration->declarationType = AST_DECLARATION_VARIABLE;
   declaration->id = id;
   declaration->type = type;
+  declaration->tmp = -1;
 
   return declaration;
 }
