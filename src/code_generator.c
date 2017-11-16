@@ -22,10 +22,13 @@ void generateCommand(int depth, AST_Command *command);
 void generateCommandPrint(int depth, AST_CommandPrint *print);
 
 int generateExpression(int depth, AST_Expression *expression);
-void generateVariable(int depth, int id, AST_Variable *variable);
-void generateVariableSimple(int depth, int id, AST_VariableSimple *variable);
-void generateVariableArray(int depth, int id, AST_VariableArray *variable);
-void generateExpressionConstant(int depth, int id, AST_ExpressionConstant *constantExpression);
+int generateVariable(int depth, AST_Variable *variable);
+int generateVariableSimple(int depth, AST_VariableSimple *variable);
+int generateVariableArray(int depth, AST_VariableArray *variable);
+int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
+int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression);
+int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression);
+int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression);
 
 int getNextId();
 int getNextLabel();
@@ -272,13 +275,13 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 }
 
 int generateExpression(int depth, AST_Expression *expression) {
-  int id = getNextId();
+  int id = -1;
 
   printWithDepth(depth, "");
 
   switch (expression->expressionType) {
     case AST_EXPRESSION_VARIABLE:
-      generateVariable(depth, id, expression->expression.variable->variable);
+      id = generateVariable(depth, expression->expression.variable->variable);
       break;
     case AST_EXPRESSION_CALL:
       break;
@@ -287,15 +290,15 @@ int generateExpression(int depth, AST_Expression *expression) {
     case AST_EXPRESSION_AS:
       break;
     case AST_EXPRESSION_CONSTANT:
-      generateExpressionConstant(depth, id, expression->expression.constant);
+      id = generateExpressionConstant(depth, expression->expression.constant);
       break;
     case AST_EXPRESSION_UNARY:
       break;
     case AST_EXPRESSION_BINARY:
+      id = generateExpressionBinary(depth, expression->type, expression->expression.binary);
       break;
     default:
       error("Cannot generate an expression for an unknown expression type");
-      return -1;
   }
 
   putchar('\n');
@@ -303,20 +306,22 @@ int generateExpression(int depth, AST_Expression *expression) {
   return id;
 }
 
-void generateVariable(int depth, int id, AST_Variable *variable) {
+int generateVariable(int depth, AST_Variable *variable) {
   switch (variable->variableType) {
     case AST_VARIABLE_SIMPLE:
-      generateVariableSimple(depth, id, variable->variable.simple);
+      return generateVariableSimple(depth, variable->variable.simple);
       break;
     case AST_VARIABLE_ARRAY:
-      generateVariableArray(depth, id, variable->variable.array);
+      return generateVariableArray(depth, variable->variable.array);
       break;
     default:
       error("Cannot generate a variable expression for an unknown variable type");
+      return -1;
   }
 }
 
-void generateVariableSimple(int depth, int id, AST_VariableSimple *variable) {
+int generateVariableSimple(int depth, AST_VariableSimple *variable) {
+  int id = getNextId();
   int variableId;
 
   if (variable->declaration->tmp == -1) {
@@ -341,12 +346,16 @@ void generateVariableSimple(int depth, int id, AST_VariableSimple *variable) {
     variable->declaration->type
   );
   generateId(variableId);
+
+  return id;
 }
 
-void generateVariableArray(int depth, int id, AST_VariableArray *variable) {
+int generateVariableArray(int depth, AST_VariableArray *variable) {
+  return getNextId();
 }
 
-void generateExpressionConstant(int depth, int id, AST_ExpressionConstant *constantExpression) {
+int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression) {
+  int id = getNextId();
   generateId(id);
 
   switch (constantExpression->constantType) {
@@ -369,6 +378,69 @@ void generateExpressionConstant(int depth, int id, AST_ExpressionConstant *const
     default:
       error("Cannot generate a constant expression for an unknown constant type");
   }
+
+  return id;
+}
+
+int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+  switch (expression->binaryType) {
+    case AST_EXPRESSION_BINARY_MULTIPLICATION:
+    case AST_EXPRESSION_BINARY_DIVISION:
+    case AST_EXPRESSION_BINARY_PLUS:
+    case AST_EXPRESSION_BINARY_MINUS:
+      return generateExpressionArithmetic(depth, type, expression);
+      break;
+    case AST_EXPRESSION_BINARY_LESS:
+    case AST_EXPRESSION_BINARY_GREATER:
+    case AST_EXPRESSION_BINARY_LESS_EQUAL:
+    case AST_EXPRESSION_BINARY_GREATER_EQUAL:
+    case AST_EXPRESSION_BINARY_EQUAL:
+    case AST_EXPRESSION_BINARY_NOT_EQUAL:
+    case AST_EXPRESSION_BINARY_LOGIC_AND:
+    case AST_EXPRESSION_BINARY_LOGIC_OR:
+      return generateExpressionRelational(depth, type, expression);
+      break;
+    default:
+      error("Cannot generate an expression for a unknown expression type");
+      return -1;
+  }
+}
+
+int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+  int id = getNextId();
+  int leftId = generateExpression(depth, expression->leftExpression);
+  int rightId = generateExpression(depth, expression->rightExpression);
+
+  generateId(id);
+  print(" = ");
+
+  switch (expression->binaryType) {
+    case AST_EXPRESSION_BINARY_MULTIPLICATION:
+      print("mul");
+      break;
+    case AST_EXPRESSION_BINARY_DIVISION:
+      print("div");
+      break;
+    case AST_EXPRESSION_BINARY_PLUS:
+      print("add");
+      break;
+    case AST_EXPRESSION_BINARY_MINUS:
+      print("sub");
+      break;
+    default:
+      error("Cannot generate an arithmetic expression for a non-arithmetic expression type");
+  }
+
+  print(" %s ", getType(type));
+  generateId(leftId);
+  print(", ");
+  generateId(rightId);
+
+  return id;
+}
+
+int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+  return getNextId();
 }
 
 int getNextId() {
