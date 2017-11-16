@@ -6,8 +6,6 @@
 void generateHeader();
 void generateGlobalDeclaration(AST_Declaration *declaration);
 void generateGlobalVariable(AST_Declaration *declaration);
-char * getType(AST_Type type);
-char * getInitialValueForType(AST_Type type);
 void generateFunction(AST_Declaration *declaration);
 void generateParameters(AST_DeclarationElement *parameters);
 void generateParameter(AST_Declaration *parameter);
@@ -33,7 +31,10 @@ int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary 
 int getNextId();
 int getNextLabel();
 void generateId(int id);
-void  generateLabel(int label);
+void generateLabel(int label);
+
+char * getType(AST_Type type);
+char * getInitialValueForType(AST_Type type);
 
 int currentId = 0;
 int currentLabel = 0;
@@ -47,6 +48,9 @@ void CG_generateCode(AST_Program *program) {
     generateGlobalDeclaration(currentDeclaration->declaration);
 
     currentDeclaration = currentDeclaration->next;
+    if (currentDeclaration != NULL) {
+      putchar('\n');
+    }
   }
 }
 
@@ -71,7 +75,6 @@ void generateGlobalDeclaration(AST_Declaration *declaration) {
     default:
       error("Cannot generate a global declaration for an unknown declaration type");
   }
-  putchar('\n');
 }
 
 void generateGlobalVariable(AST_Declaration *declaration) {
@@ -82,63 +85,7 @@ void generateGlobalVariable(AST_Declaration *declaration) {
   );
 }
 
-char * getType(AST_Type type) {
-  switch (type) {
-    case AST_INT:
-      return "i32";
-      break;
-    case AST_FLOAT:
-      return "float";
-      break;
-    case AST_CHAR:
-      return "i8";
-      break;
-    case AST_ARRAY_INT:
-      return "i32*";
-      break;
-    case AST_ARRAY_FLOAT:
-      return "float*";
-      break;
-    case AST_ARRAY_CHAR:
-      return "i8*";
-      break;
-    case AST_VOID:
-      return "null";
-      break;
-    default:
-      error("Cannot generate a llvm type for an unknown type");
-      return NULL;
-  }
-}
-
-char * getInitialValueForType(AST_Type type) {
-  switch (type) {
-    case AST_INT:
-      return "0";
-      break;
-    case AST_FLOAT:
-      return "0.0";
-      break;
-    case AST_CHAR:
-      return "0";
-      break;
-    case AST_ARRAY_INT:
-      return "null";
-      break;
-    case AST_ARRAY_FLOAT:
-      return "null";
-      break;
-    case AST_ARRAY_CHAR:
-      return "null";
-      break;
-    default:
-      error("Cannot generate an initial value for an unknown type");
-      return NULL;
-  }
-}
-
 void generateFunction(AST_Declaration *declaration) {
-
   print("define %s @%s (",
     getType(declaration->type),
     declaration->id
@@ -462,4 +409,59 @@ void generateId(int id) {
 
 void generateLabel(int label) {
   print("%%l%d", label);
+}
+
+char * getType(AST_Type type) {
+  switch (type) {
+    case AST_INT:
+      return "i32";
+      break;
+    case AST_FLOAT:
+      return "float";
+      break;
+    case AST_CHAR:
+      return "i8";
+      break;
+    case AST_ARRAY_INT:
+      return "i32*";
+      break;
+    case AST_ARRAY_FLOAT:
+      return "float*";
+      break;
+    case AST_ARRAY_CHAR:
+      return "i8*";
+      break;
+    case AST_VOID:
+      return "null";
+      break;
+    default:
+      error("Cannot generate a llvm type for an unknown type");
+      return NULL;
+  }
+}
+
+char * getInitialValueForType(AST_Type type) {
+  switch (type) {
+    case AST_INT:
+      return "0";
+      break;
+    case AST_FLOAT:
+      return "0.0";
+      break;
+    case AST_CHAR:
+      return "0";
+      break;
+    case AST_ARRAY_INT:
+      return "null";
+      break;
+    case AST_ARRAY_FLOAT:
+      return "null";
+      break;
+    case AST_ARRAY_CHAR:
+      return "null";
+      break;
+    default:
+      error("Cannot generate an initial value for an unknown type");
+      return NULL;
+  }
 }
