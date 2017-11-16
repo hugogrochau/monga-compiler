@@ -277,8 +277,6 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 int generateExpression(int depth, AST_Expression *expression) {
   int id = -1;
 
-  printWithDepth(depth, "");
-
   switch (expression->expressionType) {
     case AST_EXPRESSION_VARIABLE:
       id = generateVariable(depth, expression->expression.variable->variable);
@@ -324,6 +322,8 @@ int generateVariableSimple(int depth, AST_VariableSimple *variable) {
   int id = getNextId();
   int variableId;
 
+  printWithDepth(depth, "");
+
   if (variable->declaration->tmp == -1) {
     // global
     variableId = getNextId();
@@ -356,6 +356,8 @@ int generateVariableArray(int depth, AST_VariableArray *variable) {
 
 int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression) {
   int id = getNextId();
+
+  printWithDepth(depth, "");
   generateId(id);
 
   switch (constantExpression->constantType) {
@@ -407,10 +409,11 @@ int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *exp
 }
 
 int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
-  int id = getNextId();
   int leftId = generateExpression(depth, expression->leftExpression);
   int rightId = generateExpression(depth, expression->rightExpression);
+  int id = getNextId();
 
+  printWithDepth(depth, "");
   generateId(id);
   print(" = ");
 
