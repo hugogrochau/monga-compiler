@@ -15,6 +15,7 @@ void generateParameter(AST_Declaration *parameter);
 void generateBlock(int depth, AST_Block *block);
 
 void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
+void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration);
 
 void generateCommands(int depth, AST_CommandElement *commands);
 void generateCommand(int depth, AST_Command *command);
@@ -180,13 +181,17 @@ void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDec
   AST_DeclarationElement *currentVariableDeclaration = variableDeclarations;
 
   while (currentVariableDeclaration != NULL) {
-    printLineWithDepth(depth, "%%%s = alloca %s",
-      currentVariableDeclaration->declaration->id,
-      getType(currentVariableDeclaration->declaration->type)
-    );
+    generateVariableDeclaration(depth, currentVariableDeclaration->declaration);
 
     currentVariableDeclaration = currentVariableDeclaration->next;
   }
+}
+
+void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration) {
+  printLineWithDepth(depth, "%%%s = alloca %s",
+    variableDeclaration->id,
+    getType(variableDeclaration->type)
+  );
 }
 
 void generateCommands(int depth, AST_CommandElement *commands) {
