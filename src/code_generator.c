@@ -3,6 +3,7 @@
 #include "code_generator.h"
 #include "util.h"
 
+void generateHeader();
 void generateGlobalDeclaration(AST_Declaration *declaration);
 void generateGlobalVariable(AST_Declaration *declaration);
 char * getType(AST_Type type);
@@ -21,7 +22,6 @@ void generateCommandPrint(int depth, AST_CommandPrint *print);
 
 int generateExpression(int depth, AST_Expression *expression);
 
-
 int getNextId();
 int getNextLabel();
 void generateId(int id);
@@ -31,29 +31,39 @@ int currentId = 0;
 int currentLabel = 0;
 
 void CG_generateCode(AST_Program *program) {
-  printLineWithDepth(0, "declare i32 @printf(i8*, ....)");
+  generateHeader();
 
   AST_DeclarationElement *currentDeclaration = program->declarations;
 
   while (currentDeclaration != NULL) {
     generateGlobalDeclaration(currentDeclaration->declaration);
-    putchar('\n');
 
     currentDeclaration = currentDeclaration->next;
   }
 }
 
+void generateHeader() {
+  printLineWithDepth(0, "declare i32 @printf(i8*, ...)");
+  printLineWithDepth(0, "@intTemplate private unnamed_addr constant [3 x i8] c\"%%d\\00\"");
+  printLineWithDepth(0, "@floatTemplate private unnamed_addr constant [3 x i8] c\"%%f\\00\"");
+  printLineWithDepth(0, "@charTemplate private unnamed_addr constant [3 x i8] c\"%%c\\00\"");
+  printLineWithDepth(0, "@stringTemplate private unnamed_addr constant [3 x i8] c\"%%s\\00\"");
+  printLineWithDepth(0, "@addressTemplate private unnamed_addr constant [3 x i8] c\"%%p\\00\"");
+  putchar('\n');
+}
+
 void generateGlobalDeclaration(AST_Declaration *declaration) {
-    switch (declaration->declarationType) {
-      case AST_DECLARATION_VARIABLE:
-        generateGlobalVariable(declaration);
-        break;
-      case AST_DECLARATION_FUNCTION:
-        generateFunction(declaration);
-        break;
-      default:
-        error("Unknown global declaration type");
-    }
+  switch (declaration->declarationType) {
+    case AST_DECLARATION_VARIABLE:
+      generateGlobalVariable(declaration);
+      break;
+    case AST_DECLARATION_FUNCTION:
+      generateFunction(declaration);
+      break;
+    default:
+      error("Unknown global declaration type");
+  }
+  putchar('\n');
 }
 
 void generateGlobalVariable(AST_Declaration *declaration) {
@@ -88,7 +98,7 @@ char * getType(AST_Type type) {
       return "null";
       break;
     default:
-      error("Can't generate code for this type");
+      error("Cannot generate code for this type");
       return NULL;
   }
 }
@@ -114,7 +124,7 @@ char * getInitialValueForType(AST_Type type) {
       return "null";
       break;
     default:
-      error("Can't generate code for this type");
+      error("Cannot generate code for this type");
       return NULL;
   }
 }
@@ -210,24 +220,43 @@ void generateCommand(int depth, AST_Command *command) {
     default:
       error("Unknown command type");
   }
+  putchar('\n');
 }
 
-void generateCommandPrint(int depth, AST_CommandPrint *print) {
-  int id = generateExpression(depth, print->expression);
-  switch (print->expression->type) {
+void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
+  int expressionId = generateExpression(depth, printCommand->expression);
+
+  printWithDepth(depth, "call i32 (i8*, ...) @printf(i8* ");
+
+  switch (printCommand->expression->type) {
     case AST_INT:
+      print("@intTemplate, i32");
       break;
     case AST_FLOAT:
+      print("@floatTemplate, float");
       break;
     case AST_CHAR:
+      print("@charTemplate, i8");
       break;
     case AST_ARRAY_INT:
+      print("@addressTemplate, i32*");
+      break;
     case AST_ARRAY_FLOAT:
+      print("@addressTemplate, float*");
+      break;
     case AST_ARRAY_CHAR:
+      print("@stringTemplate, i8*");
       break;
     case AST_VOID:
+      error("Cannot print a void variable");
+      break;
+    default:
+      error("Cannot print an unknown variable");
       break;
   }
+  print(" ");
+  generateId(expressionId);
+  print(")");
 }
 
 int generateExpression(int depth, AST_Expression *expression) {
