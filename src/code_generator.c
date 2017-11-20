@@ -17,12 +17,13 @@ void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration
 
 void generateCommands(int depth, AST_CommandElement *commands);
 void generateCommand(int depth, AST_Command *command);
+void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
 void generateCommandPrint(int depth, AST_CommandPrint *print);
 
 int generateExpression(int depth, AST_Expression *expression);
-int generateVariable(int depth, AST_Variable *variable);
-int generateVariableSimple(int depth, AST_VariableSimple *variable);
-int generateVariableArray(int depth, AST_VariableArray *variable);
+int generateExpressionVariable(int depth, AST_Variable *variable);
+int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable);
+int generateExpressionVariableArray(int depth, AST_VariableArray *variable);
 int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
 int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression);
 int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression);
@@ -145,10 +146,15 @@ void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDec
 }
 
 void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration) {
-  printLineWithDepth(depth, "%%%s = alloca %s",
-    variableDeclaration->id,
+  int id = getNextId();
+  variableDeclaration->tmp = id;
+
+  printWithDepth(depth, "");
+  generateId(id);
+  print(" = alloca %s",
     getType(variableDeclaration->type)
   );
+  putchar('\n');
 }
 
 void generateCommands(int depth, AST_CommandElement *commands) {
@@ -168,6 +174,7 @@ void generateCommand(int depth, AST_Command *command) {
     case AST_COMMAND_WHILE:
       break;
     case AST_COMMAND_ASSIGN:
+      generateCommandAssign(depth, command->command.commandAssign);
       break;
     case AST_COMMAND_RETURN:
       break;
@@ -183,6 +190,17 @@ void generateCommand(int depth, AST_Command *command) {
       error("Cannot generate a command for an unknown command type");
   }
   putchar('\n');
+}
+
+void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
+  AST_Declaration *variableDeclaration = assignCommand->variable->variable.simple->declaration;
+
+  int expressionId = generateExpression(depth, assignCommand->expression);
+
+  printWithDepth(depth, "store %s ", getType(variableDeclaration->type));
+  generateId(variableDeclaration->tmp);
+  print(", %s* ", getType(assignCommand->expression->type));
+  generateId(expressionId);
 }
 
 void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
@@ -222,11 +240,11 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 }
 
 int generateExpression(int depth, AST_Expression *expression) {
-  int id = -1;
+  int id;
 
   switch (expression->expressionType) {
     case AST_EXPRESSION_VARIABLE:
-      id = generateVariable(depth, expression->expression.variable->variable);
+      id = generateExpressionVariable(depth, expression->expression.variable->variable);
       break;
     case AST_EXPRESSION_CALL:
       break;
@@ -243,6 +261,7 @@ int generateExpression(int depth, AST_Expression *expression) {
       id = generateExpressionBinary(depth, expression->type, expression->expression.binary);
       break;
     default:
+      id = -1;
       error("Cannot generate an expression for an unknown expression type");
   }
 
@@ -251,13 +270,13 @@ int generateExpression(int depth, AST_Expression *expression) {
   return id;
 }
 
-int generateVariable(int depth, AST_Variable *variable) {
+int generateExpressionVariable(int depth, AST_Variable *variable) {
   switch (variable->variableType) {
     case AST_VARIABLE_SIMPLE:
-      return generateVariableSimple(depth, variable->variable.simple);
+      return generateExpressionVariableSimple(depth, variable->variable.simple);
       break;
     case AST_VARIABLE_ARRAY:
-      return generateVariableArray(depth, variable->variable.array);
+      return generateExpressionVariableArray(depth, variable->variable.array);
       break;
     default:
       error("Cannot generate a variable expression for an unknown variable type");
@@ -265,7 +284,7 @@ int generateVariable(int depth, AST_Variable *variable) {
   }
 }
 
-int generateVariableSimple(int depth, AST_VariableSimple *variable) {
+int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable) {
   int id = getNextId();
   int variableId;
 
@@ -277,8 +296,8 @@ int generateVariableSimple(int depth, AST_VariableSimple *variable) {
 
     generateId(variableId);
     print(" = getelementptr %s, %s* @%s, i64 0",
-      variable->declaration->type,
-      variable->declaration->type,
+      getType(variable->declaration->type),
+      getType(variable->declaration->type),
       variable->declaration->id
     );
     putchar('\n');
@@ -289,15 +308,15 @@ int generateVariableSimple(int depth, AST_VariableSimple *variable) {
 
   generateId(id);
   print(" = load %s, %s* ",
-    variable->declaration->type,
-    variable->declaration->type
+    getType(variable->declaration->type),
+    getType(variable->declaration->type)
   );
   generateId(variableId);
 
   return id;
 }
 
-int generateVariableArray(int depth, AST_VariableArray *variable) {
+int generateExpressionVariableArray(int depth, AST_VariableArray *variable) {
   return getNextId();
 }
 
