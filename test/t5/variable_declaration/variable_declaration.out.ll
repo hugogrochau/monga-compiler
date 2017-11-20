@@ -6,7 +6,7 @@ declare i32 @printf(i8*, ...)
 @addressTemplate private unnamed_addr constant [3 x i8] c"%p\00"
 
 define null @main () {
-  %a = alloca i32
-  %b = alloca float
-  %c = alloca i8
+  %t1 = alloca i32
+  %t2 = alloca float
+  %t3 = alloca i8
 }
