@@ -192,22 +192,22 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
 
   switch (printCommand->expression->type) {
     case AST_INT:
-      print("@intTemplate, i32");
+      print("getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32");
       break;
     case AST_FLOAT:
-      print("@floatTemplate, float");
+      print("getelementptr inbounds ([3 x i8], [3 x i8] *@floatTemplate, i32 0, i32 0), float");
       break;
     case AST_CHAR:
-      print("@charTemplate, i8");
+      print("getelementptr inbounds ([3 x i8], [3 x i8] *@charTemplate, i32 0, i32 0), i8");
       break;
     case AST_ARRAY_INT:
-      print("@addressTemplate, i32*");
+      print("getelementptr inbounds ([3 x i8], [3 x i8] *@addressTemplate, i32 0, i32 0), i32*");
       break;
     case AST_ARRAY_FLOAT:
-      print("@addressTemplate, float*");
+      print("getelementptr inbounds ([3 x i8], [3 x i8] *@addressTemplate, i32 0, i32 0), float*");
       break;
     case AST_ARRAY_CHAR:
-      print("@stringTemplate, i8*");
+      print("getelementptr inbounds ([3 x i8], [3 x i8] *@stringTemplate, i32 0, i32 0), i8*");
       break;
     case AST_VOID:
       error("Cannot generate a print command for a void variable");
