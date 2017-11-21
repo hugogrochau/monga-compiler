@@ -3,4 +3,5 @@ main (): void {
   b: int;
   a = 3;
   b = a;
+  @b;
 }
