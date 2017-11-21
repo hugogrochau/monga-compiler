@@ -57,11 +57,11 @@ void CG_generateCode(AST_Program *program) {
 
 void generateHeader() {
   printLineWithDepth(0, "declare i32 @printf(i8*, ...)");
-  printLineWithDepth(0, "@intTemplate private unnamed_addr constant [3 x i8] c\"%%d\\00\"");
-  printLineWithDepth(0, "@floatTemplate private unnamed_addr constant [3 x i8] c\"%%f\\00\"");
-  printLineWithDepth(0, "@charTemplate private unnamed_addr constant [3 x i8] c\"%%c\\00\"");
-  printLineWithDepth(0, "@stringTemplate private unnamed_addr constant [3 x i8] c\"%%s\\00\"");
-  printLineWithDepth(0, "@addressTemplate private unnamed_addr constant [3 x i8] c\"%%p\\00\"");
+  printLineWithDepth(0, "@intTemplate = private unnamed_addr constant [3 x i8] c\"%%d\\00\"");
+  printLineWithDepth(0, "@floatTemplate = private unnamed_addr constant [3 x i8] c\"%%f\\00\"");
+  printLineWithDepth(0, "@charTemplate = private unnamed_addr constant [3 x i8] c\"%%c\\00\"");
+  printLineWithDepth(0, "@stringTemplate = private unnamed_addr constant [3 x i8] c\"%%s\\00\"");
+  printLineWithDepth(0, "@addressTemplate = private unnamed_addr constant [3 x i8] c\"%%p\\00\"");
   putchar('\n');
 }
 
@@ -451,7 +451,7 @@ char * getType(AST_Type type) {
       return "i8*";
       break;
     case AST_VOID:
-      return "null";
+      return "void";
       break;
     default:
       error("Cannot generate a llvm type for an unknown type");
