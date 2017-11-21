@@ -79,7 +79,7 @@ static void generateGlobalDeclaration(AST_Declaration *declaration) {
 }
 
 static void generateGlobalVariable(AST_Declaration *declaration) {
-  printLineWithDepth(0, "@%s = common global %s %s",
+  printLineWithDepth(0, "@%s = global %s %s",
     declaration->id,
     getType(declaration->type),
     getInitialValueForType(declaration->type)
