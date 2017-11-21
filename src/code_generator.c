@@ -335,7 +335,7 @@ static int generateExpressionConstant(int depth, AST_ExpressionConstant *constan
       );
       break;
     case AST_EXPRESSION_CONSTANT_FLOAT:
-      print(" = add %s %s, %6e",
+      print(" = fadd %s %s, %6e",
         getType(AST_FLOAT),
         getInitialValueForType(AST_FLOAT),
         constantExpression->constant.f
