@@ -3,39 +3,39 @@
 #include "code_generator.h"
 #include "util.h"
 
-void generateHeader();
-void generateGlobalDeclaration(AST_Declaration *declaration);
-void generateGlobalVariable(AST_Declaration *declaration);
-void generateFunction(AST_Declaration *declaration);
-void generateParameters(AST_DeclarationElement *parameters);
-void generateParameter(AST_Declaration *parameter);
+static void generateHeader();
+static void generateGlobalDeclaration(AST_Declaration *declaration);
+static void generateGlobalVariable(AST_Declaration *declaration);
+static void generateFunction(AST_Declaration *declaration);
+static void generateParameters(AST_DeclarationElement *parameters);
+static void generateParameter(AST_Declaration *parameter);
 
-void generateBlock(int depth, AST_Block *block);
+static void generateBlock(int depth, AST_Block *block);
 
-void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
-void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration);
+static void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations);
+static void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration);
 
-void generateCommands(int depth, AST_CommandElement *commands);
-void generateCommand(int depth, AST_Command *command);
-void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
-void generateCommandPrint(int depth, AST_CommandPrint *print);
+static void generateCommands(int depth, AST_CommandElement *commands);
+static void generateCommand(int depth, AST_Command *command);
+static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
+static void generateCommandPrint(int depth, AST_CommandPrint *print);
 
-int generateExpression(int depth, AST_Expression *expression);
-int generateExpressionVariable(int depth, AST_Variable *variable);
-int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable);
-int generateExpressionVariableArray(int depth, AST_VariableArray *variable);
-int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
-int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression);
-int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression);
-int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression);
+static int generateExpression(int depth, AST_Expression *expression);
+static int generateExpressionVariable(int depth, AST_Variable *variable);
+static int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable);
+static int generateExpressionVariableArray(int depth, AST_VariableArray *variable);
+static int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
+static int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression);
+static int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression);
+static int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression);
 
-int getNextId();
-int getNextLabel();
-void generateId(int id);
-void generateLabel(int label);
+static int getNextId();
+static int getNextLabel();
+static void generateId(int id);
+static void generateLabel(int label);
 
-char * getType(AST_Type type);
-char * getInitialValueForType(AST_Type type);
+static char * getType(AST_Type type);
+static char * getInitialValueForType(AST_Type type);
 
 int currentId = 0;
 int currentLabel = 0;
@@ -55,7 +55,7 @@ void CG_generateCode(AST_Program *program) {
   }
 }
 
-void generateHeader() {
+static void generateHeader() {
   printLineWithDepth(0, "declare i32 @printf(i8*, ...)");
   printLineWithDepth(0, "@intTemplate = private unnamed_addr constant [3 x i8] c\"%%d\\00\"");
   printLineWithDepth(0, "@floatTemplate = private unnamed_addr constant [3 x i8] c\"%%f\\00\"");
@@ -65,7 +65,7 @@ void generateHeader() {
   putchar('\n');
 }
 
-void generateGlobalDeclaration(AST_Declaration *declaration) {
+static void generateGlobalDeclaration(AST_Declaration *declaration) {
   switch (declaration->declarationType) {
     case AST_DECLARATION_VARIABLE:
       generateGlobalVariable(declaration);
@@ -78,7 +78,7 @@ void generateGlobalDeclaration(AST_Declaration *declaration) {
   }
 }
 
-void generateGlobalVariable(AST_Declaration *declaration) {
+static void generateGlobalVariable(AST_Declaration *declaration) {
   printLineWithDepth(0, "@%s = common global %s %s",
     declaration->id,
     getType(declaration->type),
@@ -86,7 +86,7 @@ void generateGlobalVariable(AST_Declaration *declaration) {
   );
 }
 
-void generateFunction(AST_Declaration *declaration) {
+static void generateFunction(AST_Declaration *declaration) {
   print("define %s @%s (",
     getType(declaration->type),
     declaration->id
@@ -103,7 +103,7 @@ void generateFunction(AST_Declaration *declaration) {
   putchar('\n');
 }
 
-void generateParameters(AST_DeclarationElement *parameters) {
+static void generateParameters(AST_DeclarationElement *parameters) {
   AST_DeclarationElement *currentParameter = parameters;
   int parameterIndex = 0;
 
@@ -119,7 +119,7 @@ void generateParameters(AST_DeclarationElement *parameters) {
   }
 }
 
-void generateParameter(AST_Declaration *parameter) {
+static void generateParameter(AST_Declaration *parameter) {
   int id = getNextId();
   parameter->tmp = id;
 
@@ -128,14 +128,14 @@ void generateParameter(AST_Declaration *parameter) {
   generateId(id);
 }
 
-void generateBlock(int depth, AST_Block *block) {
+static void generateBlock(int depth, AST_Block *block) {
   generateVariableDeclarations(depth, block->declarationVariableList);
 
   generateCommands(depth, block->commandList);
 }
 
 
-void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations) {
+static void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDeclarations) {
   AST_DeclarationElement *currentVariableDeclaration = variableDeclarations;
 
   while (currentVariableDeclaration != NULL) {
@@ -145,7 +145,7 @@ void generateVariableDeclarations(int depth, AST_DeclarationElement *variableDec
   }
 }
 
-void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration) {
+static void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration) {
   int id = getNextId();
   variableDeclaration->tmp = id;
 
@@ -157,7 +157,7 @@ void generateVariableDeclaration(int depth, AST_Declaration *variableDeclaration
   putchar('\n');
 }
 
-void generateCommands(int depth, AST_CommandElement *commands) {
+static void generateCommands(int depth, AST_CommandElement *commands) {
   AST_CommandElement *currentCommand = commands;
 
   while (currentCommand != NULL) {
@@ -167,7 +167,7 @@ void generateCommands(int depth, AST_CommandElement *commands) {
   }
 }
 
-void generateCommand(int depth, AST_Command *command) {
+static void generateCommand(int depth, AST_Command *command) {
   switch (command->commandType) {
     case AST_COMMAND_IF:
       break;
@@ -192,7 +192,7 @@ void generateCommand(int depth, AST_Command *command) {
   putchar('\n');
 }
 
-void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
+static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
   AST_Declaration *variableDeclaration = assignCommand->variable->variable.simple->declaration;
 
   int expressionId = generateExpression(depth, assignCommand->expression);
@@ -203,7 +203,7 @@ void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
   generateId(expressionId);
 }
 
-void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
+static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
   int expressionId = generateExpression(depth, printCommand->expression);
 
   printWithDepth(depth, "call i32 (i8*, ...) @printf(i8* ");
@@ -239,7 +239,7 @@ void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
   print(")");
 }
 
-int generateExpression(int depth, AST_Expression *expression) {
+static int generateExpression(int depth, AST_Expression *expression) {
   int id;
 
   switch (expression->expressionType) {
@@ -270,7 +270,7 @@ int generateExpression(int depth, AST_Expression *expression) {
   return id;
 }
 
-int generateExpressionVariable(int depth, AST_Variable *variable) {
+static int generateExpressionVariable(int depth, AST_Variable *variable) {
   switch (variable->variableType) {
     case AST_VARIABLE_SIMPLE:
       return generateExpressionVariableSimple(depth, variable->variable.simple);
@@ -284,7 +284,7 @@ int generateExpressionVariable(int depth, AST_Variable *variable) {
   }
 }
 
-int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable) {
+static int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable) {
   int id = getNextId();
   int variableId;
 
@@ -316,11 +316,11 @@ int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable) {
   return id;
 }
 
-int generateExpressionVariableArray(int depth, AST_VariableArray *variable) {
+static int generateExpressionVariableArray(int depth, AST_VariableArray *variable) {
   return getNextId();
 }
 
-int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression) {
+static int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression) {
   int id = getNextId();
 
   printWithDepth(depth, "");
@@ -350,7 +350,7 @@ int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpres
   return id;
 }
 
-int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+static int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression) {
   switch (expression->binaryType) {
     case AST_EXPRESSION_BINARY_MULTIPLICATION:
     case AST_EXPRESSION_BINARY_DIVISION:
@@ -374,7 +374,7 @@ int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *exp
   }
 }
 
-int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+static int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
   int leftId = generateExpression(depth, expression->leftExpression);
   int rightId = generateExpression(depth, expression->rightExpression);
   int id = getNextId();
@@ -408,29 +408,29 @@ int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary 
   return id;
 }
 
-int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+static int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression) {
   return getNextId();
 }
 
-int getNextId() {
+static int getNextId() {
   ++currentId;
   return currentId;
 }
 
-int getNextLabel() {
+static int getNextLabel() {
   ++currentLabel;
   return currentLabel;
 }
 
-void generateId(int id) {
+static void generateId(int id) {
   print("%%t%d", id);
 }
 
-void generateLabel(int label) {
+static void generateLabel(int label) {
   print("%%l%d", label);
 }
 
-char * getType(AST_Type type) {
+static char * getType(AST_Type type) {
   switch (type) {
     case AST_INT:
       return "i32";
@@ -459,7 +459,7 @@ char * getType(AST_Type type) {
   }
 }
 
-char * getInitialValueForType(AST_Type type) {
+static char * getInitialValueForType(AST_Type type) {
   switch (type) {
     case AST_INT:
       return "0";
