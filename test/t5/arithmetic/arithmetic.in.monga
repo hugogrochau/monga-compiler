@@ -1,0 +1,13 @@
+main (): int{
+  a: int;
+  b: int;
+
+  a = 1 + 4;
+  b = a - 3;
+  b = b * 3;
+  b = b / 2;
+
+  @b;
+
+  return 0;
+}

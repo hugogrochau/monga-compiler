@@ -401,7 +401,7 @@ static int generateExpressionArithmetic(int depth, AST_Type type, AST_Expression
       print("mul");
       break;
     case AST_EXPRESSION_BINARY_DIVISION:
-      print("div");
+      print("sdiv");
       break;
     case AST_EXPRESSION_BINARY_PLUS:
       print("add");
