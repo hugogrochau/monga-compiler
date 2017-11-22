@@ -30,11 +30,13 @@ static int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBina
 static int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression);
 static int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression);
 static int generateExpressionLogic(int depth, AST_Type type, AST_ExpressionBinary *expression);
+static int generateExtension(int depth, int id, AST_Type type);
+
+static void generateId(int id);
+static void generateLabel(int label);
 
 static int getNextId();
 static int getNextLabel();
-static void generateId(int id);
-static void generateLabel(int label);
 
 static char * getType(AST_Type type);
 static char * getInitialValueForType(AST_Type type);
@@ -422,22 +424,24 @@ static int generateExpressionArithmetic(int depth, AST_Type type, AST_Expression
 static int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression) {
   int leftId = generateExpression(depth, expression->leftExpression);
   int rightId = generateExpression(depth, expression->rightExpression);
-  int id = getNextId();
+  int charId = getNextId();
 
   printWithDepth(depth, "");
-  generateId(id);
+  generateId(charId);
   print(" = ");
 
   switch (type) {
     case AST_INT:
-      print(" icmp ");
+      print("icmp");
       break;
     case AST_FLOAT:
-      print(" fcmp ");
+      print("fcmp");
       break;
     default:
       break;
   }
+
+  print(" ");
 
   switch (expression->binaryType) {
     case AST_EXPRESSION_BINARY_LESS:
@@ -467,13 +471,34 @@ static int generateExpressionRelational(int depth, AST_Type type, AST_Expression
   generateId(leftId);
   print(", ");
   generateId(rightId);
+  putchar('\n');
 
-  return id;
-  return getNextId();
+  return generateExtension(depth, charId, type);
 }
 
 static int generateExpressionLogic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
   return getNextId();
+}
+
+static int generateExtension(int depth, int id, AST_Type type) {
+  int extendedId = getNextId();
+
+  printWithDepth(depth, "");
+  generateId(extendedId);
+  print(" = ");
+  print("zext i1 ");
+  generateId(id);
+  print(" to %s", getType(type));
+
+  return extendedId;
+}
+
+static void generateId(int id) {
+  print("%%t%d", id);
+}
+
+static void generateLabel(int label) {
+  print("%%l%d", label);
 }
 
 static int getNextId() {
@@ -484,14 +509,6 @@ static int getNextId() {
 static int getNextLabel() {
   ++currentLabel;
   return currentLabel;
-}
-
-static void generateId(int id) {
-  print("%%t%d", id);
-}
-
-static void generateLabel(int label) {
-  print("%%l%d", label);
 }
 
 static char * getType(AST_Type type) {

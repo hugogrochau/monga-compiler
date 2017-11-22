@@ -1,0 +1,9 @@
+main (): int {
+  foo: int;
+
+  foo = 3 == 4;
+
+  @foo;
+
+  return 1;
+}
