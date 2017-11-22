@@ -396,21 +396,45 @@ static int generateExpressionArithmetic(int depth, AST_Type type, AST_Expression
   generateId(id);
   print(" = ");
 
-  switch (expression->binaryType) {
-    case AST_EXPRESSION_BINARY_MULTIPLICATION:
-      print("mul");
-      break;
-    case AST_EXPRESSION_BINARY_DIVISION:
-      print("sdiv");
-      break;
-    case AST_EXPRESSION_BINARY_PLUS:
-      print("add");
-      break;
-    case AST_EXPRESSION_BINARY_MINUS:
-      print("sub");
-      break;
+  switch (type) {
+    case AST_INT:
+      switch (expression->binaryType) {
+        case AST_EXPRESSION_BINARY_MULTIPLICATION:
+          print("mul");
+          break;
+        case AST_EXPRESSION_BINARY_DIVISION:
+          print("sdiv");
+          break;
+        case AST_EXPRESSION_BINARY_PLUS:
+          print("add");
+          break;
+        case AST_EXPRESSION_BINARY_MINUS:
+          print("sub");
+          break;
+        default:
+          break;
+      }
+    break;
+    case AST_FLOAT:
+      switch (expression->binaryType) {
+        case AST_EXPRESSION_BINARY_MULTIPLICATION:
+          print("fmul");
+          break;
+        case AST_EXPRESSION_BINARY_DIVISION:
+          print("fdiv");
+          break;
+        case AST_EXPRESSION_BINARY_PLUS:
+          print("fadd");
+          break;
+        case AST_EXPRESSION_BINARY_MINUS:
+          print("fsub");
+          break;
+        default:
+          break;
+      }
+    break;
     default:
-      error("Cannot generate an arithmetic expression for a non-arithmetic expression type");
+    break;
   }
 
   print(" %s ", getType(type));

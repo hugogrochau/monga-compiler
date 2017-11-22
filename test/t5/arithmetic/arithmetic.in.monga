@@ -1,6 +1,7 @@
 main (): int{
   a: int;
   b: int;
+  c: float;
 
   a = 1 + 4;
   b = a - 3;

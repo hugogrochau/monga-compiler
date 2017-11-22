@@ -7,7 +7,7 @@ declare i32 @printf(i8*, ...)
 
 define i32 @main () {
   %t1 = alloca i32
-  %t2 = add i32 0, 4
+  %t2 = add i32 0, 3
   %t3 = add i32 0, 4
   %t4 = icmp eq i32 %t2, %t3
   %t5 = zext i1 %t4 to i32
