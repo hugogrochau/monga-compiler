@@ -17,6 +17,7 @@ static void generateVariableDeclaration(int depth, AST_Declaration *variableDecl
 
 static void generateCommands(int depth, AST_CommandElement *commands);
 static void generateCommand(int depth, AST_Command *command);
+static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand);
 static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
 static void generateCommandPrint(int depth, AST_CommandPrint *print);
 
@@ -178,6 +179,7 @@ static void generateCommand(int depth, AST_Command *command) {
       generateCommandAssign(depth, command->command.commandAssign);
       break;
     case AST_COMMAND_RETURN:
+      generateCommandReturn(depth, command->command.commandReturn);
       break;
     case AST_COMMAND_CALL:
       break;
@@ -202,6 +204,13 @@ static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
   generateId(expressionId);
   print(", %s* ", getType(variableDeclaration->type));
   generateId(variableDeclaration->tmp);
+}
+
+static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand) {
+  int expressionId = generateExpression(depth, returnCommand->expression);
+
+  printWithDepth(depth, "ret %s ", getType(returnCommand->expression->type));
+  generateId(expressionId);
 }
 
 static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
