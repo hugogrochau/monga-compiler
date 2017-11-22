@@ -103,6 +103,11 @@ static void generateFunction(AST_Declaration *declaration) {
 
   generateBlock(1, declaration->block);
 
+  if (declaration->type == AST_VOID) {
+    printWithDepth(1, "ret void");
+    putchar('\n');
+  }
+
   print("}");
   putchar('\n');
 }
