@@ -6,39 +6,42 @@ declare i32 @printf(i8*, ...)
 @addressTemplate = private unnamed_addr constant [3 x i8] c"%p\00"
 
 define void @main () {
-  %t1 = add i32 0, 1
-  %t2 = icmp ne i32 %t1, 0
-  br i1 %t2, label %l1, label %l2
+  %t1 = add i32 0, 2
+  %t2 = add i32 0, 1
+  %t3 = icmp sgt i32 %t1, %t2
+  br i1 %t3, label %l1, label %l2
 l1:
-  %t3 = add i32 0, 1
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t3)
   %t4 = add i32 0, 1
-  %t5 = icmp ne i32 %t4, 0
-  br i1 %t5, label %l3, label %l5
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t4)
+  %t5 = add i32 0, 1
+  %t6 = add i32 0, 1
+  %t7 = icmp eq i32 %t5, %t6
+  br i1 %t7, label %l3, label %l5
 l3:
-  %t6 = add i32 0, 2
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t6)
+  %t8 = add i32 0, 2
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t8)
   br label %l4
 l5:
-  %t7 = add i32 0, 3
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t7)
+  %t9 = add i32 0, 3
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t9)
   br label %l4
 l4:
   br label %l2
 l2:
-  %t8 = add i32 0, 0
-  %t9 = icmp ne i32 %t8, 0
-  br i1 %t9, label %l6, label %l8
+  %t10 = add i32 0, 1
+  %t11 = add i32 0, 2
+  %t12 = icmp sge i32 %t10, %t11
+  br i1 %t12, label %l6, label %l8
 l6:
-  %t10 = add i32 0, 4
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t10)
+  %t13 = add i32 0, 4
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t13)
   br label %l7
 l8:
-  %t11 = add i32 0, 5
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t11)
+  %t14 = add i32 0, 5
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t14)
   br label %l7
 l7:
-  %t12 = add i32 0, 6
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t12)
+  %t15 = add i32 0, 6
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t15)
   ret void
 }

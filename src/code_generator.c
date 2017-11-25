@@ -20,6 +20,8 @@ static void generateCommand(int depth, AST_Command *command);
 
 static void generateCommandIf(int depth, AST_CommandIf *commandIf);
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel);
+static int generateBooleanFromExpression(int depth, AST_Expression *expression);
+static int generateRelational(int depth, AST_Expression *expression);
 static void generateLabelBody(int depth, int labelStart, int labelExit, AST_Block* block);
 
 static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand);
@@ -31,10 +33,10 @@ static int generateExpressionVariable(int depth, AST_Variable *variable);
 static int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable);
 static int generateExpressionVariableArray(int depth, AST_VariableArray *variable);
 static int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
-static int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression);
-static int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression);
-static int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression);
-static int generateExpressionLogic(int depth, AST_Type type, AST_ExpressionBinary *expression);
+static int generateExpressionBinary(int depth, AST_Expression *expression);
+static int generateExpressionArithmetic(int depth, AST_Expression *expression);
+static int generateExpressionRelational(int depth, AST_Expression *expression);
+static int generateExpressionLogic(int depth, AST_Expression *expression);
 static int generateExtension(int depth, int id, AST_Type type);
 
 static void generateId(int id);
@@ -229,6 +231,39 @@ static void generateCommandIf(int depth, AST_CommandIf *commandIf) {
 }
 
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel) {
+  int booleanId;
+
+  switch (expression->expressionType) {
+    case AST_EXPRESSION_BINARY:
+      switch (expression->expression.binary->binaryType) {
+        case AST_EXPRESSION_BINARY_LESS:
+        case AST_EXPRESSION_BINARY_GREATER:
+        case AST_EXPRESSION_BINARY_LESS_EQUAL:
+        case AST_EXPRESSION_BINARY_GREATER_EQUAL:
+        case AST_EXPRESSION_BINARY_EQUAL:
+        case AST_EXPRESSION_BINARY_NOT_EQUAL:
+          booleanId = generateRelational(depth, expression);
+          break;
+        default:
+          booleanId = generateBooleanFromExpression(depth, expression);
+          break;
+      }
+      break;
+    default:
+      booleanId = generateBooleanFromExpression(depth, expression);
+      break;
+  }
+
+  printWithDepth(depth, "br i1 ");
+  generateId(booleanId);
+  print(", label ");
+  generateLabel(trueLabel);
+  print(", label ");
+  generateLabel(falseLabel);
+  putchar('\n');
+}
+
+static int generateBooleanFromExpression(int depth, AST_Expression *expression) {
   int expressionId = generateExpression(depth, expression);
   int booleanId = getNextId();
 
@@ -239,14 +274,64 @@ static void generateCondition(int depth, AST_Expression *expression, int trueLab
   print(", 0");
   putchar('\n');
 
+  return booleanId;
+}
 
-  printWithDepth(depth, "br i1 ");
+static int generateRelational(int depth, AST_Expression *expression) {
+  AST_ExpressionBinary *binaryExpression = expression->expression.binary;
+
+  int leftId = generateExpression(depth, binaryExpression->leftExpression);
+  int rightId = generateExpression(depth, binaryExpression->rightExpression);
+  int booleanId = getNextId();
+
+  printWithDepth(depth, "");
   generateId(booleanId);
-  print(", label ");
-  generateLabel(trueLabel);
-  print(", label ");
-  generateLabel(falseLabel);
+  print(" = ");
+
+  switch (expression->type) {
+    case AST_INT:
+      print("icmp");
+      break;
+    case AST_FLOAT:
+      print("fcmp");
+      break;
+    default:
+      break;
+  }
+
+  print(" ");
+
+  switch (binaryExpression->binaryType) {
+    case AST_EXPRESSION_BINARY_LESS:
+      print("slt");
+      break;
+    case AST_EXPRESSION_BINARY_GREATER:
+      print("sgt");
+      break;
+    case AST_EXPRESSION_BINARY_LESS_EQUAL:
+      print("sle");
+      break;
+    case AST_EXPRESSION_BINARY_GREATER_EQUAL:
+      print("sge");
+      break;
+    case AST_EXPRESSION_BINARY_EQUAL:
+      print("eq");
+      break;
+    case AST_EXPRESSION_BINARY_NOT_EQUAL:
+      print("ne");
+      break;
+    default:
+      error("Cannot generate an arithmetic expression for a non-arithmetic expression type");
+      break;
+  }
+
+  print(" %s ", getType(expression->type));
+  generateId(leftId);
+  print(", ");
+  generateId(rightId);
   putchar('\n');
+
+  return booleanId;
 }
 
 static void generateLabelBody(int depth, int labelStart, int labelExit, AST_Block* block) {
@@ -333,7 +418,7 @@ static int generateExpression(int depth, AST_Expression *expression) {
     case AST_EXPRESSION_UNARY:
       break;
     case AST_EXPRESSION_BINARY:
-      id = generateExpressionBinary(depth, expression->type, expression->expression.binary);
+      id = generateExpressionBinary(depth, expression);
       break;
     default:
       id = -1;
@@ -425,13 +510,15 @@ static int generateExpressionConstant(int depth, AST_ExpressionConstant *constan
   return id;
 }
 
-static int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBinary *expression) {
-  switch (expression->binaryType) {
+static int generateExpressionBinary(int depth, AST_Expression *expression) {
+  AST_ExpressionBinary *binaryExpression = expression->expression.binary;
+
+  switch (binaryExpression->binaryType) {
     case AST_EXPRESSION_BINARY_MULTIPLICATION:
     case AST_EXPRESSION_BINARY_DIVISION:
     case AST_EXPRESSION_BINARY_PLUS:
     case AST_EXPRESSION_BINARY_MINUS:
-      return generateExpressionArithmetic(depth, type, expression);
+      return generateExpressionArithmetic(depth, expression);
       break;
     case AST_EXPRESSION_BINARY_LESS:
     case AST_EXPRESSION_BINARY_GREATER:
@@ -439,29 +526,30 @@ static int generateExpressionBinary(int depth, AST_Type type, AST_ExpressionBina
     case AST_EXPRESSION_BINARY_GREATER_EQUAL:
     case AST_EXPRESSION_BINARY_EQUAL:
     case AST_EXPRESSION_BINARY_NOT_EQUAL:
-      return generateExpressionRelational(depth, type, expression);
+      return generateExpressionRelational(depth, expression);
       break;
     case AST_EXPRESSION_BINARY_LOGIC_AND:
     case AST_EXPRESSION_BINARY_LOGIC_OR:
-      return generateExpressionLogic(depth, type, expression);
+      return generateExpressionLogic(depth, expression);
     default:
       error("Cannot generate an expression for a unknown expression type");
       return -1;
   }
 }
 
-static int generateExpressionArithmetic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
-  int leftId = generateExpression(depth, expression->leftExpression);
-  int rightId = generateExpression(depth, expression->rightExpression);
+static int generateExpressionArithmetic(int depth, AST_Expression *expression) {
+  AST_ExpressionBinary *binaryExpression = expression->expression.binary;
+  int leftId = generateExpression(depth, binaryExpression->leftExpression);
+  int rightId = generateExpression(depth, binaryExpression->rightExpression);
   int id = getNextId();
 
   printWithDepth(depth, "");
   generateId(id);
   print(" = ");
 
-  switch (type) {
+  switch (expression->type) {
     case AST_INT:
-      switch (expression->binaryType) {
+      switch (binaryExpression->binaryType) {
         case AST_EXPRESSION_BINARY_MULTIPLICATION:
           print("mul");
           break;
@@ -479,7 +567,7 @@ static int generateExpressionArithmetic(int depth, AST_Type type, AST_Expression
       }
     break;
     case AST_FLOAT:
-      switch (expression->binaryType) {
+      switch (binaryExpression->binaryType) {
         case AST_EXPRESSION_BINARY_MULTIPLICATION:
           print("fmul");
           break;
@@ -500,7 +588,7 @@ static int generateExpressionArithmetic(int depth, AST_Type type, AST_Expression
     break;
   }
 
-  print(" %s ", getType(type));
+  print(" %s ", getType(expression->type));
   generateId(leftId);
   print(", ");
   generateId(rightId);
@@ -508,62 +596,13 @@ static int generateExpressionArithmetic(int depth, AST_Type type, AST_Expression
   return id;
 }
 
-static int generateExpressionRelational(int depth, AST_Type type, AST_ExpressionBinary *expression) {
-  int leftId = generateExpression(depth, expression->leftExpression);
-  int rightId = generateExpression(depth, expression->rightExpression);
-  int charId = getNextId();
+static int generateExpressionRelational(int depth, AST_Expression *expression) {
+  int booleanId = generateRelational(depth, expression);
 
-  printWithDepth(depth, "");
-  generateId(charId);
-  print(" = ");
-
-  switch (type) {
-    case AST_INT:
-      print("icmp");
-      break;
-    case AST_FLOAT:
-      print("fcmp");
-      break;
-    default:
-      break;
-  }
-
-  print(" ");
-
-  switch (expression->binaryType) {
-    case AST_EXPRESSION_BINARY_LESS:
-      print("lt");
-      break;
-    case AST_EXPRESSION_BINARY_GREATER:
-      print("gt");
-      break;
-    case AST_EXPRESSION_BINARY_LESS_EQUAL:
-      print("le");
-      break;
-    case AST_EXPRESSION_BINARY_GREATER_EQUAL:
-      print("ge");
-      break;
-    case AST_EXPRESSION_BINARY_EQUAL:
-      print("eq");
-      break;
-    case AST_EXPRESSION_BINARY_NOT_EQUAL:
-      print("ne");
-      break;
-    default:
-      error("Cannot generate an arithmetic expression for a non-arithmetic expression type");
-      break;
-  }
-
-  print(" %s ", getType(type));
-  generateId(leftId);
-  print(", ");
-  generateId(rightId);
-  putchar('\n');
-
-  return generateExtension(depth, charId, type);
+  return generateExtension(depth, booleanId, expression->type);
 }
 
-static int generateExpressionLogic(int depth, AST_Type type, AST_ExpressionBinary *expression) {
+static int generateExpressionLogic(int depth, AST_Expression *expression) {
   return getNextId();
 }
 

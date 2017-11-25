@@ -39,7 +39,6 @@ typedef struct expressionElement AST_ExpressionElement;
 typedef union expressionUnion AST_ExpressionUnion;
 typedef struct expression AST_Expression;
 typedef struct expressionVariable AST_ExpressionVariable;
-typedef struct expressionParentheses AST_ExpressionParentheses;
 typedef struct expressionCall AST_ExpressionCall;
 typedef struct expressionNew AST_ExpressionNew;
 typedef struct expressionAs AST_ExpressionAs;
@@ -235,7 +234,6 @@ struct expressionElement {
 
 union expressionUnion {
   AST_ExpressionVariable *variable;
-  AST_ExpressionParentheses *parentheses;
   AST_ExpressionCall *call;
   AST_ExpressionNew *new;
   AST_ExpressionAs *as;

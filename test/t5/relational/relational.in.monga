@@ -1,9 +1,12 @@
-main (): int {
+main (): void {
   foo: int;
+  bar: int;
 
   foo = 3 == 4;
 
   @foo;
 
-  return 1;
+  bar = 3 >= 2;
+
+  @bar;
 }
