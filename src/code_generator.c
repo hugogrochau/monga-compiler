@@ -210,22 +210,22 @@ static void generateCommand(int depth, AST_Command *command) {
 
 static void generateCommandIf(int depth, AST_CommandIf *commandIf) {
   int trueLabel = getNextLabel();
-  int outLabel = getNextLabel();
+  int exitLabel = getNextLabel();
   int falseLabel;
 
   // if else
   if (commandIf->elseBlock != NULL) {
     falseLabel = getNextLabel();
     generateCondition(depth, commandIf->expression, trueLabel, falseLabel);
-    generateLabelBody(depth, trueLabel, outLabel, commandIf->thenBlock);
-    generateLabelBody(depth, falseLabel, outLabel, commandIf->elseBlock);
+    generateLabelBody(depth, trueLabel, exitLabel, commandIf->thenBlock);
+    generateLabelBody(depth, falseLabel, exitLabel, commandIf->elseBlock);
   // just if
   } else {
-    generateCondition(depth, commandIf->expression, trueLabel, outLabel);
-    generateLabelBody(depth, trueLabel, outLabel, commandIf->thenBlock);
+    generateCondition(depth, commandIf->expression, trueLabel, exitLabel);
+    generateLabelBody(depth, trueLabel, exitLabel, commandIf->thenBlock);
   }
 
-  printWithDepth(depth - 1, "l%d:", outLabel);
+  printWithDepth(depth - 1, "l%d:", exitLabel);
 }
 
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel) {
