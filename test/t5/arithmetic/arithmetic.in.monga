@@ -7,6 +7,7 @@ main (): int{
   b = a - 3;
   b = b * 3;
   b = b / 2;
+  b = -b;
 
   @b;
 

@@ -26,7 +26,10 @@ define i32 @main () {
   %t15 = sdiv i32 %t13, %t14
   store i32 %t15, i32* %t2
   %t16 = load i32, i32* %t2
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t16)
-  %t17 = add i32 0, 0
-  ret i32 %t17
+  %t17 = sub nsw i32 0, %t16
+  store i32 %t17, i32* %t2
+  %t18 = load i32, i32* %t2
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t18)
+  %t19 = add i32 0, 0
+  ret i32 %t19
 }

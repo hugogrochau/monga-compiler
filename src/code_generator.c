@@ -34,6 +34,7 @@ static int generateExpressionVariable(int depth, AST_Variable *variable);
 static int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable);
 static int generateExpressionVariableArray(int depth, AST_VariableArray *variable);
 static int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
+static int generateExpressionUnary(int depth, AST_Expression *expression);
 static int generateExpressionBinary(int depth, AST_Expression *expression);
 static int generateExpressionArithmetic(int depth, AST_Expression *expression);
 static int generateExpressionRelational(int depth, AST_Expression *expression);
@@ -439,6 +440,7 @@ static int generateExpression(int depth, AST_Expression *expression) {
       id = generateExpressionConstant(depth, expression->expression.constant);
       break;
     case AST_EXPRESSION_UNARY:
+      id = generateExpressionUnary(depth, expression);
       break;
     case AST_EXPRESSION_BINARY:
       id = generateExpressionBinary(depth, expression);
@@ -532,6 +534,25 @@ static int generateExpressionConstant(int depth, AST_ExpressionConstant *constan
   }
 
   return id;
+}
+
+static int generateExpressionUnary(int depth, AST_Expression *expression) {
+  AST_ExpressionUnary* expressionUnary = expression->expression.unary;
+  int expressionId = generateExpression(depth, expressionUnary->expression);
+  int returnedId = getNextId();
+
+  switch (expressionUnary->unaryType) {
+    case AST_EXPRESSION_UNARY_MINUS:
+      printWithDepth(depth, "");
+      generateId(returnedId);
+      print(" = sub nsw %s 0, ", getType(expression->type));
+      generateId(expressionId);
+    break;
+    case AST_EXPRESSION_UNARY_NOT:
+    break;
+  }
+
+  return returnedId;
 }
 
 static int generateExpressionBinary(int depth, AST_Expression *expression) {
