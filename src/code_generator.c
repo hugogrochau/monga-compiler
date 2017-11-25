@@ -17,6 +17,11 @@ static void generateVariableDeclaration(int depth, AST_Declaration *variableDecl
 
 static void generateCommands(int depth, AST_CommandElement *commands);
 static void generateCommand(int depth, AST_Command *command);
+
+static void generateCommandIf(int depth, AST_CommandIf *commandIf);
+static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel);
+static void generateLabelBody(int depth, int labelStart, int labelExit, AST_Block* block);
+
 static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand);
 static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
 static void generateCommandPrint(int depth, AST_CommandPrint *print);
@@ -179,6 +184,7 @@ static void generateCommands(int depth, AST_CommandElement *commands) {
 static void generateCommand(int depth, AST_Command *command) {
   switch (command->commandType) {
     case AST_COMMAND_IF:
+      generateCommandIf(depth, command->command.commandIf);
       break;
     case AST_COMMAND_WHILE:
       break;
@@ -199,6 +205,58 @@ static void generateCommand(int depth, AST_Command *command) {
     default:
       error("Cannot generate a command for an unknown command type");
   }
+  putchar('\n');
+}
+
+static void generateCommandIf(int depth, AST_CommandIf *commandIf) {
+  int trueLabel = getNextLabel();
+  int outLabel = getNextLabel();
+  int falseLabel;
+
+  // if else
+  if (commandIf->elseBlock != NULL) {
+    falseLabel = getNextLabel();
+    generateCondition(depth, commandIf->expression, trueLabel, falseLabel);
+    generateLabelBody(depth, trueLabel, outLabel, commandIf->thenBlock);
+    generateLabelBody(depth, falseLabel, outLabel, commandIf->elseBlock);
+  // just if
+  } else {
+    generateCondition(depth, commandIf->expression, trueLabel, outLabel);
+    generateLabelBody(depth, trueLabel, outLabel, commandIf->thenBlock);
+  }
+
+  printWithDepth(depth - 1, "l%d:", outLabel);
+}
+
+static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel) {
+  int expressionId = generateExpression(depth, expression);
+  int booleanId = getNextId();
+
+  printWithDepth(depth, "");
+  generateId(booleanId);
+  print(" = icmp ne i32 ");
+  generateId(expressionId);
+  print(", 0");
+  putchar('\n');
+
+
+  printWithDepth(depth, "br i1 ");
+  generateId(booleanId);
+  print(", label ");
+  generateLabel(trueLabel);
+  print(", label ");
+  generateLabel(falseLabel);
+  putchar('\n');
+}
+
+static void generateLabelBody(int depth, int labelStart, int labelExit, AST_Block* block) {
+  printWithDepth(depth - 1, "l%d:", labelStart);
+  putchar('\n');
+  if (block != NULL) {
+    generateBlock(depth, block);
+  }
+  printWithDepth(depth, "br label ");
+  generateLabel(labelExit);
   putchar('\n');
 }
 
