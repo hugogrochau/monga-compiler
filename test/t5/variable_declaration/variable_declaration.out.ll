@@ -9,4 +9,5 @@ define void @main () {
   %t1 = alloca i32
   %t2 = alloca float
   %t3 = alloca i8
+  ret void
 }

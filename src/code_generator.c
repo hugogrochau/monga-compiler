@@ -484,12 +484,12 @@ static int generateExpressionVariableSimple(int depth, AST_VariableSimple *varia
       variable->declaration->id
     );
     putchar('\n');
+    printWithDepth(depth, "");
   } else {
     // local
     variableId = variable->declaration->tmp;
   }
 
-  printWithDepth(depth, "");
   generateId(id);
   print(" = load %s, %s* ",
     getType(variable->declaration->type),

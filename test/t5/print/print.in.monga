@@ -1,4 +1,0 @@
-main (a: int, b: float): void {
-  @1;
-  @4.5;
-}
