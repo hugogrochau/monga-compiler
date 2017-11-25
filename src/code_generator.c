@@ -19,10 +19,11 @@ static void generateCommands(int depth, AST_CommandElement *commands);
 static void generateCommand(int depth, AST_Command *command);
 
 static void generateCommandIf(int depth, AST_CommandIf *commandIf);
+static void generateCommandWhile(int depth, AST_CommandWhile *commandWhile);
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel);
 static int generateBooleanFromExpression(int depth, AST_Expression *expression);
 static int generateRelational(int depth, AST_Expression *expression);
-static void generateLabelBody(int depth, int labelStart, int labelExit, AST_Block* block);
+static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Block* block);
 
 static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand);
 static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
@@ -41,6 +42,7 @@ static int generateExtension(int depth, int id, AST_Type type);
 
 static void generateId(int id);
 static void generateLabel(int label);
+static void generateLabelStart(int depth, int label);
 
 static int getNextId();
 static int getNextLabel();
@@ -189,6 +191,7 @@ static void generateCommand(int depth, AST_Command *command) {
       generateCommandIf(depth, command->command.commandIf);
       break;
     case AST_COMMAND_WHILE:
+      generateCommandWhile(depth, command->command.commandWhile);
       break;
     case AST_COMMAND_ASSIGN:
       generateCommandAssign(depth, command->command.commandAssign);
@@ -207,7 +210,6 @@ static void generateCommand(int depth, AST_Command *command) {
     default:
       error("Cannot generate a command for an unknown command type");
   }
-  putchar('\n');
 }
 
 static void generateCommandIf(int depth, AST_CommandIf *commandIf) {
@@ -219,15 +221,29 @@ static void generateCommandIf(int depth, AST_CommandIf *commandIf) {
   if (commandIf->elseBlock != NULL) {
     falseLabel = getNextLabel();
     generateCondition(depth, commandIf->expression, trueLabel, falseLabel);
-    generateLabelBody(depth, trueLabel, exitLabel, commandIf->thenBlock);
-    generateLabelBody(depth, falseLabel, exitLabel, commandIf->elseBlock);
+    generateSimpleBlock(depth, trueLabel, exitLabel, commandIf->thenBlock);
+    generateSimpleBlock(depth, falseLabel, exitLabel, commandIf->elseBlock);
   // just if
   } else {
     generateCondition(depth, commandIf->expression, trueLabel, exitLabel);
-    generateLabelBody(depth, trueLabel, exitLabel, commandIf->thenBlock);
+    generateSimpleBlock(depth, trueLabel, exitLabel, commandIf->thenBlock);
   }
 
-  printWithDepth(depth - 1, "l%d:", exitLabel);
+  generateLabelStart(depth - 1, exitLabel);
+}
+static void generateCommandWhile(int depth, AST_CommandWhile *commandWhile) {
+  int bodyLabel = getNextLabel();
+  int exitLabel = getNextLabel();
+
+  generateCondition(depth, commandWhile->expression, bodyLabel, exitLabel);
+
+  generateLabelStart(depth - 1, bodyLabel);
+
+  generateBlock(depth, commandWhile->block);
+
+  generateCondition(depth, commandWhile->expression, bodyLabel, exitLabel);
+
+  generateLabelStart(depth - 1, exitLabel);
 }
 
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel) {
@@ -334,9 +350,8 @@ static int generateRelational(int depth, AST_Expression *expression) {
   return booleanId;
 }
 
-static void generateLabelBody(int depth, int labelStart, int labelExit, AST_Block* block) {
-  printWithDepth(depth - 1, "l%d:", labelStart);
-  putchar('\n');
+static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Block* block) {
+  generateLabelStart(depth - 1, labelStart);
   if (block != NULL) {
     generateBlock(depth, block);
   }
@@ -354,6 +369,7 @@ static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
   generateId(expressionId);
   print(", %s* ", getType(variableDeclaration->type));
   generateId(variableDeclaration->tmp);
+  putchar('\n');
 }
 
 static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand) {
@@ -361,6 +377,7 @@ static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand) {
 
   printWithDepth(depth, "ret %s ", getType(returnCommand->expression->type));
   generateId(expressionId);
+  putchar('\n');
 }
 
 static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
@@ -397,6 +414,7 @@ static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
   print(" ");
   generateId(expressionId);
   print(")");
+  putchar('\n');
 }
 
 static int generateExpression(int depth, AST_Expression *expression) {
@@ -625,6 +643,11 @@ static void generateId(int id) {
 
 static void generateLabel(int label) {
   print("%%l%d", label);
+}
+
+static void generateLabelStart(int depth, int label) {
+  print("l%d:", label);
+  putchar('\n');
 }
 
 static int getNextId() {
