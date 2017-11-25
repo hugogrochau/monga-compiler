@@ -6,7 +6,6 @@ foo5: char[];
 foo6: float[];
 
 main (a: int, b: float): void {
-}
-
-main2 (a: char, b: char[]): char {
+  foo1 = 2;
+  @foo1;
 }

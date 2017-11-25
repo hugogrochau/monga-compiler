@@ -368,7 +368,12 @@ static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand) {
   printWithDepth(depth, "store %s ", getType(assignCommand->expression->type));
   generateId(expressionId);
   print(", %s* ", getType(variableDeclaration->type));
-  generateId(variableDeclaration->tmp);
+  // global
+  if (variableDeclaration->tmp == -1) {
+    print("@%s", variableDeclaration->id);
+  } else {
+    generateId(variableDeclaration->tmp);
+  }
   putchar('\n');
 }
 
@@ -484,6 +489,7 @@ static int generateExpressionVariableSimple(int depth, AST_VariableSimple *varia
     variableId = variable->declaration->tmp;
   }
 
+  printWithDepth(depth, "");
   generateId(id);
   print(" = load %s, %s* ",
     getType(variable->declaration->type),

@@ -27,12 +27,6 @@ define i32 @main () {
   store i32 %t15, i32* %t2
   %t16 = load i32, i32* %t2
   call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t16)
-  %t17 = fadd float 0.0, 1.0e+00
-  %t18 = fadd float 0.0, 2.000000e+00
-  %t19 = fmul float %t17, %t18
-  store float %t19, float* %t3
-  %t20 = load float, float* %t3
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@floatTemplate, i32 0, i32 0), float %t20)
-  %t21 = add i32 0, 0
-  ret i32 %t21
+  %t17 = add i32 0, 0
+  ret i32 %t17
 }

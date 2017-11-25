@@ -18,7 +18,10 @@ declare i32 @printf(i8*, ...)
 @foo6 = global float* null
 
 define void @main (i32 %t1, float %t2) {
-}
-
-define i8 @main2 (i8 %t3, i8* %t4) {
+  %t3 = add i32 0, 2
+  store i32 %t3, i32* @foo1
+  %t5 = getelementptr i32, i32* @foo1, i64 0
+  %t4 = load i32, i32* %t5
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t4)
+  ret void
 }

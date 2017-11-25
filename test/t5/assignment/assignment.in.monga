@@ -1,8 +1,7 @@
-main (): int {
+main (): void {
   a: int;
   b: int;
   a = 3;
   b = a;
   @b;
-  return b;
 }
