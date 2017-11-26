@@ -408,7 +408,16 @@ static int generateLogical(int depth, AST_Expression *expression) {
   int resultLabel = getNextLabel();
   int returnedId = getNextId();
 
-  generateCondition(depth, binaryExpression->leftExpression, rightExpressionLabel, falseLabel);
+  switch (binaryExpression->binaryType) {
+    case AST_EXPRESSION_BINARY_LOGIC_AND:
+      generateCondition(depth, binaryExpression->leftExpression, rightExpressionLabel, falseLabel);
+      break;
+    case AST_EXPRESSION_BINARY_LOGIC_OR:
+      generateCondition(depth, binaryExpression->leftExpression, trueLabel, rightExpressionLabel);
+      break;
+    default:
+      break;
+  }
 
   generateSimpleBlock(depth, trueLabel, resultLabel, NULL);
 
