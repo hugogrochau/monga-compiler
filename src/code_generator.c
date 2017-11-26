@@ -9,6 +9,7 @@ static void generateGlobalDeclaration(AST_Declaration *declaration);
 static void generateGlobalVariable(AST_Declaration *declaration);
 static void generateFunction(AST_Declaration *declaration);
 static void generateParameters(AST_DeclarationElement *parameters);
+static void generateParametersStore(AST_DeclarationElement *parameters);
 static void generateParameter(AST_Declaration *parameter);
 
 static void generateBlock(int depth, AST_Block *block);
@@ -30,6 +31,7 @@ static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Bl
 
 static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand);
 static void generateCommandAssign(int depth, AST_CommandAssign *assignCommand);
+static int generateCall(int depth, AST_Call *call);
 static void generateCommandPrint(int depth, AST_CommandPrint *print);
 
 static int generateExpression(int depth, AST_Expression *expression);
@@ -115,6 +117,10 @@ static void generateFunction(AST_Declaration *declaration) {
   print(") {");
   putchar('\n');
 
+  generateVariableDeclarations(1, declaration->parameterList);
+
+  generateParametersStore(declaration->parameterList);
+
   generateBlock(1, declaration->block);
 
   if (declaration->type == AST_VOID) {
@@ -128,7 +134,6 @@ static void generateFunction(AST_Declaration *declaration) {
 
 static void generateParameters(AST_DeclarationElement *parameters) {
   AST_DeclarationElement *currentParameter = parameters;
-  int parameterIndex = 0;
 
   while (currentParameter != NULL) {
     generateParameter(currentParameter->declaration);
@@ -137,14 +142,27 @@ static void generateParameters(AST_DeclarationElement *parameters) {
       print(", ");
     }
 
-    ++parameterIndex;
+    currentParameter = currentParameter->next;
+  }
+}
+
+static void generateParametersStore(AST_DeclarationElement *parameters) {
+  AST_DeclarationElement *currentParameter = parameters;
+
+  while (currentParameter != NULL) {
+    printWithDepth(1, "store %s ", getType(currentParameter->declaration->type));
+    generateId(currentParameter->declaration->parameterId);
+    print(", %s* ", getType(currentParameter->declaration->type));
+    generateId(currentParameter->declaration->tmp);
+    putchar('\n');
+
     currentParameter = currentParameter->next;
   }
 }
 
 static void generateParameter(AST_Declaration *parameter) {
   int id = getNextId();
-  parameter->tmp = id;
+  parameter->parameterId = id;
 
   print(getType(parameter->type));
   print(" ");
@@ -205,6 +223,8 @@ static void generateCommand(int depth, AST_Command *command) {
       generateCommandReturn(depth, command->command.commandReturn);
       break;
     case AST_COMMAND_CALL:
+      generateCall(depth, command->command.commandCall->call);
+      putchar('\n');
       break;
     case AST_COMMAND_PRINT:
       generateCommandPrint(depth, command->command.commandPrint);
@@ -494,6 +514,48 @@ static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand) {
   putchar('\n');
 }
 
+static int generateCall(int depth, AST_Call *call) {
+  int returnId = getNextId();
+  int parameters[200];
+  int i = 0;
+  AST_ExpressionElement *currentParameterExpression = call->expressionList;
+
+  while (currentParameterExpression != NULL) {
+    parameters[i] = generateExpression(depth, currentParameterExpression->expression);
+    ++i;
+    currentParameterExpression = currentParameterExpression->next;
+  }
+
+  printWithDepth(depth, "");
+
+  if (call->declaration->type != AST_VOID) {
+    generateId(returnId);
+    print(" = ");
+  }
+
+  print("call %s @%s(",
+    getType(call->declaration->type),
+    call->declaration->id
+  );
+
+  currentParameterExpression = call->expressionList;
+  i = 0;
+  while (currentParameterExpression != NULL) {
+    print("%s ", getType(currentParameterExpression->expression->type));
+    generateId(parameters[i]);
+    if (currentParameterExpression->next != NULL) {
+      print(", ");
+    }
+
+    ++i;
+    currentParameterExpression = currentParameterExpression->next;
+  }
+
+  print(")");
+
+  return returnId;
+}
+
 static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
   int expressionId = generateExpression(depth, printCommand->expression);
   int doubleId;
@@ -532,6 +594,7 @@ static int generateExpression(int depth, AST_Expression *expression) {
       id = generateExpressionVariable(depth, expression->expression.variable->variable);
       break;
     case AST_EXPRESSION_CALL:
+      id = generateCall(depth, expression->expression.call->call);
       break;
     case AST_EXPRESSION_NEW:
       break;

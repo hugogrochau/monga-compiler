@@ -132,6 +132,7 @@ struct declaration {
   AST_Block *block;
   // for generating code
   int tmp;
+  int parameterId;
 };
 
 struct block {

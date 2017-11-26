@@ -1,0 +1,17 @@
+foo (a: int, b: int): void {
+  @(a + b);
+}
+
+bar (a: float, b: float): int {
+  return a == b;
+}
+
+main(): void {
+  barReturn: int;
+
+  foo(1, 2);
+
+  barReturn = bar(1.1, 1.2);
+
+  @barReturn;
+}
