@@ -45,7 +45,7 @@ static int generateExtension(int depth, int id, AST_Type type);
 
 static void generateId(int id);
 static void generateLabel(int label);
-static void generateLabelStart(int depth, int label);
+static void generateLabelStart(int label);
 
 static int getNextId();
 static int getNextLabel();
@@ -232,7 +232,7 @@ static void generateCommandIf(int depth, AST_CommandIf *commandIf) {
     generateSimpleBlock(depth, trueLabel, exitLabel, commandIf->thenBlock);
   }
 
-  generateLabelStart(depth - 1, exitLabel);
+  generateLabelStart(exitLabel);
 }
 static void generateCommandWhile(int depth, AST_CommandWhile *commandWhile) {
   int bodyLabel = getNextLabel();
@@ -240,13 +240,13 @@ static void generateCommandWhile(int depth, AST_CommandWhile *commandWhile) {
 
   generateCondition(depth, commandWhile->expression, bodyLabel, exitLabel);
 
-  generateLabelStart(depth - 1, bodyLabel);
+  generateLabelStart(bodyLabel);
 
   generateBlock(depth, commandWhile->block);
 
   generateCondition(depth, commandWhile->expression, bodyLabel, exitLabel);
 
-  generateLabelStart(depth - 1, exitLabel);
+  generateLabelStart(exitLabel);
 }
 
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel) {
@@ -421,12 +421,12 @@ static int generateLogical(int depth, AST_Expression *expression) {
 
   generateSimpleBlock(depth, trueLabel, resultLabel, NULL);
 
-  generateLabelStart(depth, rightExpressionLabel);
+  generateLabelStart(rightExpressionLabel);
   generateCondition(depth, binaryExpression->rightExpression, trueLabel, falseLabel);
 
   generateSimpleBlock(depth, falseLabel, resultLabel, NULL);
 
-  generateLabelStart(depth, resultLabel);
+  generateLabelStart(resultLabel);
   printWithDepth(depth, "");
   generateId(returnedId);
   print(" = phi i1 [1, ");
@@ -440,7 +440,7 @@ static int generateLogical(int depth, AST_Expression *expression) {
 }
 
 static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Block* block) {
-  generateLabelStart(depth - 1, labelStart);
+  generateLabelStart(labelStart);
   if (block != NULL) {
     generateBlock(depth, block);
   }
@@ -766,7 +766,7 @@ static void generateLabel(int label) {
   print("%%l%d", label);
 }
 
-static void generateLabelStart(int depth, int label) {
+static void generateLabelStart(int label) {
   print("l%d:", label);
   putchar('\n');
 }
