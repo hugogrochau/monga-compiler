@@ -21,6 +21,7 @@ static void generateCommand(int depth, AST_Command *command);
 static void generateCommandIf(int depth, AST_CommandIf *commandIf);
 static void generateCommandWhile(int depth, AST_CommandWhile *commandWhile);
 static void generateCondition(int depth, AST_Expression *expression, int trueLabel, int falseLabel);
+static int generateUnaryNot(int depth, AST_Expression* expression);
 static int generateBooleanFromExpression(int depth, AST_Expression *expression);
 static int generateRelational(int depth, AST_Expression *expression);
 static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Block* block);
@@ -251,6 +252,15 @@ static void generateCondition(int depth, AST_Expression *expression, int trueLab
   int booleanId;
 
   switch (expression->expressionType) {
+    case AST_EXPRESSION_UNARY:
+      switch (expression->expression.unary->unaryType) {
+        case AST_EXPRESSION_UNARY_NOT:
+          booleanId = generateUnaryNot(depth, expression);
+        break;
+        default:
+          booleanId = generateBooleanFromExpression(depth, expression);
+        break;
+      }
     case AST_EXPRESSION_BINARY:
       switch (expression->expression.binary->binaryType) {
         case AST_EXPRESSION_BINARY_LESS:
@@ -278,6 +288,40 @@ static void generateCondition(int depth, AST_Expression *expression, int trueLab
   print(", label ");
   generateLabel(falseLabel);
   putchar('\n');
+}
+
+static int generateUnaryNot(int depth, AST_Expression* expression) {
+  AST_ExpressionUnary* expressionUnary = expression->expression.unary;
+  int expressionId = generateExpression(depth, expressionUnary->expression);
+  int booleanId = getNextId();
+  int returnedId = getNextId();
+
+  printWithDepth(depth, "");
+  generateId(booleanId);
+  print(" = ");
+  switch (expression->type) {
+    case AST_INT:
+      print("icmp");
+      break;
+    case AST_FLOAT:
+      print("fcmp");
+      break;
+    default:
+      break;
+  }
+  print(" ne %s ", getType(expression->type));
+  generateId(expressionId);
+  print(", 0");
+  putchar('\n');
+
+  printWithDepth(depth, "");
+  generateId(returnedId);
+  print(" = xor i1 ");
+  generateId(booleanId);
+  print(", true");
+  putchar('\n');
+
+  return returnedId;
 }
 
 static int generateBooleanFromExpression(int depth, AST_Expression *expression) {
@@ -539,16 +583,20 @@ static int generateExpressionConstant(int depth, AST_ExpressionConstant *constan
 static int generateExpressionUnary(int depth, AST_Expression *expression) {
   AST_ExpressionUnary* expressionUnary = expression->expression.unary;
   int expressionId = generateExpression(depth, expressionUnary->expression);
-  int returnedId = getNextId();
+  int returnedId;
+  int booleanId;
 
   switch (expressionUnary->unaryType) {
     case AST_EXPRESSION_UNARY_MINUS:
+      returnedId = getNextId();
       printWithDepth(depth, "");
       generateId(returnedId);
       print(" = sub nsw %s 0, ", getType(expression->type));
       generateId(expressionId);
     break;
     case AST_EXPRESSION_UNARY_NOT:
+      booleanId = generateUnaryNot(depth, expression);
+      returnedId = generateExtension(depth, booleanId, expression->type);
     break;
   }
 
