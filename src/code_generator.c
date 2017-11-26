@@ -402,17 +402,18 @@ static int generateRelational(int depth, AST_Expression *expression) {
 
 static int generateLogical(int depth, AST_Expression *expression) {
   AST_ExpressionBinary *binaryExpression = expression->expression.binary;
-  int rightExpressionLabel = getNextLabel();
   int trueLabel = getNextLabel();
+  int rightExpressionLabel = getNextLabel();
   int falseLabel = getNextLabel();
   int resultLabel = getNextLabel();
   int returnedId = getNextId();
 
-  generateCondition(depth, binaryExpression->leftExpression, trueLabel, rightExpressionLabel);
-  generateLabelStart(depth, rightExpressionLabel);
-  generateCondition(depth, binaryExpression->rightExpression, trueLabel, falseLabel);
+  generateCondition(depth, binaryExpression->leftExpression, rightExpressionLabel, falseLabel);
 
   generateSimpleBlock(depth, trueLabel, resultLabel, NULL);
+
+  generateLabelStart(depth, rightExpressionLabel);
+  generateCondition(depth, binaryExpression->rightExpression, trueLabel, falseLabel);
 
   generateSimpleBlock(depth, falseLabel, resultLabel, NULL);
 
