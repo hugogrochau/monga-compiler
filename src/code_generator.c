@@ -306,19 +306,19 @@ static int generateUnaryNot(int depth, AST_Expression* expression) {
   printWithDepth(depth, "");
   generateId(booleanId);
   print(" = ");
-  switch (expression->type) {
+  switch (expressionUnary->expression->type) {
     case AST_INT:
-      print("icmp");
+      print("icmp ne");
       break;
     case AST_FLOAT:
-      print("fcmp");
+      print("fcmp one");
       break;
     default:
       break;
   }
-  print(" ne %s ", getType(expression->type));
+  print(" %s ", getType(expressionUnary->expression->type));
   generateId(expressionId);
-  print(", 0");
+  print(", %s", getInitialValueForType(expressionUnary->expression->type));
   putchar('\n');
 
   printWithDepth(depth, "");
@@ -648,7 +648,20 @@ static int generateExpressionUnary(int depth, AST_Expression *expression) {
       returnedId = getNextId();
       printWithDepth(depth, "");
       generateId(returnedId);
-      print(" = sub nsw %s 0, ", getType(expression->type));
+      print(" = ");
+      switch (expression->type) {
+        case AST_INT:
+          print("sub nsw");
+          break;
+        case AST_FLOAT:
+          print("fsub");
+          break;
+        default:
+          break;
+      }
+      print(" %s %s, ",
+        getType(expression->type),
+        getInitialValueForType(expression->type));
       generateId(expressionId);
     break;
     case AST_EXPRESSION_UNARY_NOT:
