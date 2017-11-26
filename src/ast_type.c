@@ -123,7 +123,14 @@ void typeExpression(AST_Expression *expression) {
     break;
   case AST_EXPRESSION_UNARY:
     typeExpression(expression->expression.unary->expression);
-    expression->type = expression->expression.unary->expression->type;
+    switch (expression->expression.unary->unaryType) {
+      case AST_EXPRESSION_UNARY_MINUS:
+        expression->type = expression->expression.unary->expression->type;
+        break;
+      case AST_EXPRESSION_UNARY_NOT:
+        expression->type = AST_INT;
+        break;
+    }
     break;
   case AST_EXPRESSION_BINARY:
     typeExpression(expression->expression.binary->leftExpression);
@@ -135,7 +142,16 @@ void typeExpression(AST_Expression *expression) {
         AST_TypeNames[expression->expression.binary->rightExpression->type]
       );
     }
-    expression->type = expression->expression.binary->leftExpression->type;
+    switch (expression->expression.binary->binaryType) {
+      case AST_EXPRESSION_BINARY_MULTIPLICATION:
+      case AST_EXPRESSION_BINARY_DIVISION:
+      case AST_EXPRESSION_BINARY_PLUS:
+      case AST_EXPRESSION_BINARY_MINUS:
+        expression->type = expression->expression.binary->leftExpression->type;
+      break;
+      default:
+        expression->type = AST_INT;
+    }
     break;
   }
 }
@@ -151,8 +167,8 @@ AST_Type typeVariable(AST_Variable *variable, AST_Type type) {
       if (type != -1 && variable->variable.simple->declaration->type != type) {
         error("Variable (%s) of type (%s) cannot be set to type (%s)",
           variable->variable.simple->id,
-          AST_TypeNames[type],
-          AST_TypeNames[variable->variable.simple->declaration->type]
+          AST_TypeNames[variable->variable.simple->declaration->type],
+          AST_TypeNames[type]
         );
       }
       return variable->variable.simple->declaration->type;

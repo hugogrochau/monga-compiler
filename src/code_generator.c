@@ -356,44 +356,62 @@ static int generateRelational(int depth, AST_Expression *expression) {
   generateId(booleanId);
   print(" = ");
 
-  switch (expression->type) {
+  switch (binaryExpression->leftExpression->type) {
     case AST_INT:
-      print("icmp");
+      print("icmp ");
+      switch (binaryExpression->binaryType) {
+        case AST_EXPRESSION_BINARY_LESS:
+          print("slt");
+          break;
+        case AST_EXPRESSION_BINARY_GREATER:
+          print("sgt");
+          break;
+        case AST_EXPRESSION_BINARY_LESS_EQUAL:
+          print("sle");
+          break;
+        case AST_EXPRESSION_BINARY_GREATER_EQUAL:
+          print("sge");
+          break;
+        case AST_EXPRESSION_BINARY_EQUAL:
+          print("eq");
+          break;
+        case AST_EXPRESSION_BINARY_NOT_EQUAL:
+          print("ne");
+          break;
+        default:
+          break;
+      }
       break;
     case AST_FLOAT:
-      print("fcmp");
+      print("fcmp ");
+      switch (binaryExpression->binaryType) {
+        case AST_EXPRESSION_BINARY_LESS:
+          print("olt");
+          break;
+        case AST_EXPRESSION_BINARY_GREATER:
+          print("ogt");
+          break;
+        case AST_EXPRESSION_BINARY_LESS_EQUAL:
+          print("ole");
+          break;
+        case AST_EXPRESSION_BINARY_GREATER_EQUAL:
+          print("oge");
+          break;
+        case AST_EXPRESSION_BINARY_EQUAL:
+          print("oeq");
+          break;
+        case AST_EXPRESSION_BINARY_NOT_EQUAL:
+          print("one");
+          break;
+        default:
+          break;
+      }
       break;
     default:
       break;
   }
 
-  print(" ");
-
-  switch (binaryExpression->binaryType) {
-    case AST_EXPRESSION_BINARY_LESS:
-      print("slt");
-      break;
-    case AST_EXPRESSION_BINARY_GREATER:
-      print("sgt");
-      break;
-    case AST_EXPRESSION_BINARY_LESS_EQUAL:
-      print("sle");
-      break;
-    case AST_EXPRESSION_BINARY_GREATER_EQUAL:
-      print("sge");
-      break;
-    case AST_EXPRESSION_BINARY_EQUAL:
-      print("eq");
-      break;
-    case AST_EXPRESSION_BINARY_NOT_EQUAL:
-      print("ne");
-      break;
-    default:
-      error("Cannot generate an arithmetic expression for a non-arithmetic expression type");
-      break;
-  }
-
-  print(" %s ", getType(expression->type));
+  print(" %s ", getType(binaryExpression->leftExpression->type));
   generateId(leftId);
   print(", ");
   generateId(rightId);
@@ -679,7 +697,7 @@ static int generateExpressionArithmetic(int depth, AST_Expression *expression) {
   generateId(id);
   print(" = ");
 
-  switch (expression->type) {
+  switch (binaryExpression->leftExpression->type) {
     case AST_INT:
       switch (binaryExpression->binaryType) {
         case AST_EXPRESSION_BINARY_MULTIPLICATION:
@@ -748,7 +766,7 @@ static int generateExtension(int depth, int id, AST_Type type) {
   print(" = ");
   print("zext i1 ");
   generateId(id);
-  print(" to %s", getType(type));
+  print(" to i32");
 
   return extendedId;
 }

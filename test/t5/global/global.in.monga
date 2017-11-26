@@ -1,11 +1,10 @@
 foo1: int;
-foo2: char;
-foo3: float;
-foo4: int[];
-foo5: char[];
-foo6: float[];
+foo2: float;
 
 main (a: int, b: float): void {
   foo1 = 2;
   @foo1;
+
+  foo2 = 1.234;
+  @foo2;
 }
