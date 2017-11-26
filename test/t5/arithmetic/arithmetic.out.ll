@@ -5,7 +5,7 @@ declare i32 @printf(i8*, ...)
 @stringTemplate = private unnamed_addr constant [3 x i8] c"%s\00"
 @addressTemplate = private unnamed_addr constant [3 x i8] c"%p\00"
 
-define i32 @main () {
+define void @main () {
   %t1 = alloca i32
   %t2 = alloca i32
   %t3 = alloca float
@@ -30,6 +30,14 @@ define i32 @main () {
   store i32 %t17, i32* %t2
   %t18 = load i32, i32* %t2
   call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 %t18)
-  %t19 = add i32 0, 0
-  ret i32 %t19
+  %t19 = fadd float 0.0, 0x3FB99999A0000000
+  %t20 = fadd float 0.0, 0x4059000000000000
+  %t21 = fmul float %t19, %t20
+  %t22 = fadd float 0.0, 0x4014000000000000
+  %t23 = fdiv float %t21, %t22
+  %t24 = fadd float 0.0, 0x3FE0000000000000
+  %t25 = fmul float %t23, %t24
+  %t26 = fpext float %t25 to double
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@floatTemplate, i32 0, i32 0), double %t26)
+  ret void
 }

@@ -1,4 +1,4 @@
-main (): int{
+main (): void {
   a: int;
   b: int;
   c: float;
@@ -11,5 +11,5 @@ main (): int{
 
   @b;
 
-  return 0;
+  @(0.1 * 100.0 / 5.0 * 0.5);
 }

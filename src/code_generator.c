@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "code_generator.h"
 #include "util.h"
@@ -46,6 +47,7 @@ static int generateExtension(int depth, int id, AST_Type type);
 static void generateId(int id);
 static void generateLabel(int label);
 static void generateLabelStart(int label);
+static void generateFloat(float value);
 
 static int getNextId();
 static int getNextLabel();
@@ -476,38 +478,31 @@ static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand) {
 
 static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
   int expressionId = generateExpression(depth, printCommand->expression);
-
-  printWithDepth(depth, "call i32 (i8*, ...) @printf(i8* ");
+  int doubleId;
 
   switch (printCommand->expression->type) {
+    case AST_CHAR:
     case AST_INT:
-      print("getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32");
+      printWithDepth(depth, "call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@intTemplate, i32 0, i32 0), i32 ");
+      generateId(expressionId);
+      print(")");
       break;
     case AST_FLOAT:
-      print("getelementptr inbounds ([3 x i8], [3 x i8] *@floatTemplate, i32 0, i32 0), float");
-      break;
-    case AST_CHAR:
-      print("getelementptr inbounds ([3 x i8], [3 x i8] *@charTemplate, i32 0, i32 0), i8");
-      break;
-    case AST_ARRAY_INT:
-      print("getelementptr inbounds ([3 x i8], [3 x i8] *@addressTemplate, i32 0, i32 0), i32*");
-      break;
-    case AST_ARRAY_FLOAT:
-      print("getelementptr inbounds ([3 x i8], [3 x i8] *@addressTemplate, i32 0, i32 0), float*");
-      break;
-    case AST_ARRAY_CHAR:
-      print("getelementptr inbounds ([3 x i8], [3 x i8] *@stringTemplate, i32 0, i32 0), i8*");
-      break;
-    case AST_VOID:
-      error("Cannot generate a print command for a void variable");
+      doubleId = getNextId();
+      printWithDepth(depth, "");
+      generateId(doubleId);
+      print(" = fpext float ");
+      generateId(expressionId);
+      print(" to double");
+      putchar('\n');
+
+      printWithDepth(depth, "call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@floatTemplate, i32 0, i32 0), double ");
+      generateId(doubleId);
+      print(")");
       break;
     default:
-      error("Cannot generate a print command for an unknown variable");
       break;
   }
-  print(" ");
-  generateId(expressionId);
-  print(")");
   putchar('\n');
 }
 
@@ -609,11 +604,11 @@ static int generateExpressionConstant(int depth, AST_ExpressionConstant *constan
       );
       break;
     case AST_EXPRESSION_CONSTANT_FLOAT:
-      print(" = fadd %s %s, %6e",
+      print(" = fadd %s %s, ",
         getType(AST_FLOAT),
-        getInitialValueForType(AST_FLOAT),
-        constantExpression->constant.f
+        getInitialValueForType(AST_FLOAT)
       );
+      generateFloat(constantExpression->constant.f);
       break;
     case AST_EXPRESSION_CONSTANT_STRING:
       break;
@@ -769,6 +764,19 @@ static void generateLabel(int label) {
 static void generateLabelStart(int label) {
   print("l%d:", label);
   putchar('\n');
+}
+
+static void generateFloat(float value) {
+  int i;
+  double doubleValue = value;
+  unsigned char buffer[sizeof(double)];
+
+  memcpy(buffer, &doubleValue, sizeof(double));
+
+  print("0x");
+  for(i = sizeof(double) - 1; i >= 0; i--) {
+    print("%02X", buffer[i]);
+  }
 }
 
 static int getNextId() {
