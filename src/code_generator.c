@@ -24,6 +24,7 @@ static void generateCondition(int depth, AST_Expression *expression, int trueLab
 static int generateUnaryNot(int depth, AST_Expression* expression);
 static int generateBooleanFromExpression(int depth, AST_Expression *expression);
 static int generateRelational(int depth, AST_Expression *expression);
+static int generateLogical(int depth, AST_Expression *expression);
 static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Block* block);
 
 static void generateCommandReturn(int depth, AST_CommandReturn *returnCommand);
@@ -39,7 +40,7 @@ static int generateExpressionUnary(int depth, AST_Expression *expression);
 static int generateExpressionBinary(int depth, AST_Expression *expression);
 static int generateExpressionArithmetic(int depth, AST_Expression *expression);
 static int generateExpressionRelational(int depth, AST_Expression *expression);
-static int generateExpressionLogic(int depth, AST_Expression *expression);
+static int generateExpressionLogical(int depth, AST_Expression *expression);
 static int generateExtension(int depth, int id, AST_Type type);
 
 static void generateId(int id);
@@ -271,6 +272,10 @@ static void generateCondition(int depth, AST_Expression *expression, int trueLab
         case AST_EXPRESSION_BINARY_NOT_EQUAL:
           booleanId = generateRelational(depth, expression);
           break;
+        case AST_EXPRESSION_BINARY_LOGIC_OR:
+        case AST_EXPRESSION_BINARY_LOGIC_AND:
+          booleanId = generateLogical(depth, expression);
+          break;
         default:
           booleanId = generateBooleanFromExpression(depth, expression);
           break;
@@ -393,6 +398,35 @@ static int generateRelational(int depth, AST_Expression *expression) {
   putchar('\n');
 
   return booleanId;
+}
+
+static int generateLogical(int depth, AST_Expression *expression) {
+  AST_ExpressionBinary *binaryExpression = expression->expression.binary;
+  int rightExpressionLabel = getNextLabel();
+  int trueLabel = getNextLabel();
+  int falseLabel = getNextLabel();
+  int resultLabel = getNextLabel();
+  int returnedId = getNextId();
+
+  generateCondition(depth, binaryExpression->leftExpression, trueLabel, rightExpressionLabel);
+  generateLabelStart(depth, rightExpressionLabel);
+  generateCondition(depth, binaryExpression->rightExpression, trueLabel, falseLabel);
+
+  generateSimpleBlock(depth, trueLabel, resultLabel, NULL);
+
+  generateSimpleBlock(depth, falseLabel, resultLabel, NULL);
+
+  generateLabelStart(depth, resultLabel);
+  printWithDepth(depth, "");
+  generateId(returnedId);
+  print(" = phi i1 [1, ");
+  generateLabel(trueLabel);
+  print("], [0, ");
+  generateLabel(falseLabel);
+  print("]");
+  putchar('\n');
+
+  return returnedId;
 }
 
 static void generateSimpleBlock(int depth, int labelStart, int labelExit, AST_Block* block) {
@@ -623,7 +657,7 @@ static int generateExpressionBinary(int depth, AST_Expression *expression) {
       break;
     case AST_EXPRESSION_BINARY_LOGIC_AND:
     case AST_EXPRESSION_BINARY_LOGIC_OR:
-      return generateExpressionLogic(depth, expression);
+      return generateExpressionLogical(depth, expression);
     default:
       error("Cannot generate an expression for a unknown expression type");
       return -1;
@@ -695,8 +729,10 @@ static int generateExpressionRelational(int depth, AST_Expression *expression) {
   return generateExtension(depth, booleanId, expression->type);
 }
 
-static int generateExpressionLogic(int depth, AST_Expression *expression) {
-  return getNextId();
+static int generateExpressionLogical(int depth, AST_Expression *expression) {
+  int booleanId = generateLogical(depth, expression);
+
+  return generateExtension(depth, booleanId, expression->type);
 }
 
 static int generateExtension(int depth, int id, AST_Type type) {
