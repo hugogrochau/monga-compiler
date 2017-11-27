@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include "ast_structure.h"
     #include "ast_create.h"
+    #include "util.h"
 
     extern int yylex(void);
     void yyerror(char *);
@@ -361,5 +362,5 @@ expression:
 
 %%
 void yyerror(char *s) {
-    printf("%s. On line number %d\n", s, lineNumber);
+    error("%s. On line number %d\n", s, lineNumber);
 }

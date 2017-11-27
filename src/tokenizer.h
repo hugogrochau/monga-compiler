@@ -3,7 +3,7 @@
 
 #include "parser.h"
 
-int lineNumber;
+extern int lineNumber;
 
 typedef enum yytokentype TokenType;
 
