@@ -50,15 +50,22 @@ static void generateId(int id);
 static void generateLabel(int label);
 static void generateLabelStart(int label);
 static void generateFloat(float value);
+static void generateString(char *string);
 
 static int getNextId();
 static int getNextLabel();
+static int getNextString();
+
+static void dumpStrings();
 
 static char * getType(AST_Type type);
 static char * getInitialValueForType(AST_Type type);
 
 int currentId = 0;
 int currentLabel = 0;
+int currentString = 0;
+
+CG_StringElement *stringList = NULL;
 
 void CG_generateCode(AST_Program *program) {
   generateHeader();
@@ -73,6 +80,8 @@ void CG_generateCode(AST_Program *program) {
       putchar('\n');
     }
   }
+
+  dumpStrings();
 }
 
 static void generateHeader() {
@@ -581,6 +590,9 @@ static void generateCommandPrint(int depth, AST_CommandPrint *printCommand) {
       print(")");
       break;
     default:
+      printWithDepth(depth, "call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8] *@stringTemplate, i32 0, i32 0), i8* ");
+      generateId(expressionId);
+      print(")");
       break;
   }
   putchar('\n');
@@ -692,9 +704,10 @@ static int generateExpressionConstant(int depth, AST_ExpressionConstant *constan
       generateFloat(constantExpression->constant.f);
       break;
     case AST_EXPRESSION_CONSTANT_STRING:
-      break;
+      print(" = ");
+      generateString(constantExpression->constant.s);
     default:
-      error("Cannot generate a constant expression for an unknown constant type");
+      break;
   }
 
   return id;
@@ -873,6 +886,50 @@ static void generateFloat(float value) {
   }
 }
 
+static void generateString(char *string) {
+  CG_StringElement *currentString = stringList;
+  CG_StringElement *newStringElement;
+  int stringId = getNextString();
+  int length = strlen(string) + 1;
+
+  print("getelementptr [%d x i8], [%d x i8]* @s%d, i32 0, i32 0", length, length, stringId);
+
+  // if it isn't the first string
+  if (stringList != NULL) {
+    while (currentString->next != NULL) {
+      currentString = currentString->next;
+    }
+    newStringElement = currentString->next;
+  }
+
+  newStringElement = (CG_StringElement *) safeMalloc(sizeof(CG_StringElement));
+  newStringElement->next = NULL;
+  newStringElement->id = stringId;
+  newStringElement->length = length;
+  newStringElement->string = string;
+
+  if (stringList == NULL) {
+    stringList = newStringElement;
+  } else {
+    currentString->next = newStringElement;
+  }
+}
+
+static void dumpStrings() {
+  CG_StringElement *currentString = stringList;
+
+  while (currentString != NULL) {
+    putchar('\n');
+    print("@s%d = private constant [%d x i8] c\"%s\\00\"",
+      currentString->id,
+      currentString->length,
+      currentString->string
+    );
+
+    currentString = currentString->next;
+  }
+}
+
 static int getNextId() {
   ++currentId;
   return currentId;
@@ -881,6 +938,11 @@ static int getNextId() {
 static int getNextLabel() {
   ++currentLabel;
   return currentLabel;
+}
+
+static int getNextString() {
+  ++currentString;
+  return currentString;
 }
 
 static char * getType(AST_Type type) {
