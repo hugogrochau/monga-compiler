@@ -686,6 +686,12 @@ static int generateExpressionVariableArray(int depth, AST_VariableArray *variabl
 
 static int generateExpressionAs(int depth, AST_ExpressionAs *expressionAs) {
   int expressionId = generateExpression(depth, expressionAs->expression);
+
+  // converting to same type
+  if (expressionAs->type == expressionAs->expression->type) {
+    return expressionId;
+  }
+
   int returnedId = getNextId();
 
   printWithDepth(depth, "");

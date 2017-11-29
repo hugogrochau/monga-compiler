@@ -116,6 +116,10 @@ void typeExpression(AST_Expression *expression) {
     break;
   case AST_EXPRESSION_AS:
     typeExpression(expression->expression.as->expression);
+    if (expression->expression.as->type != AST_INT && expression->expression.as->type != AST_FLOAT) {
+      error("Unsupported type (%s) for AS expression",
+        AST_TypeNames[expression->expression.as->type]);
+    }
     expression->type = expression->expression.as->type;
     break;
   case AST_EXPRESSION_CONSTANT:

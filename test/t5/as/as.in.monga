@@ -1,13 +1,17 @@
 main (): void {
-  a: int;
-  b: float;
+  a: float;
+  b: int;
 
-  a = 1;
-  b = a as float;
+  a = 10.34;
+  a = a as float;
+  @a;
+  @"\n";
+
+  b = a as int;
   @b;
   @"\n";
 
-  a = b as int;
-
+  a = b as float;
   @a;
+  @"\n";
 }
