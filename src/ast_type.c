@@ -139,7 +139,6 @@ void typeExpression(AST_Expression *expression) {
   case AST_EXPRESSION_BINARY:
     typeExpression(expression->expression.binary->leftExpression);
     typeExpression(expression->expression.binary->rightExpression);
-    // TODO: type casting
     if (expression->expression.binary->leftExpression->type != expression->expression.binary->rightExpression->type) {
       error("Invalid types for binary expression: (%s) and (%s)",
         AST_TypeNames[expression->expression.binary->leftExpression->type],
