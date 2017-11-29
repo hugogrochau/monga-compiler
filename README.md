@@ -15,7 +15,7 @@ A compiler for the monga language. Written for the INF1715 class @ PUC-Rio
 - AST knitter [src/knit.c](src/ast_knit.c)
 - AST typer and type checker [src/ast_type.c](src/ast_type.c)
 - AST code generator [src/code_generator.c](src/code_generator.c)
-- Testing [scripts/test.py](scripts/test.py), [tests/](tests/)
+- Testing [scripts/test.py](scripts/test.py), [tests/](test/)
 
 ## Running
 `make test`
