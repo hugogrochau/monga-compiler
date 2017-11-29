@@ -39,6 +39,7 @@ static int generateExpressionVariable(int depth, AST_Variable *variable);
 static int generateExpressionVariableSimple(int depth, AST_VariableSimple *variable);
 static int generateExpressionVariableArray(int depth, AST_VariableArray *variable);
 static int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression);
+static int generateExpressionAs(int depth, AST_ExpressionAs *expressionAs);
 static int generateExpressionUnary(int depth, AST_Expression *expression);
 static int generateExpressionBinary(int depth, AST_Expression *expression);
 static int generateExpressionArithmetic(int depth, AST_Expression *expression);
@@ -611,6 +612,7 @@ static int generateExpression(int depth, AST_Expression *expression) {
     case AST_EXPRESSION_NEW:
       break;
     case AST_EXPRESSION_AS:
+      id = generateExpressionAs(depth, expression->expression.as);
       break;
     case AST_EXPRESSION_CONSTANT:
       id = generateExpressionConstant(depth, expression->expression.constant);
@@ -680,6 +682,32 @@ static int generateExpressionVariableSimple(int depth, AST_VariableSimple *varia
 
 static int generateExpressionVariableArray(int depth, AST_VariableArray *variable) {
   return getNextId();
+}
+
+static int generateExpressionAs(int depth, AST_ExpressionAs *expressionAs) {
+  int expressionId = generateExpression(depth, expressionAs->expression);
+  int returnedId = getNextId();
+
+  printWithDepth(depth, "");
+  generateId(returnedId);
+  print(" = ");
+
+  switch(expressionAs->type) {
+    case AST_INT:
+      print("fptosi float ");
+      generateId(expressionId);
+      print(" to i32");
+      break;
+    case AST_FLOAT:
+      print("sitofp i32 ");
+      generateId(expressionId);
+      print(" to float");
+      break;
+    default:
+      break;
+  }
+
+  return returnedId;
 }
 
 static int generateExpressionConstant(int depth, AST_ExpressionConstant *constantExpression) {
